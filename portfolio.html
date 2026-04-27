@@ -167,8 +167,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 2rem 5vw;
-      background: var(--bg);
+      padding: 1.2rem 5vw;
+      background: #111110;
       border-bottom: 1px solid var(--line);
     }
     .nav-logo {
@@ -196,7 +196,7 @@
       font-size: 0.68rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #1e1e1c;
+      color: #ffffff;
       text-decoration: none;
       transition: color 0.3s;
     }
@@ -231,14 +231,28 @@
     }
 
     .hero-eye {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.9rem;
+      width: 50%;
       font-size: 0.65rem;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 2.5rem;
+      color: #f0ede8;
+      background: #000;
+      padding: 1rem 1.35rem;
+      margin-top: 2.2rem;
+      margin-bottom: 0;
       opacity: 0;
       transform: translateY(16px);
       transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
+    }
+    .hero-eye-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
     }
     #main.visible .hero-eye { opacity: 1; transform: none; }
 
@@ -276,7 +290,7 @@
     #main.visible .hero-foot { opacity: 1; transform: none; }
 
     .hero-desc {
-      max-width: 38ch;
+      max-width: 56ch;
       font-size: 0.88rem;
       line-height: 1.85;
       color: var(--muted);
@@ -727,12 +741,13 @@
       position: relative;
       z-index: 1;
       padding: 3vh 5vw;
+      background: #000;
       border-top: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
       font-size: 0.6rem;
       letter-spacing: 0.1em;
-      color: rgba(138,138,134,0.3);
+      color: #ffffff;
     }
   </style>
 </head>
@@ -782,54 +797,46 @@
 
     <!-- HERO -->
     <section id="hero">
-      <div class="hero-eye" style="color: rgb(57, 57, 57)">Yu-Hsien (Rowan) Lin &nbsp;·&nbsp; UI/UX Designer</div>
       <h1 class="hero-title">
-        <span class="h-line">Designing</span>
-        <span class="h-line">the <em class="accent">unknown</em></span>
-        <span class="h-line">universe.</span>
+        <span class="accent">Cross-screen</span>
+        <span class="h-line">UI/UX &amp; <em class="h-line">Product</em></span>
+        <span class="h-line">Designer.</span>
       </h1>
       <div class="hero-foot" style="color: rgb(57, 57, 57)">
         <p class="hero-desc">
-          Based in London. 5+ years designing across mobile, web,<br>
-          wearable &amp; TV — from Taiwan's tech ecosystem to global scale.
+          Designing scalable product experiences from mobile screens to large displays.
         </p>
         <div class="scroll-ind">
           <div class="scroll-bar"></div>
           <span>Scroll</span>
         </div>
       </div>
+      <div class="hero-eye">
+        <span class="hero-eye-dot"></span>
+        <span>Based in London &nbsp;·&nbsp; Authorised to work in the UK and Taiwan</span>
+      </div>
     </section>
 
     <!-- WORK -->
     <section id="work">
       <span class="sec-label reveal in" style="transition-delay: 0s;">Projects</span>
+      <p class="hero-desc reveal in" style="transition-delay:0.1s; margin-bottom:3rem;">Featured work across cross-screen products, wearable interaction, and responsive systems.</p>
       <ul class="work-list" id="work-list">
-        <li class="work-item reveal in" data-name="FainTV" data-type="Streaming Platform · Multi-device" style="transition-delay: 0s;" onclick="location.href='faintv.html'" style="cursor:pointer;">
+        <li class="work-item reveal in" data-name="FainTV" data-type="Cross-screen · Mobile · Tablet · Web · TV" style="transition-delay: 0s;" onclick="location.href='faintv.html'" style="cursor:pointer;">
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">01</span>
             <span class="wi-name">FainTV</span>
             <div class="wi-right">
-              <span class="wi-type">Streaming · Multi-device</span>
+              <span class="wi-type">Cross-screen · Mobile · Tablet · Web · TV</span>
               <span class="wi-arrow">→</span>
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg')"></div></li>
-        <li class="work-item reveal in" data-name="Genebook" data-type="Website · Branding" style="transition-delay: 0s;" onclick="location.href='genebook.html'">
-          <div class="wi-bg"></div>
-          <div class="work-inner">
-            <span class="wi-num">02</span>
-            <span class="wi-name">Genebook</span>
-            <div class="wi-right">
-              <span class="wi-type">Website · Branding</span>
-              <span class="wi-arrow">→</span>
-            </div>
-          </div>
-        <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg')"></div></li>
         <li class="work-item reveal in" data-name="Training for Life" data-type="Mobile · Wearable" style="transition-delay: 0s;" onclick="location.href='tfl.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
-            <span class="wi-num">03</span>
+            <span class="wi-num">02</span>
             <span class="wi-name">Training for Life</span>
             <div class="wi-right">
               <span class="wi-type">Mobile · Wearable</span>
@@ -837,24 +844,35 @@
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg')"></div></li>
-        <li class="work-item reveal in" data-name="Ai Cun Cell" data-type="Mobile Application" style="transition-delay: 0s;" onclick="location.href='aicuncell.html'">
+        <li class="work-item reveal in" data-name="Health GeneTech" data-type="Responsive Web · Branding" style="transition-delay: 0s;" onclick="location.href='genebook.html'">
+          <div class="wi-bg"></div>
+          <div class="work-inner">
+            <span class="wi-num">03</span>
+            <span class="wi-name">Health GeneTech</span>
+            <div class="wi-right">
+              <span class="wi-type">Responsive Web · Branding</span>
+              <span class="wi-arrow">→</span>
+            </div>
+          </div>
+        <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg')"></div></li>
+        <li class="work-item reveal in" data-name="Ai Cun Cell" data-type="Mobile · Healthcare" style="transition-delay: 0s;" onclick="location.href='aicuncell.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">04</span>
             <span class="wi-name">Ai Cun Cell</span>
             <div class="wi-right">
-              <span class="wi-type">Mobile Application</span>
+              <span class="wi-type">Mobile · Healthcare</span>
               <span class="wi-arrow">→</span>
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a2c6df5c-28b9-480b-a51f-171dc085410b/1.1+landing+page.jpg')"></div></li>
-        <li class="work-item reveal in" data-name="Marilyn" data-type="Website" style="transition-delay: 0s;" onclick="location.href='marilyn.html'">
+        <li class="work-item reveal in" data-name="Marilyn" data-type="Responsive Web · Campaign" style="transition-delay: 0s;" onclick="location.href='marilyn.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">05</span>
             <span class="wi-name">Marilyn</span>
             <div class="wi-right">
-              <span class="wi-type">Website</span>
+              <span class="wi-type">Responsive Web · Campaign</span>
               <span class="wi-arrow">→</span>
             </div>
           </div>
@@ -886,15 +904,12 @@
       <div class="about-text-col">
         <span class="sec-label reveal in" style="transition-delay: 0s;">About</span>
         <p class="about-bio reveal in" style="transition-delay: 0s;">
-          I'm a designer who sees every brief as a journey into <em>uncharted space</em> —
-          unknown, exhilarating, and worth exploring with precision.
+          UI/UX and Product Designer based in London, with 5+ years across <em>mobile, web, wearable, and TV</em> platforms.
         </p>
         <p class="about-bio-small reveal in" style="transition-delay: 0s;">
-          With 5+ years spanning Taiwan's tech ecosystem to global platforms,
-          I've evolved from crafting UI components to leading end-to-end product strategy.
-          I thrive at the intersection of user empathy and business strategy —
-          transforming complexity into clarity through research-driven design,
-          scalable systems, and cross-functional collaboration.
+          MSc User Experience Engineering with Distinction, Goldsmiths, University of London.<br><br>
+          My work focuses on turning complex product journeys into clear, scalable interfaces across screen sizes, supported by reusable components and design systems.<br><br>
+          Authorised to work in the UK and Taiwan.
         </p>
 
       </div>
@@ -953,20 +968,24 @@
       <span class="sec-label reveal">Impact</span>
       <div class="stats-grid-full reveal" style="text-align: center">
         <div class="stat-block">
+          <span class="stat-val" style="font-size: 70px">1M<span class="u">+</span></span>
+          <span class="stat-lbl">Users Reached</span>
+          <span class="stat-lbl" style="margin-top:0.5rem; font-size:0.55rem; opacity:0.6;">FainTV · mobile, tablet, web, TV</span>
+        </div>
+        <div class="stat-block">
           <span class="stat-val" style="font-size: 70px">45<span class="u">%</span></span>
           <span class="stat-lbl">Revenue Growth</span>
+          <span class="stat-lbl" style="margin-top:0.5rem; font-size:0.55rem; opacity:0.6;">User journey and onboarding redesign</span>
         </div>
         <div class="stat-block">
           <span class="stat-val" style="font-size: 70px">40<span class="u">%</span></span>
-          <span class="stat-lbl">Bounce Rate Reduced</span>
+          <span class="stat-lbl">Bounce Rate Reduction</span>
+          <span class="stat-lbl" style="margin-top:0.5rem; font-size:0.55rem; opacity:0.6;">Responsive website restructure</span>
         </div>
         <div class="stat-block">
-          <span class="stat-val" style="font-size: 70px">30<span class="u" style="font-size: 4px">%</span></span>
-          <span class="stat-lbl">Usability Improvement</span>
-        </div>
-        <div class="stat-block">
-          <span class="stat-val" style="font-size: 70px">5<span class="u">+</span></span>
-          <span class="stat-lbl">Years Experience</span>
+          <span class="stat-val" style="font-size: 55px">30→80<span class="u">%</span></span>
+          <span class="stat-lbl">Task Completion Rate</span>
+          <span class="stat-lbl" style="margin-top:0.5rem; font-size:0.55rem; opacity:0.6;">Voice UI for elderly TV users</span>
         </div>
       </div>
     </section>
@@ -978,7 +997,7 @@
         <li class="exp-item">
           <div class="exp-inner">
             <div class="exp-left">
-              <span class="exp-company">Global Social Innovator</span>
+              <span class="exp-company">Global Social Innovators<span class="exp-sub">London, UK</span></span>
               <span class="exp-period">2025 — Present</span>
             </div>
             <span class="exp-role">UI/UX Designer</span>
@@ -987,8 +1006,8 @@
         <li class="exp-item">
           <div class="exp-inner">
             <div class="exp-left">
-              <span class="exp-company">Product Design Consultant</span>
-              <span class="exp-period">2021 — 2024</span>
+              <span class="exp-company">Independent<span class="exp-sub">London, UK</span></span>
+              <span class="exp-period">2021 — Present</span>
             </div>
             <span class="exp-role">Product Design Consultant</span>
           </div>
@@ -996,25 +1015,25 @@
         <li class="exp-item">
           <div class="exp-inner">
             <div class="exp-left">
-              <span class="exp-company">Intersense Tech.<span class="exp-sub">A system integration company in Taiwan</span></span>
+              <span class="exp-company">Intersense Tech.<span class="exp-sub">Taipei, Taiwan</span></span>
               <span class="exp-period">2020 — 2021</span>
             </div>
-            <span class="exp-role">Lead UI/UX Designer</span>
+            <span class="exp-role">Lead UI Designer</span>
           </div>
         </li>
         <li class="exp-item">
           <div class="exp-inner">
             <div class="exp-left">
-              <span class="exp-company">Tones Design Ltd.<span class="exp-sub">A design and marketing company in Taiwan</span></span>
+              <span class="exp-company">Tones Design Ltd.<span class="exp-sub">Taipei, Taiwan</span></span>
               <span class="exp-period">2019 — 2020</span>
             </div>
-            <span class="exp-role">Lead Product Designer</span>
+            <span class="exp-role">Product Designer</span>
           </div>
         </li>
         <li class="exp-item">
           <div class="exp-inner">
             <div class="exp-left">
-              <span class="exp-company">Hawsing Co., Ltd<span class="exp-sub">A streaming provider in Taiwan</span></span>
+              <span class="exp-company">Hawsing Co., Ltd.<span class="exp-sub">Taipei, Taiwan</span></span>
               <span class="exp-period">2018 — 2019</span>
             </div>
             <span class="exp-role">UI/UX Designer</span>
@@ -1034,13 +1053,13 @@
         <span class="ct-sep"></span>
         <a class="ct-link" href="https://www.linkedin.com/in/rowanlin1229/" target="_blank" rel="noopener">LinkedIn</a>
         <span class="ct-sep"></span>
-        <a class="ct-link" href="https://rowanlin.myportfolio.com/work" target="_blank" rel="noopener">Portfolio</a>
+        <a class="ct-link" href="#download-cv">Download CV</a>
       </div>
     </section>
 
     <footer>
-      <span>© 2026 Yu-Hsien (Rowan) Lin</span>
-      <span>London, UK</span>
+      <span>© 2026 Yu-Hsien "Rowan" Lin</span>
+      <span></span>
     </footer>
   </div>
 
@@ -1126,7 +1145,7 @@
       const pImg = document.getElementById('wk-prev-img');
       const covers = {
         'FainTV': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg',
-        'Genebook': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg',
+        'Health GeneTech': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg',
         'Training for Life': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg',
         'Ai Cun Cell': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a2c6df5c-28b9-480b-a51f-171dc085410b/1.1+landing+page.jpg',
         'Marilyn': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a7f85fc8-9e9d-48cc-8b65-d1ea109acdd0/banner.png'
