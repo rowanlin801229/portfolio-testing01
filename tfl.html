@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training for Life — Rowan Lin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#0e0e0d; --fg:#8a8a86; --accent:#C94F4F; --muted:rgba(138,138,134,0.55); --line:rgba(138,138,134,0.13); --surface:#141413; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--fg);font-family:'Space Grotesk',sans-serif;font-weight:300;cursor:none;overflow-x:hidden}
+    #cur-ring{position:fixed;width:38px;height:38px;border:1px solid rgba(201,79,79,0.45);border-radius:50%;pointer-events:none;z-index:9998;top:0;left:0;transition:width .35s,height .35s,border-color .3s,background .3s;will-change:transform}
+    #cur-dot{position:fixed;width:4px;height:4px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;top:0;left:0;will-change:transform}
+    #cur-ring.expanded{width:60px;height:60px;border-color:var(--accent);background:rgba(201,79,79,0.06)}
+    nav{position:fixed;inset:0 0 auto;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:2rem 5vw}
+    .nav-back{display:flex;align-items:center;gap:.7rem;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s}
+    .nav-back:hover{color:var(--fg)}
+    .nav-back-arrow{transition:transform .3s cubic-bezier(.16,1,.3,1)}
+    .nav-back:hover .nav-back-arrow{transform:translateX(-4px)}
+    .nav-right{display:flex;align-items:center;gap:2rem}
+    .nav-index{font-size:.62rem;letter-spacing:.15em;color:var(--muted)}
+    .nav-prev,.nav-next{display:flex;align-items:center;gap:.6rem;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s}
+    .nav-prev:hover,.nav-next:hover{color:var(--fg)}
+    .nav-next-arrow{transition:transform .3s cubic-bezier(.16,1,.3,1)}
+    .nav-next:hover .nav-next-arrow{transform:translateX(4px)}
+
+    .cs-hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:120px 5vw 8vh;border-bottom:1px solid var(--line)}
+    .cs-label{font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);margin-bottom:2rem;display:block;opacity:0;transform:translateY(12px);animation:fadeup .7s cubic-bezier(.16,1,.3,1) .2s forwards}
+    .cs-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(3rem,10vw,10rem);line-height:.9;letter-spacing:-.03em;margin-bottom:4rem;opacity:0;transform:translateY(60px);animation:fadeup .9s cubic-bezier(.16,1,.3,1) .3s forwards}
+    .cs-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;border-top:1px solid var(--line);padding-top:2.5rem;opacity:0;transform:translateY(20px);animation:fadeup .7s cubic-bezier(.16,1,.3,1) .55s forwards}
+    .cs-meta-label{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.6rem}
+    .cs-meta-val{font-size:.82rem;line-height:1.6;color:var(--fg)}
+    @keyframes fadeup{to{opacity:1;transform:none}}
+
+    .cs-img{width:100%;display:block;object-fit:cover}
+    .cs-img-full{border-bottom:1px solid var(--line)}
+    .cs-img-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+    .cs-img-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px}
+
+    .cs-section{padding:8vh 5vw;border-bottom:1px solid var(--line)}
+    .cs-sec-header{display:grid;grid-template-columns:220px 1fr;gap:6vw;margin-bottom:5rem}
+    .cs-sec-label{font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);padding-top:.3rem}
+    .cs-sec-headline{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(2rem,4vw,3.5rem);line-height:1.15;letter-spacing:-.02em}
+    .cs-text-grid{display:grid;grid-template-columns:220px 1fr;gap:6vw}
+    .cs-text-label{font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);padding-top:.25rem}
+    .cs-text-body{font-size:.92rem;line-height:1.95;color:var(--muted);max-width:68ch;text-wrap:pretty}
+    .cs-text-body strong{color:var(--fg);font-weight:400}
+
+    .cs-stats-row{display:flex;gap:6vw;align-items:center;padding:4rem 5vw;background:var(--surface);border-bottom:1px solid var(--line)}
+    .cs-stat{display:flex;flex-direction:column;gap:.4rem;flex-shrink:0}
+    .cs-stat-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(4rem,7vw,6rem);font-weight:300;line-height:1;letter-spacing:-.02em}
+    .cs-stat-num span{color:var(--accent);font-size:.5em;vertical-align:super}
+    .cs-stat-lbl{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+    .cs-stat-divider{width:1px;height:70px;background:var(--line);flex-shrink:0}
+    .cs-stat-desc{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.2rem,2vw,1.8rem);font-weight:300;line-height:1.55;max-width:52ch}
+    .cs-stat-desc em{color:var(--accent)}
+
+    .cs-strategy-list{display:flex;flex-direction:column;gap:0;margin-top:3rem}
+    .cs-str-item{display:grid;grid-template-columns:60px 220px 1fr;gap:3rem;align-items:start;padding:2.5rem 0;border-bottom:1px solid var(--line)}
+    .cs-str-item:last-child{border-bottom:none}
+    .cs-str-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.6rem;font-weight:300;color:rgba(201,79,79,.3)}
+    .cs-str-name{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg);padding-top:.2rem}
+    .cs-str-desc{font-size:.85rem;line-height:1.85;color:var(--muted)}
+    .cs-str-desc strong{color:var(--fg);font-weight:400}
+
+    .cs-quote{padding:6vh 5vw;border-bottom:1px solid var(--line);display:grid;grid-template-columns:220px 1fr;gap:6vw;align-items:start}
+    .cs-quote-label{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--accent)}
+    .cs-quote-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.5rem,3vw,2.5rem);font-weight:300;line-height:1.45}
+    .cs-quote-text em{color:var(--accent)}
+
+    .cs-next{border-top:1px solid var(--line);padding:6vh 5vw;display:flex;justify-content:space-between;align-items:center;text-decoration:none;transition:background .4s}
+    .cs-next:hover{background:var(--surface)}
+    .cs-next-label{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.8rem;display:block}
+    .cs-next-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;letter-spacing:-.02em;line-height:1;color:var(--fg);transition:letter-spacing .4s cubic-bezier(.16,1,.3,1)}
+    .cs-next:hover .cs-next-name{letter-spacing:.01em}
+    .cs-next-arrow{font-size:3rem;color:var(--accent);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+    .cs-next:hover .cs-next-arrow{transform:translateX(12px)}
+
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1)}
+    .reveal.in{opacity:1;transform:none}
+    footer{padding:2.5vh 5vw;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:.6rem;letter-spacing:.1em;color:rgba(138,138,134,.28)}
+  </style>
+</head>
+<body>
+  <div id="cur-ring"></div>
+  <div id="cur-dot"></div>
+
+  <nav>
+    <a class="nav-back" href="portfolio.html"><span class="nav-back-arrow">←</span> All Work</a>
+    <div class="nav-right">
+      <span class="nav-index">03 / 05</span>
+      <a class="nav-prev" href="genebook.html">← Genebook</a>
+      <a class="nav-next" href="aicuncell.html">Next <span class="nav-next-arrow">→</span></a>
+    </div>
+  </nav>
+
+  <section class="cs-hero">
+    <span class="cs-label">03 — Mobile Application · Wearable Devices · 10 Weeks</span>
+    <h1 class="cs-title">Training<br>for Life</h1>
+    <div class="cs-meta">
+      <div><span class="cs-meta-label">Role</span><span class="cs-meta-val">UI/UX Designer</span></div>
+      <div><span class="cs-meta-label">Timeline</span><span class="cs-meta-val">10 Weeks</span></div>
+      <div><span class="cs-meta-label">Scope</span><span class="cs-meta-val">End-to-End Design<br>Design System · Branding</span></div>
+      <div><span class="cs-meta-label">Tools</span><span class="cs-meta-val">Figma · Adobe Suite</span></div>
+    </div>
+  </section>
+
+  <div class="cs-img-full">
+    <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg" alt="TFL Hero" loading="lazy">
+  </div>
+
+  <!-- STATS -->
+  <div class="cs-stats-row reveal">
+    <div class="cs-stat">
+      <span class="cs-stat-num">90<span>%</span></span>
+      <span class="cs-stat-lbl">Completion Rate</span>
+    </div>
+    <div class="cs-stat-divider"></div>
+    <div class="cs-stat">
+      <span class="cs-stat-num">4.5<span>/5</span></span>
+      <span class="cs-stat-lbl">Satisfaction Score</span>
+    </div>
+    <div class="cs-stat-divider"></div>
+    <div class="cs-stat">
+      <span class="cs-stat-num">60<span>%</span></span>
+      <span class="cs-stat-lbl">Logging Flow Streamlined</span>
+    </div>
+    <div class="cs-stat-divider"></div>
+    <p class="cs-stat-desc">From <em>5 steps to 2</em> — frictionless tracking that maintains training momentum.</p>
+  </div>
+
+  <!-- OVERVIEW -->
+  <section class="cs-section">
+    <div class="cs-text-grid reveal">
+      <span class="cs-text-label">Overview</span>
+      <p class="cs-text-body">
+        Despite a saturated fitness app market, high churn rates persist. Most apps fail by burdening users with complex data entry during intense workouts. My goal was to design a <strong>frictionless tracking system</strong> that maintains training momentum and boosts long-term engagement — transforming the solitary nature of working out into a vibrant, human-centred experience.
+      </p>
+    </div>
+  </section>
+
+  <!-- STRATEGY -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Strategy</span>
+      <h2 class="cs-sec-headline">Triple W framework — Why, How, What — to ensure every decision is user-grounded.</h2>
+    </div>
+
+    <div class="cs-strategy-list reveal">
+      <div class="cs-str-item">
+        <span class="cs-str-num">01</span>
+        <span class="cs-str-name">Audit</span>
+        <p class="cs-str-desc">Conducted <strong>competitive analysis</strong> to identify navigation bottlenecks in top-tier fitness apps. Existing apps lack trainer follow-up and community features.</p>
+      </div>
+      <div class="cs-str-item">
+        <span class="cs-str-num">02</span>
+        <span class="cs-str-name">Design</span>
+        <p class="cs-str-desc">Implemented <strong>gesture-based navigation</strong> and <strong>predictive data entry</strong> to minimise cognitive load during workouts. IA and Task Flows served as the blueprint for the Deliver phase.</p>
+      </div>
+      <div class="cs-str-item">
+        <span class="cs-str-num">03</span>
+        <span class="cs-str-name">Validate</span>
+        <p class="cs-str-desc">Executed usability testing with <strong>5 active lifters</strong> to measure task completion speed and flow satisfaction. Design Review phase synthesised post-interview feedback with engineering feasibility.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="cs-img-full reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/91513dac-32a3-4301-8657-b7b487fa76f8/4.3+design+process.jpg" alt="Design Process" loading="lazy">
+  </div>
+
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/faa03869-b39d-4773-ab65-73e3b8285df5/4.5+User++Interview.jpg" alt="User Interview" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6a29dcdb-8248-4db6-b3a6-c2f5d0571809/4.6+Qualitative+Research.jpg" alt="Qualitative Research" loading="lazy">
+  </div>
+
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/7490b005-f50d-4ef2-abf4-5d73bf736012/4.7+competitive+analysis.jpg" alt="Competitive Analysis" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/8499e7a1-1afc-4365-aaaa-bc8181546390/4.8++perona%231.jpg" alt="Persona 1" loading="lazy">
+  </div>
+
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b3935472-7fdb-4ff6-9ee7-6247c0f332cb/4.9+perona%232.jpg" alt="Persona 2" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/15f7a5e2-25ab-44b5-9c27-c1e36c753482/4.12+empahty+map.jpg" alt="Empathy Map" loading="lazy">
+  </div>
+
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/3e90faab-ec64-47b7-948c-8a393796e28a/4.11+empahty+map.jpg" alt="Empathy Map 2" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/463f00d9-a804-4293-bb9f-4babad5e7a5a/4.13+user+journey+map.jpg" alt="User Journey Map" loading="lazy">
+  </div>
+
+  <div class="cs-img-full reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/92d549ff-a9e3-4e8f-9c28-8104804033bb/4.4+DESIGN+STRATEGY.jpg" alt="Design Strategy" loading="lazy">
+  </div>
+
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/886c9f3d-c6d6-453d-bb1f-caefd1890af3/4.14+task+flows-1.jpg" alt="Task Flows" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/2b598040-2f98-4703-afb8-3970d29fa482/4.14+task+flows.jpg" alt="Task Flows 2" loading="lazy">
+  </div>
+
+  <div class="cs-img-full reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/922801ed-5e52-47b5-ba5a-25cc200cbd0f/4.18+HANDWRITTEN+SKETCHS.jpg" alt="Sketches" loading="lazy">
+  </div>
+
+  <!-- DESIGN -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Design</span>
+      <h2 class="cs-sec-headline">Bridging expert guidance with social connectivity — beyond just tracking numbers.</h2>
+    </div>
+    <div class="cs-text-grid reveal">
+      <span class="cs-text-label">Scalability</span>
+      <p class="cs-text-body">Developed a comprehensive <strong>Design System</strong> to ensure visual consistency and <strong>2× faster developer handoff</strong>. A Design Review phase synthesised feedback from user post-interviews and technical feasibility assessments before the final Deliver stage.</p>
+    </div>
+  </section>
+
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/bdc6993e-0b42-429f-9ba5-9b932f1c8fb6/4.23+main+functions02+-setup.jpg" alt="Main Functions" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/170d4b0d-f505-44ae-b594-1a2944368c15/4.25+main+functions03+-AI+insrctor02.jpg" alt="AI Instructor" loading="lazy">
+  </div>
+  <div class="cs-img-full reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/11fbf3e2-bca0-4158-9f0a-e4122e40c1d2/4.27+main+functions02+-coaches02.jpg" alt="Coaches" loading="lazy">
+  </div>
+
+  <!-- CONCLUSION -->
+  <div class="cs-quote reveal">
+    <span class="cs-quote-label">Conclusion</span>
+    <p class="cs-quote-text">"Beyond Tracking: Elevating the Fitness Journey through <em>Connection and Insight</em>."</p>
+  </div>
+
+  <a class="cs-next" href="aicuncell.html">
+    <div><span class="cs-next-label">Next Project</span><div class="cs-next-name">Ai Cun Cell</div></div>
+    <span class="cs-next-arrow">→</span>
+  </a>
+
+  <footer><span>© 2026 Yu-Hsien (Rowan) Lin</span><span>Training for Life — 03 / 05</span></footer>
+
+  <script>
+    const ring=document.getElementById('cur-ring'),dot=document.getElementById('cur-dot');
+    let mx=-100,my=-100,rx=-100,ry=-100;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx-2}px,${my-2}px)`});
+    (function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.transform=`translate(${rx-19}px,${ry-19}px)`;requestAnimationFrame(loop)})();
+    document.querySelectorAll('a').forEach(el=>{el.addEventListener('mouseenter',()=>ring.classList.add('expanded'));el.addEventListener('mouseleave',()=>ring.classList.remove('expanded'))});
+    const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  </script>
+</body>
+</html>

@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FainTV — Rowan Lin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0e0e0d;
+      --fg: #8a8a86;
+      --accent: #C94F4F;
+      --muted: rgba(138,138,134,0.55);
+      --line: rgba(138,138,134,0.13);
+      --surface: #141413;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 300;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* ── CURSOR ── */
+    #cur-ring {
+      position: fixed;
+      width: 38px; height: 38px;
+      border: 1px solid rgba(201,79,79,0.45);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      top: 0; left: 0;
+      transition: width .35s, height .35s, border-color .3s, background .3s;
+      will-change: transform;
+    }
+    #cur-dot {
+      position: fixed;
+      width: 4px; height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      top: 0; left: 0;
+      will-change: transform;
+    }
+    #cur-ring.expanded { width: 60px; height: 60px; border-color: var(--accent); background: rgba(201,79,79,0.06); }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 200;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 5vw;
+      mix-blend-mode: normal;
+    }
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-back:hover { color: var(--fg); }
+    .nav-back-arrow {
+      display: inline-block;
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .nav-back:hover .nav-back-arrow { transform: translateX(-4px); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .nav-index {
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+    .nav-next {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-next:hover { color: var(--fg); }
+    .nav-next-arrow { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+    .nav-next:hover .nav-next-arrow { transform: translateX(4px); }
+
+    /* ── HERO ── */
+    .cs-hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 120px 5vw 8vh;
+      position: relative;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .cs-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2rem;
+      display: block;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards;
+    }
+
+    .cs-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(5rem, 12vw, 12rem);
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+      margin-bottom: 4rem;
+      opacity: 0;
+      transform: translateY(60px);
+      animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
+    }
+
+    .cs-meta {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      border-top: 1px solid var(--line);
+      padding-top: 2.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s forwards;
+    }
+
+    .cs-meta-item {}
+    .cs-meta-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+    .cs-meta-val {
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: var(--fg);
+    }
+
+    @keyframes fadeup {
+      to { opacity: 1; transform: none; }
+    }
+
+    /* ── HERO IMAGE ── */
+    .cs-hero-img {
+      width: 100%;
+      max-height: 85vh;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ── CONTENT ── */
+    .cs-body {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* ── SECTION BLOCK ── */
+    .cs-section {
+      padding: 8vh 5vw;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .cs-sec-header {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 6vw;
+      margin-bottom: 5rem;
+    }
+
+    .cs-sec-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding-top: 0.3rem;
+    }
+
+    .cs-sec-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── TEXT GRID ── */
+    .cs-text-grid {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 6vw;
+    }
+
+    .cs-text-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding-top: 0.25rem;
+    }
+
+    .cs-text-body {
+      font-size: 0.92rem;
+      line-height: 1.95;
+      color: var(--muted);
+      max-width: 68ch;
+      text-wrap: pretty;
+    }
+
+    .cs-text-body strong { color: var(--fg); font-weight: 400; }
+
+    /* ── IMPACT HIGHLIGHT ── */
+    .cs-impact {
+      background: var(--surface);
+      padding: 4rem 5vw;
+      display: flex;
+      align-items: center;
+      gap: 8vw;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .cs-impact-stat {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .cs-impact-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(4rem, 8vw, 7rem);
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .cs-impact-num span { color: var(--accent); font-size: 0.5em; vertical-align: super; }
+    .cs-impact-lbl {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cs-impact-divider {
+      width: 1px;
+      height: 80px;
+      background: var(--line);
+      flex-shrink: 0;
+    }
+    .cs-impact-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
+      font-weight: 300;
+      line-height: 1.5;
+      max-width: 55ch;
+    }
+    .cs-impact-text em { color: var(--accent); }
+
+    /* ── PROCESS STEPS ── */
+    .cs-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      margin-top: 3rem;
+    }
+
+    .cs-step {
+      border-right: 1px solid var(--line);
+      padding: 2rem 1.5rem;
+    }
+    .cs-step:last-child { border-right: none; }
+
+    .cs-step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 3rem;
+      font-weight: 300;
+      color: rgba(201,79,79,0.25);
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+    .cs-step-name {
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--fg);
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+    .cs-step-desc {
+      font-size: 0.78rem;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    /* ── DESIGN FEATURES ── */
+    .cs-features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      margin-top: 3rem;
+    }
+
+    .cs-feature {
+      background: var(--surface);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .cs-feat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 2rem;
+      font-weight: 300;
+      color: rgba(201,79,79,0.3);
+      line-height: 1;
+    }
+    .cs-feat-name {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--fg);
+    }
+    .cs-feat-desc {
+      font-size: 0.82rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 52ch;
+    }
+    .cs-feat-desc strong { color: var(--fg); font-weight: 400; }
+
+    /* ── IMAGE ── */
+    .cs-img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .cs-img-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+
+    .cs-img-full {
+      padding: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    /* ── REFLECTION ── */
+    .cs-reflection {
+      padding: 8vh 5vw;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8vw;
+    }
+
+    .cs-refl-item { display: flex; flex-direction: column; gap: 1.5rem; }
+    .cs-refl-title {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .cs-refl-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.3rem, 2vw, 1.8rem);
+      font-weight: 300;
+      line-height: 1.55;
+      color: var(--fg);
+    }
+
+    /* ── NEXT PROJECT ── */
+    .cs-next {
+      border-top: 1px solid var(--line);
+      padding: 6vh 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+      transition: background 0.4s;
+    }
+    .cs-next:hover { background: var(--surface); }
+
+    .cs-next-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+    .cs-next-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--fg);
+      transition: letter-spacing 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .cs-next:hover .cs-next-name { letter-spacing: 0.01em; }
+
+    .cs-next-arrow {
+      font-size: 3rem;
+      color: var(--accent);
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .cs-next:hover .cs-next-arrow { transform: translateX(12px); }
+
+    /* ── REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.85s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.in { opacity: 1; transform: none; }
+
+    footer {
+      padding: 2.5vh 5vw;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: rgba(138,138,134,0.28);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur-ring"></div>
+  <div id="cur-dot"></div>
+
+  <nav>
+    <a class="nav-back" href="portfolio.html">
+      <span class="nav-back-arrow">←</span>
+      All Work
+    </a>
+    <div class="nav-right">
+      <span class="nav-index">01 / 05</span>
+      <a class="nav-next" href="genebook.html">
+        Next
+        <span class="nav-next-arrow">→</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="cs-hero">
+    <span class="cs-label">01 — Streaming Platform · Multi-device · 1 Year</span>
+    <h1 class="cs-title">FainTV</h1>
+    <div class="cs-meta">
+      <div class="cs-meta-item">
+        <span class="cs-meta-label">Role</span>
+        <span class="cs-meta-val">UI/UX Designer</span>
+      </div>
+      <div class="cs-meta-item">
+        <span class="cs-meta-label">Duration</span>
+        <span class="cs-meta-val">1 Year</span>
+      </div>
+      <div class="cs-meta-item">
+        <span class="cs-meta-label">Platform</span>
+        <span class="cs-meta-val">TV · Mobile · Web</span>
+      </div>
+      <div class="cs-meta-item">
+        <span class="cs-meta-label">Company</span>
+        <span class="cs-meta-val">Hawsing Co., Ltd<br>Streaming Provider, Taiwan</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- HERO IMAGE -->
+  <div class="cs-img-full">
+    <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg" alt="FainTV Loading Screen" loading="lazy">
+  </div>
+
+  <div class="cs-body">
+
+    <!-- OVERVIEW -->
+    <section class="cs-section">
+      <div class="cs-text-grid reveal">
+        <span class="cs-text-label">Overview</span>
+        <p class="cs-text-body">
+          FainTV is a prominent streaming service provider in Taiwan, offering an extensive library of live television, movies, and hit dramas. As the UI/UX Designer, I spearheaded the complete redesign of the <strong>FainTV 2.0</strong> platform — modernising the viewing journey and creating a seamless, intuitive interface that enhances how audiences discover and interact with digital content <strong>across multiple devices</strong>.
+        </p>
+      </div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section class="cs-section">
+      <div class="cs-sec-header reveal">
+        <span class="cs-sec-label">Problem</span>
+        <h2 class="cs-sec-headline">Traditional TV interfaces rely on remote control text input, creating significant barriers for elderly users.</h2>
+      </div>
+      <div class="cs-text-grid reveal">
+        <span class="cs-text-label">Research Finding</span>
+        <p class="cs-text-body">
+          <strong>65% of elderly users</strong> struggled with text-based searching. The remote-control keyboard created friction during content search and account registration, causing high drop-off rates and low task completion — especially for a demographic that represents a significant portion of the FainTV user base.
+        </p>
+      </div>
+    </section>
+
+    <!-- IMPACT STAT -->
+    <div class="cs-impact reveal">
+      <div class="cs-impact-stat">
+        <span class="cs-impact-num">30<span>%</span></span>
+        <span class="cs-impact-lbl">Before redesign</span>
+      </div>
+      <div class="cs-impact-divider"></div>
+      <div class="cs-impact-stat">
+        <span class="cs-impact-num">80<span>%</span></span>
+        <span class="cs-impact-lbl">After redesign</span>
+      </div>
+      <div class="cs-impact-divider"></div>
+      <p class="cs-impact-text">
+        Task completion rate among <em>elderly users</em> increased by 50 percentage points — significantly lowering the barrier to accessing digital services.
+      </p>
+    </div>
+
+    <!-- PROCESS -->
+    <section class="cs-section">
+      <div class="cs-sec-header reveal">
+        <span class="cs-sec-label">Process</span>
+        <h2 class="cs-sec-headline">Double Diamond — every decision rooted in data, not assumptions.</h2>
+      </div>
+      <div class="cs-text-grid reveal">
+        <span class="cs-text-label">Framework</span>
+        <p class="cs-text-body">
+          I utilised the <strong>Double Diamond</strong> framework to ensure every design decision began with extensive primary and secondary research to uncover core user pain points. By synthesising insights into <strong>personas and empathy maps</strong>, I bridged the gap between user needs and business goals — delivering a scalable design system that simplifies complexity and enhances the entertainment experience.
+        </p>
+      </div>
+      <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/76dec9a1-8725-4ac8-b9ce-f802cdbaf5b0/1.4+design+process.jpg" alt="Design Process" loading="lazy" style="margin-top:3rem;">
+
+      <div class="cs-steps reveal" style="margin-top:4rem;">
+        <div class="cs-step">
+          <div class="cs-step-num">01</div>
+          <span class="cs-step-name">Define Objective</span>
+          <p class="cs-step-desc">Identifying core business goals and key questions to answer through user insights.</p>
+        </div>
+        <div class="cs-step">
+          <div class="cs-step-num">02</div>
+          <span class="cs-step-name">Plan Research</span>
+          <p class="cs-step-desc">Selecting qualitative and quantitative methods to gather comprehensive data.</p>
+        </div>
+        <div class="cs-step">
+          <div class="cs-step-num">03</div>
+          <span class="cs-step-name">Recruit</span>
+          <p class="cs-step-desc">Screening 50+ participants for a diverse, representative sample.</p>
+        </div>
+        <div class="cs-step">
+          <div class="cs-step-num">04</div>
+          <span class="cs-step-name">Conduct Research</span>
+          <p class="cs-step-desc">In-depth interviews capturing real-time behaviours and frustrations.</p>
+        </div>
+        <div class="cs-step">
+          <div class="cs-step-num">05</div>
+          <span class="cs-step-name">Analyse Data</span>
+          <p class="cs-step-desc">Synthesising findings into personas and user flows.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESEARCH IMAGES -->
+    <div class="cs-img-grid reveal">
+      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6b59363d-8cf7-44b8-afbf-227fea4f916a/1.6+User++Interview.jpg" alt="User Interview" loading="lazy">
+      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/144f4129-994f-4c58-9640-42bbcf94c254/1.7.1+User++Interview.jpg" alt="User Interview 2" loading="lazy">
+      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/32c6a317-12d0-4d16-bae2-d16ac06b31ed/1.7.2Qualitative+Research.jpg" alt="Qualitative Research" loading="lazy">
+      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/074c6087-2b13-4d75-a21e-2863a98fd831/1.8+competitive+analysis.jpg" alt="Competitive Analysis" loading="lazy">
+    </div>
+
+    <!-- PERSONAS -->
+    <div class="cs-img-grid reveal">
+      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/d33038a6-f2c8-4a28-a758-ecb4d78dc167/1.9.1++perona%231.jpg" alt="Persona 1" loading="lazy">
+      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/2c687869-8e15-4a6a-81d3-c9dcbeb521f6/1.9.2++perona%231.jpg" alt="Persona 2" loading="lazy">
+    </div>
+
+    <!-- SOLUTION -->
+    <section class="cs-section">
+      <div class="cs-sec-header reveal">
+        <span class="cs-sec-label">Solution</span>
+        <h2 class="cs-sec-headline">Voice input and landline login — directly addressing the two core pain points.</h2>
+      </div>
+      <div class="cs-text-grid reveal">
+        <span class="cs-text-label">Design Decision</span>
+        <p class="cs-text-body">
+          I introduced <strong>voice input</strong> to replace remote control typing, and <strong>landline phone number login</strong> to replace email and mobile verification — directly addressing the two core pain points identified through user interviews and usability testing. Both solutions required zero learning curve for elderly users.
+        </p>
+      </div>
+
+      <div class="cs-features reveal" style="margin-top:4rem;">
+        <div class="cs-feature">
+          <div class="cs-feat-num">01</div>
+          <span class="cs-feat-name">Intelligent Voice Search</span>
+          <p class="cs-feat-desc">Streamlines navigation by allowing users to locate content via a <strong>3-second remote button press</strong>, reducing a complex search to just two steps.</p>
+        </div>
+        <div class="cs-feature">
+          <div class="cs-feat-num">02</div>
+          <span class="cs-feat-name">Immersive T-Commerce</span>
+          <p class="cs-feat-desc">Enables real-time shopping during broadcasts, allowing viewers to purchase featured items <strong>without disrupting the viewing experience</strong>.</p>
+        </div>
+        <div class="cs-feature">
+          <div class="cs-feat-num">03</div>
+          <span class="cs-feat-name">Structured Account Management</span>
+          <p class="cs-feat-desc">Utilises a <strong>12-column grid system</strong> to organise diverse member data, ensuring a balanced and responsive layout across all platforms.</p>
+        </div>
+        <div class="cs-feature">
+          <div class="cs-feat-num">04</div>
+          <span class="cs-feat-name">Optimised Checkout Flow</span>
+          <p class="cs-feat-desc">Simplifies the multi-step purchasing journey into a <strong>linear path optimised for D-pad remote navigation</strong> and high conversion.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOLUTION IMAGES -->
+    <div class="cs-img-full reveal">
+      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/09ae4cf1-07a0-4c9b-b709-5f64943db7c0/1.18.2+visual+design%2303.jpg" alt="Visual Design" loading="lazy">
+    </div>
+    <div class="cs-img-grid reveal">
+      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/7e9db351-ad37-4b07-a7f0-9905e591231e/1.19.1visual+design04.jpg" alt="Visual Design 2" loading="lazy">
+      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/98429e52-c554-4522-8875-1a33a8235d64/1.19.2+visual+design04.jpg" alt="Visual Design 3" loading="lazy">
+    </div>
+    <div class="cs-img-full reveal">
+      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26a72df6-cc1b-48c6-af38-4c52bf30541a/1.19.3+visual+design-+shopping+process.jpg" alt="Shopping Process" loading="lazy">
+    </div>
+
+    <!-- REFLECTION -->
+    <section class="cs-reflection reveal">
+      <div class="cs-refl-item">
+        <span class="cs-refl-title">Reflection & Growth</span>
+        <p class="cs-refl-text">I mastered the nuances of <em style="color:var(--accent);">10-foot UI design</em> while navigating complex cross-platform integrations, significantly strengthening my ability to lead cross-functional collaborations and resolve technical conflicts.</p>
+      </div>
+      <div class="cs-refl-item">
+        <span class="cs-refl-title">Scaling Impact & Safety</span>
+        <p class="cs-refl-text">Moving forward, I aim to transform the TV remote into a <em style="color:var(--accent);">safety tool for the elderly</em> by integrating emergency SOS features — creating a more inclusive and secure product ecosystem for every home.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- NEXT PROJECT -->
+  <a class="cs-next" href="genebook.html">
+    <div>
+      <span class="cs-next-label">Next Project</span>
+      <div class="cs-next-name">Genebook</div>
+    </div>
+    <span class="cs-next-arrow">→</span>
+  </a>
+
+  <footer>
+    <span>© 2026 Yu-Hsien (Rowan) Lin</span>
+    <span>FainTV — 01 / 05</span>
+  </footer>
+
+  <script>
+    /* cursor */
+    const ring = document.getElementById('cur-ring');
+    const dot = document.getElementById('cur-dot');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = `translate(${mx-2}px,${my-2}px)`;
+    });
+    (function loop() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.transform = `translate(${rx-19}px,${ry-19}px)`;
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('a').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('expanded'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('expanded'));
+    });
+
+    /* scroll reveal */
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
