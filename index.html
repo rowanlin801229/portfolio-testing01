@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rowan Lin — Portfolio</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Space+Grotesk:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1a1a1a;
+    --text: #f5f5f5;
+    --muted: rgba(245,245,245,0.6);
+    --faint: rgba(245,245,245,0.15);
+    --accent: #E63A1A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: var(--bg);
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  #loader {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 10;
+    transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+  #loader.fade-out { opacity: 0; pointer-events: none; }
+
+  .font-display {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  #word-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .word {
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    color: var(--text);
+    position: absolute;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s cubic-bezier(0.4,0,0.2,1),
+                transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    line-height: 1;
+  }
+  .word.enter { opacity: 0.95; transform: translateY(0); }
+  .word.exit  { opacity: 0; transform: translateY(-20px); }
+
+  #counter {
+    position: absolute;
+    bottom: clamp(2rem, 3vw, 3rem);
+    right: clamp(2rem, 3vw, 3rem);
+    font-size: clamp(4rem, 10vw, 8rem);
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s 0.1s cubic-bezier(0.4,0,0.2,1),
+                transform 0.6s 0.1s cubic-bezier(0.4,0,0.2,1);
+  }
+  #counter.visible { opacity: 1; transform: translateY(0); }
+
+  #progress-track {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--faint);
+  }
+  #progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width 0.1s linear;
+  }
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div id="word-container">
+    <span class="word font-display" id="w0">Design</span>
+    <span class="word font-display" id="w1">Create</span>
+    <span class="word font-display" id="w2">Inspire</span>
+  </div>
+  <div id="counter" class="font-display">000</div>
+  <div id="progress-track">
+    <div id="progress-fill"></div>
+  </div>
+</div>
+
+<script>
+  if (sessionStorage.getItem('introPlayed') === '1') {
+    window.location.replace('portfolio.html');
+  }
+
+  const WORDS = ['w0','w1','w2'];
+  const DURATION = 2700;
+
+  function padded(n) {
+    return Math.round(n).toString().padStart(3,'0');
+  }
+
+  function start() {
+    requestAnimationFrame(() => {
+      document.getElementById('counter').classList.add('visible');
+      document.getElementById('w0').classList.add('enter');
+    });
+
+    let wi = 0;
+    const wordTimer = setInterval(() => {
+      if (wi >= WORDS.length - 1) { clearInterval(wordTimer); return; }
+      const cur = document.getElementById(WORDS[wi]);
+      cur.classList.remove('enter');
+      cur.classList.add('exit');
+      wi++;
+      const next = document.getElementById(WORDS[wi]);
+      next.classList.remove('exit');
+      void next.offsetWidth;
+      next.classList.add('enter');
+    }, 900);
+
+    let startTime = null;
+    let done = false;
+    function tick(ts) {
+      if (!startTime) startTime = ts;
+      const p = Math.min(((ts - startTime) / DURATION) * 100, 100);
+      document.getElementById('counter').textContent = padded(p);
+      document.getElementById('progress-fill').style.width = p + '%';
+
+      if (p < 100) {
+        requestAnimationFrame(tick);
+      } else if (!done) {
+        done = true;
+        setTimeout(() => {
+          document.getElementById('loader').classList.add('fade-out');
+          setTimeout(() => {
+            sessionStorage.setItem('introPlayed', '1');
+            window.location.href = 'portfolio.html';
+          }, 600);
+        }, 400);
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  start();
+</script>
+</body>
+</html>
