@@ -5,16 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FainTV — Rowan Lin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0e0e0d;
-      --fg: #8a8a86;
-      --accent: #C94F4F;
-      --muted: rgba(138,138,134,0.55);
-      --line: rgba(138,138,134,0.13);
-      --surface: #141413;
+      --bg: #F5F4F0;
+      --surface: #FFFFFF;
+      --surface2: #EFEFEB;
+      --fg: #1a1a18;
+      --mid: #3a3a37;
+      --muted: #6a6a66;
+      --line: rgba(26,26,24,0.12);
+      --red: #C94F4F;
+      --green: #3E9E6F;
+      --blue: #3A72C4;
+      --red-light: rgba(201,79,79,0.08);
+      --green-light: rgba(62,158,111,0.08);
+      --blue-light: rgba(58,114,196,0.08);
+      --red-mid: rgba(201,79,79,0.15);
+      --green-mid: rgba(62,158,111,0.15);
+      --blue-mid: rgba(58,114,196,0.18);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,7 +43,7 @@
     #cur-ring {
       position: fixed;
       width: 38px; height: 38px;
-      border: 1px solid rgba(201,79,79,0.45);
+      border: 1px solid rgba(201,79,79,0.35);
       border-radius: 50%;
       pointer-events: none;
       z-index: 9998;
@@ -44,14 +54,14 @@
     #cur-dot {
       position: fixed;
       width: 4px; height: 4px;
-      background: var(--accent);
+      background: var(--red);
       border-radius: 50%;
       pointer-events: none;
       z-index: 9999;
       top: 0; left: 0;
       will-change: transform;
     }
-    #cur-ring.expanded { width: 60px; height: 60px; border-color: var(--accent); background: rgba(201,79,79,0.06); }
+    #cur-ring.expanded { width: 56px; height: 56px; border-color: var(--red); background: rgba(201,79,79,0.05); }
 
     /* ── NAV ── */
     nav {
@@ -61,661 +71,862 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 2rem 5vw;
-      mix-blend-mode: normal;
+      padding: 1.2rem 5vw;
+      background: rgba(245,244,240,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
     }
     .nav-back {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.3s;
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.3s;
     }
     .nav-back:hover { color: var(--fg); }
-    .nav-back-arrow {
-      display: inline-block;
-      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
-    }
+    .nav-back-arrow { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); }
     .nav-back:hover .nav-back-arrow { transform: translateX(-4px); }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-    }
-    .nav-index {
-      font-size: 0.62rem;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-    }
+    .nav-right { display: flex; align-items: center; gap: 2rem; }
+    .nav-index { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--muted); }
     .nav-next {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.3s;
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.3s;
     }
     .nav-next:hover { color: var(--fg); }
     .nav-next-arrow { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); }
     .nav-next:hover .nav-next-arrow { transform: translateX(4px); }
 
     /* ── HERO ── */
-    .cs-hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 120px 5vw 8vh;
-      position: relative;
-      border-bottom: 1px solid var(--line);
+    .hero {
+      padding: 8rem 5vw 0;
+      background: var(--surface);
     }
-
-    .cs-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 2rem;
-      display: block;
-      opacity: 0;
-      transform: translateY(12px);
+    .hero-eyebrow {
+      font-size: 0.58rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--red); display: block; margin-bottom: 0.8rem; font-weight: 700;
+      opacity: 0; transform: translateY(10px);
       animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards;
     }
-
-    .cs-title {
+    .hero-title {
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: clamp(5rem, 12vw, 12rem);
-      line-height: 0.9;
-      letter-spacing: -0.03em;
-      margin-bottom: 4rem;
-      opacity: 0;
-      transform: translateY(60px);
+      font-style: italic; font-weight: 300;
+      font-size: clamp(5rem, 12vw, 11rem);
+      line-height: 0.9; letter-spacing: -0.03em; color: var(--fg);
+      margin-bottom: 0;
+      opacity: 0; transform: translateY(40px);
       animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
     }
 
-    .cs-meta {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2rem;
-      border-top: 1px solid var(--line);
-      padding-top: 2.5rem;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s forwards;
-    }
-
-    .cs-meta-item {}
-    .cs-meta-label {
-      font-size: 0.58rem;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--accent);
-      display: block;
-      margin-bottom: 0.6rem;
-    }
-    .cs-meta-val {
-      font-size: 0.82rem;
-      line-height: 1.6;
-      color: var(--fg);
-    }
-
-    @keyframes fadeup {
-      to { opacity: 1; transform: none; }
-    }
-
-    /* ── HERO IMAGE ── */
-    .cs-hero-img {
+    /* hero image — replace src with your actual image */
+    .hero-img-wrap {
+      margin: 1.8rem 0 0;
       width: 100%;
-      max-height: 85vh;
-      object-fit: cover;
-      display: block;
+      opacity: 0; transform: translateY(20px);
+      animation: fadeup 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards;
+    }
+    .hero-img-wrap img {
+      width: 100%; max-height: 420px; object-fit: cover; display: block;
     }
 
-    /* ── CONTENT ── */
-    .cs-body {
-      max-width: 1440px;
-      margin: 0 auto;
+    /* meta grid below hero image */
+    .meta-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem;
+      border-top: 1px solid var(--line); padding: 1.5rem 5vw;
+      background: var(--surface); border-bottom: 1px solid var(--line);
+      opacity: 0; transform: translateY(16px);
+      animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.6s forwards;
     }
-
-    /* ── SECTION BLOCK ── */
-    .cs-section {
-      padding: 8vh 5vw;
-      border-bottom: 1px solid var(--line);
+    .meta-lbl {
+      font-size: 0.58rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--red); display: block; margin-bottom: 0.4rem; font-weight: 700;
     }
+    .meta-val { font-size: 0.78rem; line-height: 1.6; color: var(--mid); }
 
-    .cs-sec-header {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 6vw;
-      margin-bottom: 5rem;
+    @keyframes fadeup { to { opacity: 1; transform: none; } }
+
+    /* ── SHARED ── */
+    .section { padding: 2.5rem 5vw; border-bottom: 1px solid var(--line); }
+
+    .sec-stack { margin-bottom: 1.8rem; }
+    .sec-lbl {
+      font-size: 0.58rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--red); display: block; margin-bottom: 0.5rem; font-weight: 700;
     }
-
-    .cs-sec-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--accent);
-      padding-top: 0.3rem;
-    }
-
-    .cs-sec-headline {
+    .sec-hl {
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: clamp(2rem, 4vw, 3.5rem);
-      line-height: 1.15;
-      letter-spacing: -0.02em;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(1.5rem, 3vw, 2.6rem);
+      line-height: 1.2; letter-spacing: -0.02em; color: var(--fg);
     }
 
-    /* ── TEXT GRID ── */
-    .cs-text-grid {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 6vw;
-    }
+    .body-text { font-size: 0.85rem; line-height: 1.9; color: var(--mid); }
+    .body-text strong { color: var(--fg); font-weight: 600; }
 
-    .cs-text-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--accent);
-      padding-top: 0.25rem;
+    .block-label {
+      font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
+      font-weight: 700; display: block; margin-bottom: 0.8rem;
     }
+    .bl-red { color: var(--red); }
+    .bl-green { color: var(--green); }
 
-    .cs-text-body {
-      font-size: 0.92rem;
-      line-height: 1.95;
-      color: var(--muted);
-      max-width: 68ch;
-      text-wrap: pretty;
+    /* insight block — dark full-width conclusion */
+    .insight-block {
+      padding: 1.8rem 5vw;
+      background: var(--fg);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-
-    .cs-text-body strong { color: var(--fg); font-weight: 400; }
-
-    /* ── IMPACT HIGHLIGHT ── */
-    .cs-impact {
-      background: var(--surface);
-      padding: 4rem 5vw;
-      display: flex;
-      align-items: center;
-      gap: 8vw;
-      border-bottom: 1px solid var(--line);
+    .insight-lbl {
+      font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
+      display: block; margin-bottom: 0.8rem; font-weight: 700;
     }
-
-    .cs-impact-stat {
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-    .cs-impact-num {
+    .insight-text {
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: clamp(4rem, 8vw, 7rem);
-      font-weight: 300;
-      line-height: 1;
-      letter-spacing: -0.02em;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+      line-height: 1.55; color: #F5F4F0;
     }
-    .cs-impact-num span { color: var(--accent); font-size: 0.5em; vertical-align: super; }
-    .cs-impact-lbl {
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
+    .insight-text strong { font-weight: 300; }
+
+    /* punchline — full width dark red text */
+    .punchline-full {
+      padding: 1.5rem 5vw;
+      background: var(--fg);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    .cs-impact-divider {
-      width: 1px;
-      height: 80px;
-      background: var(--line);
-      flex-shrink: 0;
-    }
-    .cs-impact-text {
+    .punchline-full p {
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: clamp(1.3rem, 2.5vw, 2rem);
-      font-weight: 300;
-      line-height: 1.5;
-      max-width: 55ch;
-    }
-    .cs-impact-text em { color: var(--accent); }
-
-    /* ── PROCESS STEPS ── */
-    .cs-steps {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 0;
-      margin-top: 3rem;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(1.1rem, 2.2vw, 1.7rem);
+      color: var(--red); line-height: 1.4; text-align: center;
     }
 
-    .cs-step {
-      border-right: 1px solid var(--line);
-      padding: 2rem 1.5rem;
-    }
-    .cs-step:last-child { border-right: none; }
+    /* ── SITUATION ── */
+    .sit-intro { font-size: 0.85rem; line-height: 1.9; color: var(--mid); margin-bottom: 1.8rem; }
+    .sit-intro strong { color: var(--fg); font-weight: 600; }
 
-    .cs-step-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 3rem;
-      font-weight: 300;
-      color: rgba(201,79,79,0.25);
-      line-height: 1;
+    .challenges { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.8rem; }
+    .challenge-item {
+      display: flex; gap: 0.9rem; align-items: flex-start;
+      padding: 0.9rem 1.1rem;
+      background: var(--surface); border: 0.5px solid var(--line); border-left: 3px solid var(--red);
+    }
+    .challenge-num {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 1.3rem; color: var(--red); opacity: 0.5; line-height: 1;
+      flex-shrink: 0; width: 1.2rem;
+    }
+    .challenge-text { font-size: 0.82rem; line-height: 1.8; color: var(--mid); }
+    .challenge-text strong { color: var(--fg); font-weight: 600; }
+
+    .owned-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .owned-item {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      padding: 0.7rem 0.9rem;
+      background: var(--surface); border: 0.5px solid var(--line);
+    }
+    .owned-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 0.45rem; }
+    .owned-text { font-size: 0.78rem; line-height: 1.7; color: var(--mid); }
+    .owned-text strong { color: var(--fg); font-weight: 600; }
+    .owned-muted .owned-text { color: var(--muted); }
+    .owned-muted .owned-dot { background: var(--muted) !important; }
+
+    /* ── TASK ── */
+    .task-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-bottom: 1.5rem; }
+    .task-card { padding: 1.5rem; }
+    .task-card.prob { background: rgba(201,79,79,0.07); border: 0.5px solid rgba(201,79,79,0.2); }
+    .task-card.goal { background: rgba(62,158,111,0.07); border: 0.5px solid rgba(62,158,111,0.2); }
+    .task-card-lbl {
+      font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
+      display: block; margin-bottom: 0.9rem;
+      padding-bottom: 0.7rem; border-bottom: 1px solid rgba(26,26,24,0.1);
+      font-weight: 700;
+    }
+    .task-card-lbl.prob { color: var(--red); }
+    .task-card-lbl.goal { color: var(--green); }
+    .task-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .task-list li { font-size: 0.8rem; line-height: 1.75; color: var(--mid); padding-left: 1rem; position: relative; }
+    .task-list li::before { content: ''; position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; }
+    .task-list.prob li::before { background: var(--red); }
+    .task-list.goal li::before { background: var(--green); }
+    .task-list li strong { color: var(--fg); font-weight: 600; }
+
+    .task-img-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 1.5rem; }
+
+    .challenge-box {
+      border-left: 3px solid var(--blue);
+      padding: 1rem 1.4rem;
+      background: var(--blue-light);
       margin-bottom: 1rem;
     }
-    .cs-step-name {
-      font-size: 0.72rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--fg);
-      margin-bottom: 0.8rem;
-      display: block;
+    .challenge-box-lbl {
+      font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--blue); display: block; margin-bottom: 0.4rem; font-weight: 700;
     }
-    .cs-step-desc {
-      font-size: 0.78rem;
-      line-height: 1.75;
-      color: var(--muted);
+    .challenge-box-text {
+      font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
+      font-size: clamp(1rem, 1.8vw, 1.3rem); line-height: 1.5; color: var(--fg);
     }
 
-    /* ── DESIGN FEATURES ── */
-    .cs-features {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2px;
-      margin-top: 3rem;
+    /* ── PROCESS ── */
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 0.5px solid var(--line); }
+    .step { padding: 1.4rem 1.1rem; border-right: 0.5px solid var(--line); }
+    .step:last-child { border-right: none; }
+    .step-num {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 2.2rem; font-weight: 300; line-height: 1; margin-bottom: 0.6rem;
     }
+    .step-name { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg); margin-bottom: 0.5rem; display: block; font-weight: 600; }
+    .step-desc { font-size: 0.74rem; line-height: 1.75; color: var(--mid); margin-bottom: 0.7rem; }
+    .step-desc strong { color: var(--fg); font-weight: 600; }
+    .step-tag { font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; display: inline-block; padding: 2px 8px; border-radius: 2px; font-weight: 600; }
+    .tag-r { background: rgba(58,114,196,0.15); color: var(--blue); }
+    .tag-s { background: rgba(201,79,79,0.15); color: var(--red); }
+    .tag-d { background: rgba(62,158,111,0.15); color: var(--green); }
+    .tag-t { background: rgba(124,92,191,0.12); color: #6B46C1; }
 
-    .cs-feature {
-      background: var(--surface);
-      padding: 2.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-    }
+    /* ── STRATEGY ── */
+    .device-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 0.5px solid var(--line); margin-bottom: 1.8rem; }
+    .device-card { padding: 1.4rem; border-right: 0.5px solid var(--line); }
+    .device-card:last-child { border-right: none; }
+    .device-card-name { font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase; display: block; margin-bottom: 0.6rem; font-weight: 700; }
+    .device-card-principle { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: 1.2rem; line-height: 1.3; margin-bottom: 0.4rem; }
+    .device-card-desc { font-size: 0.74rem; line-height: 1.7; color: var(--mid); margin-bottom: 0.7rem; }
+    .device-scope { font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; display: inline-block; padding: 2px 8px; border-radius: 2px; font-weight: 600; }
+    .scope-tv { background: var(--red-light); color: var(--red); }
+    .scope-mob { background: var(--green-light); color: var(--green); }
+    .scope-web { background: var(--blue-light); color: var(--blue); }
 
-    .cs-feat-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 2rem;
-      font-weight: 300;
-      color: rgba(201,79,79,0.3);
-      line-height: 1;
-    }
-    .cs-feat-name {
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--fg);
-    }
-    .cs-feat-desc {
-      font-size: 0.82rem;
-      line-height: 1.8;
-      color: var(--muted);
-      max-width: 52ch;
-    }
-    .cs-feat-desc strong { color: var(--fg); font-weight: 400; }
+    .heatmap-sub { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.8rem; }
+    .heatmap-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-bottom: 1.5rem; }
+    .heatmap-table th { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 0 0 0.7rem; border-bottom: 2px solid var(--fg); text-align: left; color: var(--mid); font-weight: 600; }
+    .heatmap-table th.hc { text-align: center; width: 80px; }
+    .heatmap-table td { padding: 0.5rem 0; border-bottom: 0.5px solid var(--line); color: var(--fg); vertical-align: middle; }
+    .heatmap-table tr:last-child td { border-bottom: none; }
+    .heatmap-table .grp td { padding: 0.9rem 0 0.3rem; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); border-bottom: none; font-weight: 600; }
+    .pill { display: inline-block; border-radius: 2px; font-size: 0.62rem; font-weight: 600; padding: 3px 0; width: 64px; text-align: center; }
+    .p-tv  { background: var(--red-mid);   color: var(--red); }
+    .p-mob { background: var(--green-mid); color: var(--green); }
+    .p-web { background: var(--blue-mid);  color: var(--blue); }
+    .p-tvs { background: var(--red-light);   color: var(--red);   opacity: 0.8; }
+    .p-mobs{ background: var(--green-light); color: var(--green); opacity: 0.8; }
+    .p-webs{ background: var(--blue-light);  color: var(--blue);  opacity: 0.8; }
+    .heat-cell { text-align: center; padding: 0.5rem 0; }
+    .em-dash { color: var(--line); }
 
-    /* ── IMAGE ── */
-    .cs-img {
-      width: 100%;
-      display: block;
-      object-fit: cover;
-    }
+    .decisions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 0.5px solid var(--line); margin-bottom: 1.5rem; }
+    .decision { padding: 1.2rem 1.4rem; border-right: 0.5px solid var(--line); }
+    .decision:first-child  { border-left: 3px solid var(--red); }
+    .decision:nth-child(2) { border-left: 3px solid var(--green); }
+    .decision:last-child   { border-left: 3px solid var(--blue); border-right: none; }
+    .decision-q { font-size: 0.74rem; font-weight: 600; color: var(--fg); margin-bottom: 0.5rem; line-height: 1.4; }
+    .decision-a { font-size: 0.72rem; line-height: 1.8; color: var(--mid); }
+    .decision-a strong { color: var(--fg); font-weight: 600; }
 
-    .cs-img-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2px;
-    }
+    /* ── VOICE ── */
+    .voice-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 0.5px solid var(--line); margin-bottom: 1.4rem; }
+    .voice-card { padding: 1.2rem 1.4rem; border-right: 0.5px solid var(--line); }
+    .voice-card:last-child { border-right: none; }
+    .voice-card-title { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--red); display: block; margin-bottom: 0.5rem; font-weight: 700; }
 
-    .cs-img-full {
-      padding: 0;
-      border-bottom: 1px solid var(--line);
+    .voice-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 0.5px solid var(--line); margin-bottom: 1.4rem; }
+    .voice-step { padding: 1.1rem 1.2rem; border-right: 0.5px solid var(--line); }
+    .voice-step:last-child { border-right: none; }
+    .vs-num { font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; display: inline-block; padding: 2px 8px; border-radius: 2px; margin-bottom: 0.5rem; font-weight: 700; }
+    .vs-num-1 { background: var(--red-mid); color: var(--red); }
+    .vs-num-2 { background: var(--green-mid); color: var(--green); }
+    .vs-num-3 { background: var(--blue-mid); color: var(--blue); }
+    .vs-title { font-size: 0.78rem; color: var(--fg); margin-bottom: 0.3rem; font-weight: 600; display: block; }
+    .vs-desc { font-size: 0.72rem; color: var(--mid); line-height: 1.6; }
+
+    .img-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+
+    /* ── PAIN ── */
+    .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+    .pain-items { display: flex; flex-direction: column; gap: 0.6rem; justify-content: center; }
+    .pain-item { border-left: 3px solid var(--red); padding: 0.7rem 0.9rem; background: var(--surface); }
+    .pi-title { font-size: 0.75rem; font-weight: 600; color: var(--fg); margin-bottom: 0.25rem; }
+    .pi-body { font-size: 0.7rem; color: var(--mid); line-height: 1.6; }
+
+    /* ── HANDOFF FLOW ── */
+    .hf-top, .hf-bottom { position: relative; }
+    .hf-top::before, .hf-bottom::before {
+      content: '';
+      position: absolute; left: 50%; top: 0; bottom: 0;
+      width: 1px; background: var(--line);
+      transform: translateX(-50%); z-index: 0;
     }
+    .hf-row { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 0; align-items: center; margin-bottom: 6px; position: relative; z-index: 1; }
+    .hf-num {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 1.5px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 1.2rem; color: var(--fg);
+      background: var(--bg); margin: 0 auto; flex-shrink: 0; z-index: 2;
+    }
+    .hf-card-tv { background: var(--red-mid); padding: 1rem 1.2rem; text-align: right; }
+    .hf-card-tv .hf-device { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--red); font-weight: 700; display: block; margin-bottom: 0.3rem; }
+    .hf-card-tv .hf-title { font-size: 0.8rem; font-weight: 600; color: var(--fg); margin-bottom: 0.2rem; }
+    .hf-card-tv .hf-desc { font-size: 0.72rem; color: var(--mid); line-height: 1.5; }
+    .hf-card-mob { background: var(--green-mid); padding: 1rem 1.2rem; }
+    .hf-card-mob .hf-device { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); font-weight: 700; display: block; margin-bottom: 0.3rem; }
+    .hf-card-mob .hf-title { font-size: 0.8rem; font-weight: 600; color: var(--fg); margin-bottom: 0.2rem; }
+    .hf-card-mob .hf-desc { font-size: 0.72rem; color: var(--mid); line-height: 1.5; }
+    .hf-row-ho { position: relative; z-index: 1; margin: 6px 0; }
+    .hf-card-ho { background: var(--blue-mid); padding: 1.2rem 1.4rem; text-align: center; }
+    .hf-card-ho .hf-device { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue); font-weight: 700; display: block; margin-bottom: 0.4rem; }
+    .hf-card-ho .hf-title { font-size: 0.85rem; font-weight: 600; color: var(--fg); margin-bottom: 0.2rem; }
+    .hf-card-ho .hf-desc { font-size: 0.72rem; color: var(--mid); line-height: 1.5; }
+    .hf-empty { background: transparent; }
+
+    /* ── KEY SCREENS ── */
+    .screens-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border-bottom: 1px solid var(--line); }
+    .screen-card { overflow: hidden; }
+    .screen-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .screen-img-placeholder { height: 200px; background: #DDDDD8; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.3rem; }
+    .screen-info { padding: 0.9rem 1rem; background: var(--surface); border-top: 0.5px solid var(--line); }
+    .si-label { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.25rem; font-weight: 700; display: block; }
+    .si-scope { font-size: 0.55rem; font-weight: 400; opacity: 0.6; margin-left: 0.3rem; }
+    .si-text { font-size: 0.75rem; color: var(--mid); line-height: 1.6; }
+
+    /* ── RESULT / IMPACT ── */
+    .impact-split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid var(--line); }
+    .impact-half { padding: 2.5rem 5vw; display: flex; flex-direction: column; gap: 0.5rem; background: var(--surface); }
+    .impact-half:first-child { border-right: 1px solid var(--line); }
+    .impact-half-lbl { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+    .impact-half-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(4rem, 8vw, 7rem); font-weight: 300; line-height: 1; color: var(--fg); }
+    .impact-half-num .unit { color: var(--red); font-size: 0.45em; vertical-align: super; margin-left: 0.1em; }
+
+    .impact-desc-row { background: var(--surface); padding: 1.5rem 5vw; border-bottom: 1px solid var(--line); }
+    .impact-desc-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(1rem, 2vw, 1.5rem); line-height: 1.6; color: var(--fg); }
+    .impact-desc-text em { color: var(--red); }
+
+    .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-bottom: 1px solid var(--line); }
+    .metric { padding: 1.5rem 5vw; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: none; }
+    .metric-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(2.5rem, 5vw, 3.8rem); font-weight: 300; line-height: 1; color: var(--fg); margin-bottom: 0.4rem; }
+    .metric-num .unit { color: var(--red); font-size: 0.42em; vertical-align: super; margin-left: 0.2em; }
+    .metric-num .unit-g { color: var(--green); font-size: 0.42em; vertical-align: super; margin-left: 0.2em; }
+    .metric-label { font-size: 0.74rem; color: var(--mid); line-height: 1.6; }
 
     /* ── REFLECTION ── */
-    .cs-reflection {
-      padding: 8vh 5vw;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8vw;
-    }
+    .reflection { padding: 2.5rem 5vw; display: grid; grid-template-columns: 1fr 1fr; gap: 8vw; border-bottom: 1px solid var(--line); }
+    .refl-lbl { font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--red); margin-bottom: 0.9rem; display: block; font-weight: 700; }
+    .refl-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(1rem, 1.8vw, 1.35rem); line-height: 1.65; color: var(--fg); }
+    .refl-text em { color: var(--red); }
 
-    .cs-refl-item { display: flex; flex-direction: column; gap: 1.5rem; }
-    .cs-refl-title {
-      font-size: 0.6rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-    .cs-refl-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: clamp(1.3rem, 2vw, 1.8rem);
-      font-weight: 300;
-      line-height: 1.55;
-      color: var(--fg);
-    }
-
-    /* ── NEXT PROJECT ── */
-    .cs-next {
-      border-top: 1px solid var(--line);
-      padding: 6vh 5vw;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      text-decoration: none;
-      transition: background 0.4s;
-    }
-    .cs-next:hover { background: var(--surface); }
-
-    .cs-next-label {
-      font-size: 0.58rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.8rem;
-      display: block;
-    }
-    .cs-next-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: clamp(2.5rem, 5vw, 4.5rem);
-      font-weight: 300;
-      letter-spacing: -0.02em;
-      line-height: 1;
-      color: var(--fg);
-      transition: letter-spacing 0.4s cubic-bezier(0.16,1,0.3,1);
-    }
+    /* ── NEXT ── */
+    .cs-next { border-top: 1px solid var(--line); padding: 4vh 5vw; display: flex; justify-content: space-between; align-items: center; text-decoration: none; background: var(--surface); transition: background 0.3s; }
+    .cs-next:hover { background: var(--surface2); }
+    .cs-next-label { font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; display: block; }
+    .cs-next-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 300; letter-spacing: -0.02em; line-height: 1; color: var(--fg); transition: letter-spacing 0.4s cubic-bezier(0.16,1,0.3,1); }
     .cs-next:hover .cs-next-name { letter-spacing: 0.01em; }
+    .cs-next-arrow { font-size: 2.5rem; color: var(--red); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
+    .cs-next:hover .cs-next-arrow { transform: translateX(10px); }
 
-    .cs-next-arrow {
-      font-size: 3rem;
-      color: var(--accent);
-      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
-    }
-    .cs-next:hover .cs-next-arrow { transform: translateX(12px); }
+    footer { padding: 1.5rem 5vw; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 0.58rem; letter-spacing: 0.1em; color: var(--muted); background: var(--surface); }
 
     /* ── REVEAL ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1),
-                  transform 0.85s cubic-bezier(0.16,1,0.3,1);
-    }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
     .reveal.in { opacity: 1; transform: none; }
 
-    footer {
-      padding: 2.5vh 5vw;
-      border-top: 1px solid var(--line);
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.6rem;
-      letter-spacing: 0.1em;
-      color: rgba(138,138,134,0.28);
-    }
+    /* img placeholder util */
+    .img-ph { background: #DDDDD8; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.3rem; }
+    .img-ph-lbl { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #999; font-family: 'Space Grotesk', sans-serif; }
+    .img-ph-sub { font-size: 0.55rem; color: #aaa; }
   </style>
 </head>
 <body>
 
-  <div id="cur-ring"></div>
-  <div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="cur-dot"></div>
 
-  <nav>
-    <a class="nav-back" href="portfolio.html">
-      <span class="nav-back-arrow">←</span>
-      All Work
-    </a>
-    <div class="nav-right">
-      <span class="nav-index">01 / 05</span>
-      <a class="nav-next" href="genebook.html">
-        Next
-        <span class="nav-next-arrow">→</span>
-      </a>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <section class="cs-hero">
-    <span class="cs-label">01 — Streaming Platform · Multi-device · 1 Year</span>
-    <h1 class="cs-title">FainTV</h1>
-    <div class="cs-meta">
-      <div class="cs-meta-item">
-        <span class="cs-meta-label">Role</span>
-        <span class="cs-meta-val">UI/UX Designer</span>
-      </div>
-      <div class="cs-meta-item">
-        <span class="cs-meta-label">Duration</span>
-        <span class="cs-meta-val">1 Year</span>
-      </div>
-      <div class="cs-meta-item">
-        <span class="cs-meta-label">Platform</span>
-        <span class="cs-meta-val">TV · Mobile · Web</span>
-      </div>
-      <div class="cs-meta-item">
-        <span class="cs-meta-label">Company</span>
-        <span class="cs-meta-val">Hawsing Co., Ltd<br>Streaming Provider, Taiwan</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- HERO IMAGE -->
-  <div class="cs-img-full">
-    <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg" alt="FainTV Loading Screen" loading="lazy">
-  </div>
-
-  <div class="cs-body">
-
-    <!-- OVERVIEW -->
-    <section class="cs-section">
-      <div class="cs-text-grid reveal">
-        <span class="cs-text-label">Overview</span>
-        <p class="cs-text-body">
-          FainTV is a prominent streaming service provider in Taiwan, offering an extensive library of live television, movies, and hit dramas. As the UI/UX Designer, I spearheaded the complete redesign of the <strong>FainTV 2.0</strong> platform — modernising the viewing journey and creating a seamless, intuitive interface that enhances how audiences discover and interact with digital content <strong>across multiple devices</strong>.
-        </p>
-      </div>
-    </section>
-
-    <!-- PROBLEM -->
-    <section class="cs-section">
-      <div class="cs-sec-header reveal">
-        <span class="cs-sec-label">Problem</span>
-        <h2 class="cs-sec-headline">Traditional TV interfaces rely on remote control text input, creating significant barriers for elderly users.</h2>
-      </div>
-      <div class="cs-text-grid reveal">
-        <span class="cs-text-label">Research Finding</span>
-        <p class="cs-text-body">
-          <strong>65% of elderly users</strong> struggled with text-based searching. The remote-control keyboard created friction during content search and account registration, causing high drop-off rates and low task completion — especially for a demographic that represents a significant portion of the FainTV user base.
-        </p>
-      </div>
-    </section>
-
-    <!-- IMPACT STAT -->
-    <div class="cs-impact reveal">
-      <div class="cs-impact-stat">
-        <span class="cs-impact-num">30<span>%</span></span>
-        <span class="cs-impact-lbl">Before redesign</span>
-      </div>
-      <div class="cs-impact-divider"></div>
-      <div class="cs-impact-stat">
-        <span class="cs-impact-num">80<span>%</span></span>
-        <span class="cs-impact-lbl">After redesign</span>
-      </div>
-      <div class="cs-impact-divider"></div>
-      <p class="cs-impact-text">
-        Task completion rate among <em>elderly users</em> increased by 50 percentage points — significantly lowering the barrier to accessing digital services.
-      </p>
-    </div>
-
-    <!-- PROCESS -->
-    <section class="cs-section">
-      <div class="cs-sec-header reveal">
-        <span class="cs-sec-label">Process</span>
-        <h2 class="cs-sec-headline">Double Diamond — every decision rooted in data, not assumptions.</h2>
-      </div>
-      <div class="cs-text-grid reveal">
-        <span class="cs-text-label">Framework</span>
-        <p class="cs-text-body">
-          I utilised the <strong>Double Diamond</strong> framework to ensure every design decision began with extensive primary and secondary research to uncover core user pain points. By synthesising insights into <strong>personas and empathy maps</strong>, I bridged the gap between user needs and business goals — delivering a scalable design system that simplifies complexity and enhances the entertainment experience.
-        </p>
-      </div>
-      <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/76dec9a1-8725-4ac8-b9ce-f802cdbaf5b0/1.4+design+process.jpg" alt="Design Process" loading="lazy" style="margin-top:3rem;">
-
-      <div class="cs-steps reveal" style="margin-top:4rem;">
-        <div class="cs-step">
-          <div class="cs-step-num">01</div>
-          <span class="cs-step-name">Define Objective</span>
-          <p class="cs-step-desc">Identifying core business goals and key questions to answer through user insights.</p>
-        </div>
-        <div class="cs-step">
-          <div class="cs-step-num">02</div>
-          <span class="cs-step-name">Plan Research</span>
-          <p class="cs-step-desc">Selecting qualitative and quantitative methods to gather comprehensive data.</p>
-        </div>
-        <div class="cs-step">
-          <div class="cs-step-num">03</div>
-          <span class="cs-step-name">Recruit</span>
-          <p class="cs-step-desc">Screening 50+ participants for a diverse, representative sample.</p>
-        </div>
-        <div class="cs-step">
-          <div class="cs-step-num">04</div>
-          <span class="cs-step-name">Conduct Research</span>
-          <p class="cs-step-desc">In-depth interviews capturing real-time behaviours and frustrations.</p>
-        </div>
-        <div class="cs-step">
-          <div class="cs-step-num">05</div>
-          <span class="cs-step-name">Analyse Data</span>
-          <p class="cs-step-desc">Synthesising findings into personas and user flows.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- RESEARCH IMAGES -->
-    <div class="cs-img-grid reveal">
-      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6b59363d-8cf7-44b8-afbf-227fea4f916a/1.6+User++Interview.jpg" alt="User Interview" loading="lazy">
-      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/144f4129-994f-4c58-9640-42bbcf94c254/1.7.1+User++Interview.jpg" alt="User Interview 2" loading="lazy">
-      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/32c6a317-12d0-4d16-bae2-d16ac06b31ed/1.7.2Qualitative+Research.jpg" alt="Qualitative Research" loading="lazy">
-      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/074c6087-2b13-4d75-a21e-2863a98fd831/1.8+competitive+analysis.jpg" alt="Competitive Analysis" loading="lazy">
-    </div>
-
-    <!-- PERSONAS -->
-    <div class="cs-img-grid reveal">
-      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/d33038a6-f2c8-4a28-a758-ecb4d78dc167/1.9.1++perona%231.jpg" alt="Persona 1" loading="lazy">
-      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/2c687869-8e15-4a6a-81d3-c9dcbeb521f6/1.9.2++perona%231.jpg" alt="Persona 2" loading="lazy">
-    </div>
-
-    <!-- SOLUTION -->
-    <section class="cs-section">
-      <div class="cs-sec-header reveal">
-        <span class="cs-sec-label">Solution</span>
-        <h2 class="cs-sec-headline">Voice input and landline login — directly addressing the two core pain points.</h2>
-      </div>
-      <div class="cs-text-grid reveal">
-        <span class="cs-text-label">Design Decision</span>
-        <p class="cs-text-body">
-          I introduced <strong>voice input</strong> to replace remote control typing, and <strong>landline phone number login</strong> to replace email and mobile verification — directly addressing the two core pain points identified through user interviews and usability testing. Both solutions required zero learning curve for elderly users.
-        </p>
-      </div>
-
-      <div class="cs-features reveal" style="margin-top:4rem;">
-        <div class="cs-feature">
-          <div class="cs-feat-num">01</div>
-          <span class="cs-feat-name">Intelligent Voice Search</span>
-          <p class="cs-feat-desc">Streamlines navigation by allowing users to locate content via a <strong>3-second remote button press</strong>, reducing a complex search to just two steps.</p>
-        </div>
-        <div class="cs-feature">
-          <div class="cs-feat-num">02</div>
-          <span class="cs-feat-name">Immersive T-Commerce</span>
-          <p class="cs-feat-desc">Enables real-time shopping during broadcasts, allowing viewers to purchase featured items <strong>without disrupting the viewing experience</strong>.</p>
-        </div>
-        <div class="cs-feature">
-          <div class="cs-feat-num">03</div>
-          <span class="cs-feat-name">Structured Account Management</span>
-          <p class="cs-feat-desc">Utilises a <strong>12-column grid system</strong> to organise diverse member data, ensuring a balanced and responsive layout across all platforms.</p>
-        </div>
-        <div class="cs-feature">
-          <div class="cs-feat-num">04</div>
-          <span class="cs-feat-name">Optimised Checkout Flow</span>
-          <p class="cs-feat-desc">Simplifies the multi-step purchasing journey into a <strong>linear path optimised for D-pad remote navigation</strong> and high conversion.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SOLUTION IMAGES -->
-    <div class="cs-img-full reveal">
-      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/09ae4cf1-07a0-4c9b-b709-5f64943db7c0/1.18.2+visual+design%2303.jpg" alt="Visual Design" loading="lazy">
-    </div>
-    <div class="cs-img-grid reveal">
-      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/7e9db351-ad37-4b07-a7f0-9905e591231e/1.19.1visual+design04.jpg" alt="Visual Design 2" loading="lazy">
-      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/98429e52-c554-4522-8875-1a33a8235d64/1.19.2+visual+design04.jpg" alt="Visual Design 3" loading="lazy">
-    </div>
-    <div class="cs-img-full reveal">
-      <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26a72df6-cc1b-48c6-af38-4c52bf30541a/1.19.3+visual+design-+shopping+process.jpg" alt="Shopping Process" loading="lazy">
-    </div>
-
-    <!-- REFLECTION -->
-    <section class="cs-reflection reveal">
-      <div class="cs-refl-item">
-        <span class="cs-refl-title">Reflection & Growth</span>
-        <p class="cs-refl-text">I mastered the nuances of <em style="color:var(--accent);">10-foot UI design</em> while navigating complex cross-platform integrations, significantly strengthening my ability to lead cross-functional collaborations and resolve technical conflicts.</p>
-      </div>
-      <div class="cs-refl-item">
-        <span class="cs-refl-title">Scaling Impact & Safety</span>
-        <p class="cs-refl-text">Moving forward, I aim to transform the TV remote into a <em style="color:var(--accent);">safety tool for the elderly</em> by integrating emergency SOS features — creating a more inclusive and secure product ecosystem for every home.</p>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- NEXT PROJECT -->
-  <a class="cs-next" href="genebook.html">
-    <div>
-      <span class="cs-next-label">Next Project</span>
-      <div class="cs-next-name">Genebook</div>
-    </div>
-    <span class="cs-next-arrow">→</span>
+<!-- NAV -->
+<nav>
+  <a class="nav-back" href="portfolio.html">
+    <span class="nav-back-arrow">←</span>
+    All Work
   </a>
+  <div class="nav-right">
+    <span class="nav-index">01 / 05</span>
+    <a class="nav-next" href="genebook.html">Next <span class="nav-next-arrow">→</span></a>
+  </div>
+</nav>
 
-  <footer>
-    <span>© 2026 Yu-Hsien (Rowan) Lin</span>
-    <span>FainTV — 01 / 05</span>
-  </footer>
+<!-- HERO -->
+<section class="hero">
+  <span class="hero-eyebrow">01 — TV UX &amp; Cross-device Product Design · 1 Year</span>
+  <h1 class="hero-title">FainTV</h1>
+  <div class="hero-img-wrap">
+    <!-- Replace src with your actual hero image path -->
+    <img src="images/faintv-hero.jpg" alt="FainTV loading screen">
+  </div>
+</section>
 
-  <script>
-    /* cursor */
-    const ring = document.getElementById('cur-ring');
-    const dot = document.getElementById('cur-dot');
-    let mx = -100, my = -100, rx = -100, ry = -100;
-    document.addEventListener('mousemove', e => {
-      mx = e.clientX; my = e.clientY;
-      dot.style.transform = `translate(${mx-2}px,${my-2}px)`;
+<!-- META -->
+<div class="meta-grid">
+  <div>
+    <span class="meta-lbl">Role</span>
+    <span class="meta-val">Lead TV Designer – Cross-device strategy &amp; TV ↔ Mobile handoff design</span>
+  </div>
+  <div>
+    <span class="meta-lbl">Duration</span>
+    <span class="meta-val">1 Year</span>
+  </div>
+  <div>
+    <span class="meta-lbl">Focus</span>
+    <span class="meta-val">Voice-first TV UX · Cross-device task strategy · TV ↔ Mobile handoff moments</span>
+  </div>
+  <div>
+    <span class="meta-lbl">Platforms</span>
+    <span class="meta-val">TV (shipped) · Mobile (conceptual) · Web (future)</span>
+  </div>
+</div>
+
+<!-- S: SITUATION -->
+<section class="section reveal">
+  <div class="sec-stack">
+    <span class="sec-lbl">S — Situation</span>
+    <h2 class="sec-hl">A TV streaming service where elderly users couldn't complete basic tasks on their own.</h2>
+  </div>
+  <p class="sit-intro">FainTV is a Taiwanese TV streaming service. Its core audience watches on a shared living-room screen — many are elderly users who rely on a remote control as their <strong>primary input device</strong>.</p>
+
+  <span class="block-label bl-red">Challenges</span>
+  <div class="challenges">
+    <div class="challenge-item">
+      <span class="challenge-num">1</span>
+      <p class="challenge-text">Remote-control text input is <strong>slow and exhausting</strong> — especially for elderly users trying to search for content or log in.</p>
+    </div>
+    <div class="challenge-item">
+      <span class="challenge-num">2</span>
+      <p class="challenge-text">A voice assistant already existed but was <strong>limited to search only</strong> — it couldn't help with registration, subscription, or shopping, where users needed it most.</p>
+    </div>
+    <div class="challenge-item">
+      <span class="challenge-num">3</span>
+      <p class="challenge-text">Checkout flows required entering personal details, addresses, and invoice information via D-pad, leading to <strong>high drop-off among elderly users</strong>.</p>
+    </div>
+  </div>
+
+  <span class="block-label bl-green">What I owned</span>
+  <div class="owned-grid">
+    <div class="owned-item"><div class="owned-dot" style="background:var(--green);"></div><p class="owned-text"><strong>TV information architecture</strong> and interaction design</p></div>
+    <div class="owned-item"><div class="owned-dot" style="background:var(--green);"></div><p class="owned-text"><strong>Voice search</strong> and T-commerce experience on TV</p></div>
+    <div class="owned-item"><div class="owned-dot" style="background:var(--green);"></div><p class="owned-text"><strong>Cross-device task allocation</strong> and TV ↔ Mobile handoff design</p></div>
+    <div class="owned-item"><div class="owned-dot" style="background:var(--green);"></div><p class="owned-text">User research and interviews <strong>(50+ participants)</strong></p></div>
+    <div class="owned-item owned-muted"><div class="owned-dot"></div><p class="owned-text">Mobile checkout — conceptual, to validate handoff strategy</p></div>
+    <div class="owned-item owned-muted"><div class="owned-dot"></div><p class="owned-text">Web account management — future direction</p></div>
+  </div>
+</section>
+
+<!-- S insight -->
+<div class="insight-block reveal">
+  <span class="insight-lbl" style="color:var(--red);">Outcome</span>
+  <p class="insight-text">In usability testing, redesigning FainTV's login flow increased task completion among elderly users from <strong>30% to 80%</strong> — validating a voice-first, lower-input direction on TV.</p>
+</div>
+
+<!-- T: TASK -->
+<section class="section reveal">
+  <div class="sec-stack">
+    <span class="sec-lbl">T — Task</span>
+    <h2 class="sec-hl">Elderly users could discover content — but couldn't complete what came next.</h2>
+  </div>
+
+  <div class="task-split">
+    <div class="task-card prob">
+      <span class="task-card-lbl prob">Problems</span>
+      <ul class="task-list prob">
+        <li>Typing on TV is painful — many <strong>give up or ask family</strong> before completing a search.</li>
+        <li>Payment and invoice details via remote are so <strong>slow and error-prone</strong> most rely on family to finish.</li>
+        <li>Voice can find content, but <strong>doesn't help with registration, subscription, or checkout</strong>.</li>
+      </ul>
+    </div>
+    <div class="task-card goal">
+      <span class="task-card-lbl goal">Design goals</span>
+      <ul class="task-list goal">
+        <li>Complete core tasks in <strong>as few clear steps as possible</strong> — minimal remote input.</li>
+        <li>Clarify which steps belong on TV and which should <strong>move to mobile or web</strong>.</li>
+        <li>Keep the experience <strong>simple enough for elderly users to operate independently</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Replace with your actual context photos -->
+  <div class="task-img-strip">
+    <img src="images/faintv-task-elderly-user.jpg" alt="Elderly Asian user watching TV" style="width:100%;height:170px;object-fit:cover;display:block;">
+    <img src="images/faintv-task-remote-control.jpg" alt="Remote control and TV interface" style="width:100%;height:170px;object-fit:cover;display:block;">
+  </div>
+
+  <div class="challenge-box">
+    <span class="challenge-box-lbl">Design challenge</span>
+    <p class="challenge-box-text">Redesign FainTV so that TV does what it's best at — browsing, voice search, and confirming decisions — and mobile handles the rest.</p>
+  </div>
+</section>
+
+<!-- T punchline -->
+<div class="punchline-full reveal">
+  <p>The problem isn't the form — it's that the form is on the wrong device.</p>
+</div>
+
+<!-- A: PROCESS -->
+<section class="section reveal">
+  <div class="sec-stack">
+    <span class="sec-lbl">A — Action</span>
+    <h2 class="sec-hl">Four phases — from discovering the pain, to proving the cross-device solution worked.</h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num" style="color:var(--blue);">01</div>
+      <span class="step-name">Discover</span>
+      <p class="step-desc">Interviews with 50+ users confirmed that <strong>registration, payment, and invoice steps</strong> caused the most drop-off on TV.</p>
+      <span class="step-tag tag-r">Research</span>
+    </div>
+    <div class="step">
+      <div class="step-num" style="color:var(--red);">02</div>
+      <span class="step-name">Define</span>
+      <p class="step-desc">Split tasks into TV-native vs. not. Core hypothesis: <strong>TV for deciding, mobile for filling and paying</strong>.</p>
+      <span class="step-tag tag-s">Synthesis</span>
+    </div>
+    <div class="step">
+      <div class="step-num" style="color:var(--green);">03</div>
+      <span class="step-name">Design</span>
+      <p class="step-desc">Designed TV voice search and T-commerce. Proposed <strong>"start on TV, finish on mobile"</strong> for subscription and checkout.</p>
+      <span class="step-tag tag-d">Design</span>
+    </div>
+    <div class="step">
+      <div class="step-num" style="color:#6B46C1;">04</div>
+      <span class="step-name">Test &amp; learn</span>
+      <p class="step-desc">Voice search was well-received but <strong>long form-based steps still caused friction</strong> — validating the cross-device solution.</p>
+      <span class="step-tag tag-t">Testing</span>
+    </div>
+  </div>
+</section>
+
+<!-- A process insight -->
+<div class="insight-block reveal">
+  <span class="insight-lbl" style="color:var(--green);">Key insight from testing</span>
+  <p class="insight-text">Users loved using voice for content discovery, but still got stuck whenever the TV asked them to type. This confirmed that <strong>input friction was a device problem, not a user problem.</strong></p>
+</div>
+
+<!-- A: STRATEGY -->
+<section class="section reveal">
+  <div class="sec-stack">
+    <span class="sec-lbl">A — Strategy</span>
+    <h2 class="sec-hl">Not every task belongs on every screen.</h2>
+  </div>
+  <p class="body-text" style="margin-bottom:1.8rem;max-width:65ch;">Designing for elderly users means choosing the right device for each moment — based on input effort, context, and who might be helping — not cramming everything into one interface.</p>
+
+  <div class="device-cards">
+    <div class="device-card" style="border-top:3px solid var(--red);">
+      <span class="device-card-name" style="color:var(--red);">TV</span>
+      <p class="device-card-principle" style="color:var(--fg);">Low-input, high-immersion</p>
+      <p class="device-card-desc">Browse, watch, and confirm — no typing required</p>
+      <span class="device-scope scope-tv">Designed and shipped</span>
+    </div>
+    <div class="device-card" style="border-top:3px solid var(--green);">
+      <span class="device-card-name" style="color:var(--green);">Mobile</span>
+      <p class="device-card-principle" style="color:var(--fg);">High-input, personal, on-hand</p>
+      <p class="device-card-desc">Type, pay, verify — familiar touchscreen input</p>
+      <span class="device-scope scope-mob">Conceptual — to validate handoff</span>
+    </div>
+    <div class="device-card" style="border-top:3px solid var(--blue);">
+      <span class="device-card-name" style="color:var(--blue);">Web</span>
+      <p class="device-card-principle" style="color:var(--fg);">Management &amp; long-term records</p>
+      <p class="device-card-desc">Caregivers, history, subscription control</p>
+      <span class="device-scope scope-web">Future direction</span>
+    </div>
+  </div>
+
+  <p class="heatmap-sub">What belongs on TV — what moves to mobile — what shifts to web</p>
+  <table class="heatmap-table">
+    <thead>
+      <tr>
+        <th style="width:45%;">Task</th>
+        <th class="hc" style="color:var(--red);">TV</th>
+        <th class="hc" style="color:var(--green);">Mobile</th>
+        <th class="hc" style="color:var(--blue);">Web</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="grp"><td colspan="4">Discovery &amp; viewing</td></tr>
+      <tr><td>Browse content</td><td class="heat-cell"><span class="pill p-tv">Primary</span></td><td class="heat-cell"><span class="em-dash">—</span></td><td class="heat-cell"><span class="em-dash">—</span></td></tr>
+      <tr><td>Voice search</td><td class="heat-cell"><span class="pill p-tv">Primary</span></td><td class="heat-cell"><span class="em-dash">—</span></td><td class="heat-cell"><span class="em-dash">—</span></td></tr>
+      <tr><td>Discover product during broadcast</td><td class="heat-cell"><span class="pill p-tv">Primary</span></td><td class="heat-cell"><span class="em-dash">—</span></td><td class="heat-cell"><span class="em-dash">—</span></td></tr>
+      <tr><td>Confirm "I want this"</td><td class="heat-cell"><span class="pill p-tv">Primary</span></td><td class="heat-cell"><span class="pill p-mobs">Supported</span></td><td class="heat-cell"><span class="em-dash">—</span></td></tr>
+      <tr class="grp"><td colspan="4">Account &amp; checkout</td></tr>
+      <tr><td>Login / identity verification</td><td class="heat-cell"><span class="em-dash">—</span></td><td class="heat-cell"><span class="pill p-mob">Primary</span></td><td class="heat-cell"><span class="pill p-webs">Supported</span></td></tr>
+      <tr><td>Enter address &amp; contact info</td><td class="heat-cell"><span class="em-dash">—</span></td><td class="heat-cell"><span class="pill p-mob">Primary</span></td><td class="heat-cell"><span class="pill p-webs">Supported</span></td></tr>
+      <tr><td>Payment &amp; invoice details</td><td class="heat-cell"><span class="em-dash">—</span></td><td class="heat-cell"><span class="pill p-mob">Primary</span></td><td class="heat-cell"><span class="pill p-webs">Supported</span></td></tr>
+      <tr class="grp"><td colspan="4">Account management</td></tr>
+      <tr><td>View order history</td><td class="heat-cell"><span class="em-dash">—</span></td><td class="heat-cell"><span class="pill p-mobs">Supported</span></td><td class="heat-cell"><span class="pill p-web">Primary</span></td></tr>
+      <tr><td>Manage subscription</td><td class="heat-cell"><span class="em-dash">—</span></td><td class="heat-cell"><span class="pill p-mobs">Supported</span></td><td class="heat-cell"><span class="pill p-web">Primary</span></td></tr>
+      <tr><td>Caregiver / family assistance</td><td class="heat-cell"><span class="em-dash">—</span></td><td class="heat-cell"><span class="pill p-mobs">Supported</span></td><td class="heat-cell"><span class="pill p-web">Primary</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="decisions">
+    <div class="decision">
+      <p class="decision-q">Why "confirm purchase" stays on TV</p>
+      <p class="decision-a">The <strong>decision moment belongs on the engaged screen</strong>. Moving intent to mobile mid-viewing breaks flow for elderly users.</p>
+    </div>
+    <div class="decision">
+      <p class="decision-q">Why login &amp; payment leave the TV</p>
+      <p class="decision-a">SMS codes, passwords, card numbers — all <strong>fight against a 10-foot, D-pad-only environment</strong>. Highest drop-off in testing.</p>
+    </div>
+    <div class="decision">
+      <p class="decision-q">Why caregiver tasks live on web</p>
+      <p class="decision-a">Family members need <strong>full-screen management tools</strong>, not an elderly-optimised TV interface. Separating concerns keeps both clean.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Strategy punchline -->
+<div class="punchline-full reveal">
+  <p>"I don't design screens — I design which screen each task belongs on."</p>
+</div>
+
+<!-- A: VOICE -->
+<section class="section reveal">
+  <div class="sec-stack">
+    <span class="sec-lbl">A — Voice design</span>
+    <h2 class="sec-hl">Voice as the primary input — not just a search shortcut.</h2>
+  </div>
+  <div class="voice-cards">
+    <div class="voice-card">
+      <span class="voice-card-title">10-foot constraints</span>
+      <p class="body-text">Safe-area padding, large type (min 36px) and high-contrast focus rings. All content navigable with a <strong>D-pad only</strong>.</p>
+    </div>
+    <div class="voice-card">
+      <span class="voice-card-title">Why voice, not keyboard</span>
+      <p class="body-text"><strong>65% of elderly users</strong> struggled with the on-screen keyboard. Voice reduces a 20-step search into just 2 steps.</p>
+    </div>
+  </div>
+  <div class="voice-steps">
+    <div class="voice-step">
+      <span class="vs-num vs-num-1">Step 1 · Hold 3 sec</span>
+      <span class="vs-title">Press and hold the voice button</span>
+      <p class="vs-desc">A single button on the remote — no menu navigation needed</p>
+    </div>
+    <div class="voice-step">
+      <span class="vs-num vs-num-2">Step 2 · Speak</span>
+      <span class="vs-title">Say a title, actor, or genre</span>
+      <p class="vs-desc">"Show me dramas with Chen Bo-lin" or simply "news"</p>
+    </div>
+    <div class="voice-step">
+      <span class="vs-num vs-num-3">Step 3 · Results</span>
+      <span class="vs-title">Jump directly to content</span>
+      <p class="vs-desc">No intermediate screens — users land on results immediately</p>
+    </div>
+  </div>
+  <!-- Replace with your actual TV UI screenshots -->
+  <div class="img-2col">
+    <img src="images/faintv-voice-home-screen.jpg" alt="TV home screen FainTV UI screenshot" style="width:100%;height:200px;object-fit:cover;display:block;">
+    <img src="images/faintv-voice-search-active.jpg" alt="Voice search active state FainTV UI screenshot" style="width:100%;height:200px;object-fit:cover;display:block;">
+  </div>
+</section>
+
+<!-- Voice insight -->
+<div class="insight-block reveal">
+  <span class="insight-lbl" style="color:var(--blue);">Why this matters</span>
+  <p class="insight-text">Voice wasn't just a convenience feature — it was the <strong>bridge between the TV and the rest of the cross-device system</strong>. Without it, elderly users had no reliable way to initiate a task on TV.</p>
+</div>
+
+<!-- A: PAIN -->
+<section class="section reveal">
+  <div class="sec-stack">
+    <span class="sec-lbl">A — The pain point</span>
+    <h2 class="sec-hl">The form isn't the problem. The device is.</h2>
+  </div>
+  <p class="body-text" style="margin-bottom:1.4rem;max-width:65ch;">Elderly users could discover products on TV — but many abandoned the flow as soon as checkout began. The remote turned a 2-minute task into a <strong>12–15 minute ordeal</strong>.</p>
+  <div class="pain-grid">
+    <!-- Replace with your before/after UI comparison screenshot -->
+    <img src="images/faintv-pain-old-tv-checkout.jpg" alt="Before old TV checkout UI screenshot" style="width:100%;height:220px;object-fit:cover;display:block;">
+    <div class="pain-items">
+      <div class="pain-item"><p class="pi-title">Average time: 12–15 minutes</p><p class="pi-body">Most users under 60 took under 3 minutes on mobile for the same flow.</p></div>
+      <div class="pain-item"><p class="pi-title">Most abandoned at credit card field</p><p class="pi-body">16 digits via D-pad — the single biggest drop-off point across all sessions.</p></div>
+      <div class="pain-item"><p class="pi-title">"I just asked my daughter to do it"</p><p class="pi-body">A recurring quote. Task completion depended on family availability.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Pain insight -->
+<div class="insight-block reveal">
+  <span class="insight-lbl" style="color:var(--red);">The reframe</span>
+  <p class="insight-text">These aren't bad forms. They're forms on the <strong>wrong device</strong>. The solution isn't to simplify the form — it's to move it to mobile.</p>
+</div>
+
+<!-- A: HANDOFF -->
+<section class="section reveal">
+  <div class="sec-stack">
+    <span class="sec-lbl">A — Handoff flow</span>
+    <h2 class="sec-hl">Start on TV. Finish on mobile.</h2>
+  </div>
+  <p class="body-text" style="margin-bottom:1.8rem;max-width:65ch;">TV stays in control of the viewing and decision moment. Mobile takes over the moment high-effort input is required. The handoff is one tap — or one QR scan.</p>
+
+  <!-- top segment with line: 01, 02 -->
+  <div class="hf-top">
+    <div class="hf-row">
+      <div class="hf-card-tv"><span class="hf-device">TV</span><p class="hf-title">Product appears during broadcast</p><p class="hf-desc">Lightweight CTA overlay: "Press red to buy"</p></div>
+      <div class="hf-num">01</div>
+      <div class="hf-empty"></div>
+    </div>
+    <div class="hf-row">
+      <div class="hf-card-tv"><span class="hf-device">TV</span><p class="hf-title">User confirms intent</p><p class="hf-desc">Product summary + "Send to my phone"</p></div>
+      <div class="hf-num">02</div>
+      <div class="hf-empty"></div>
+    </div>
+  </div>
+
+  <!-- handoff row: no line, full width -->
+  <div class="hf-row-ho">
+    <div class="hf-card-ho">
+      <span class="hf-device">Handoff</span>
+      <p class="hf-title">QR code on TV or push notification to phone</p>
+      <p class="hf-desc">One scan or one tap — the critical device transition</p>
+    </div>
+  </div>
+
+  <!-- bottom segment with line: 03, 04, 05 -->
+  <div class="hf-bottom">
+    <div class="hf-row">
+      <div class="hf-empty"></div>
+      <div class="hf-num">03</div>
+      <div class="hf-card-mob"><span class="hf-device">Mobile</span><p class="hf-title">Mobile opens checkout</p><p class="hf-desc">Member data pre-filled — address and payment only</p></div>
+    </div>
+    <div class="hf-row">
+      <div class="hf-empty"></div>
+      <div class="hf-num">04</div>
+      <div class="hf-card-mob"><span class="hf-device">Mobile</span><p class="hf-title">Complete payment on mobile</p><p class="hf-desc">Touchscreen input — typically around 2 minutes</p></div>
+    </div>
+    <div class="hf-row">
+      <div class="hf-card-tv"><span class="hf-device">TV</span><p class="hf-title">TV confirms success</p><p class="hf-desc">Brief confirmation, then auto-returns to content</p></div>
+      <div class="hf-num">05</div>
+      <div class="hf-empty"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Handoff insight -->
+<div class="insight-block reveal">
+  <span class="insight-lbl" style="color:var(--green);">Why this works</span>
+  <p class="insight-text">Mobile checkout screens are conceptual designs created to <strong>illustrate and validate the TV → Mobile handoff strategy</strong>. TV keeps the decision moment. Mobile handles all input.</p>
+</div>
+
+<!-- A: KEY SCREENS -->
+<section class="section reveal" style="padding-bottom:0;">
+  <div class="sec-stack">
+    <span class="sec-lbl">A — Key screens</span>
+    <h2 class="sec-hl">Four moments that tell the full story.</h2>
+  </div>
+</section>
+<div class="screens-grid reveal">
+  <div class="screen-card">
+    <!-- Replace with your actual TV CTA screenshot -->
+    <img src="images/faintv-key-tv-cta-overlay.jpg" alt="TV product CTA overlay" style="width:100%;height:200px;object-fit:cover;display:block;">
+    <div class="screen-info"><span class="si-label" style="color:var(--red);">TV · Product CTA overlay <span class="si-scope">Shipped</span></span><p class="si-text">Non-intrusive product prompt during broadcast. One button triggers the handoff.</p></div>
+  </div>
+  <div class="screen-card">
+    <!-- Replace with your actual TV QR screenshot -->
+    <img src="images/faintv-key-tv-handoff-qr.jpg" alt="TV handoff QR screen" style="width:100%;height:200px;object-fit:cover;display:block;">
+    <div class="screen-info"><span class="si-label" style="color:var(--red);">TV · Handoff moment <span class="si-scope">Shipped</span></span><p class="si-text">QR code on screen + push notification sent. The critical device transition.</p></div>
+  </div>
+  <div class="screen-card">
+    <!-- Replace with your mobile checkout screenshot -->
+    <img src="images/faintv-key-mobile-checkout.jpg" alt="Mobile checkout conceptual screen" style="width:100%;height:200px;object-fit:cover;display:block;">
+    <div class="screen-info"><span class="si-label" style="color:var(--green);">Mobile · Checkout <span class="si-scope">Conceptual</span></span><p class="si-text">Pre-filled member data, touchscreen input. Typically around 2 minutes.</p></div>
+  </div>
+  <div class="screen-card">
+    <!-- Replace with your TV success state screenshot -->
+    <img src="images/faintv-key-tv-purchase-confirmed.jpg" alt="TV purchase confirmed state" style="width:100%;height:200px;object-fit:cover;display:block;">
+    <div class="screen-info"><span class="si-label" style="color:var(--red);">TV · Purchase confirmed <span class="si-scope">Shipped</span></span><p class="si-text">Brief confirmation, then auto-returns to viewing. Loop closed on TV.</p></div>
+  </div>
+</div>
+
+<!-- R: RESULT -->
+<div class="insight-block reveal">
+  <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(1.1rem,2vw,1.6rem);line-height:1.6;color:#F5F4F0;">By moving high-input tasks off the TV and validating a cross-device handoff strategy, the redesign confirmed that <em style="color:var(--green);">device-fit matters more than interface polish.</em></p>
+</div>
+
+<!-- IMPACT -->
+<div class="impact-split reveal">
+  <div class="impact-half">
+    <span class="impact-half-lbl">Before redesign</span>
+    <span class="impact-half-num">30<span class="unit">%</span></span>
+  </div>
+  <div class="impact-half">
+    <span class="impact-half-lbl">After redesign</span>
+    <span class="impact-half-num">80<span class="unit">%</span></span>
+  </div>
+</div>
+<div class="impact-desc-row reveal">
+  <p class="impact-desc-text">Task completion among <em>elderly users</em> increased by 50 percentage points — validating a voice-first, lower-input direction on TV.</p>
+</div>
+
+<div class="metrics-row reveal">
+  <div class="metric">
+    <p class="metric-num">65 <span class="unit">%</span></p>
+    <p class="metric-label">Initially struggled with text-based search — voice search significantly reduced this friction.</p>
+  </div>
+  <div class="metric">
+    <p class="metric-num">2 <span class="unit">min</span></p>
+    <p class="metric-label">Average checkout on mobile, vs 12–15 minutes via TV D-pad input.</p>
+  </div>
+  <div class="metric">
+    <p class="metric-num">50 <span class="unit-g">+</span></p>
+    <p class="metric-label">Participants across user research and usability testing sessions.</p>
+  </div>
+</div>
+
+<!-- REFLECTION -->
+<div class="reflection reveal">
+  <div>
+    <span class="refl-lbl">What I learned</span>
+    <p class="refl-text">Designing for elderly users isn't just about making things bigger — it's about eliminating interactions that require <em>long, sustained input.</em> Voice should be a connector across devices, not just a search shortcut inside a single interface.</p>
+  </div>
+  <div>
+    <span class="refl-lbl">Next steps</span>
+    <p class="refl-text">Design the caregiver experience on web, explore an <em>emergency SOS button</em> integrated into the voice and cross-device system — and test the QR-based handoff with non-smartphone-native elderly users.</p>
+  </div>
+</div>
+
+<!-- NEXT -->
+<a class="cs-next" href="genebook.html">
+  <div>
+    <span class="cs-next-label">Next Project</span>
+    <div class="cs-next-name">Genebook</div>
+  </div>
+  <span class="cs-next-arrow">→</span>
+</a>
+
+<footer>
+  <span>© 2026 Yu-Hsien (Rowan) Lin</span>
+  <span>FainTV — 01 / 05</span>
+</footer>
+
+<script>
+  /* cursor */
+  const ring = document.getElementById('cur-ring');
+  const dot  = document.getElementById('cur-dot');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = `translate(${mx - 2}px,${my - 2}px)`;
+  });
+  (function loop() {
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx - 19}px,${ry - 19}px)`;
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('expanded'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('expanded'));
+  });
+
+  /* scroll reveal */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
     });
-    (function loop() {
-      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-      ring.style.transform = `translate(${rx-19}px,${ry-19}px)`;
-      requestAnimationFrame(loop);
-    })();
-    document.querySelectorAll('a').forEach(el => {
-      el.addEventListener('mouseenter', () => ring.classList.add('expanded'));
-      el.addEventListener('mouseleave', () => ring.classList.remove('expanded'));
-    });
-
-    /* scroll reveal */
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.08 });
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-  </script>
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
 </body>
 </html>
