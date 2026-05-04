@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ai Cun Cell — Rowan Lin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0e0e0d;--fg:#8a8a86;--accent:#C94F4F;--muted:rgba(138,138,134,0.55);--line:rgba(138,138,134,0.13);--surface:#141413}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--fg);font-family:'Space Grotesk',sans-serif;font-weight:300;cursor:none;overflow-x:hidden}
+    #cur-ring{position:fixed;width:38px;height:38px;border:1px solid rgba(201,79,79,0.45);border-radius:50%;pointer-events:none;z-index:9998;top:0;left:0;transition:width .35s,height .35s;will-change:transform}
+    #cur-dot{position:fixed;width:4px;height:4px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;top:0;left:0;will-change:transform}
+    #cur-ring.expanded{width:60px;height:60px;border-color:var(--accent);background:rgba(201,79,79,0.06)}
+    nav{position:fixed;inset:0 0 auto;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:2rem 5vw}
+    .nav-back{display:flex;align-items:center;gap:.7rem;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s}
+    .nav-back:hover{color:var(--fg)}
+    .nav-back-arrow{transition:transform .3s cubic-bezier(.16,1,.3,1)}
+    .nav-back:hover .nav-back-arrow{transform:translateX(-4px)}
+    .nav-right{display:flex;align-items:center;gap:2rem}
+    .nav-index{font-size:.62rem;letter-spacing:.15em;color:var(--muted)}
+    .nav-prev,.nav-next{display:flex;align-items:center;gap:.6rem;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s}
+    .nav-prev:hover,.nav-next:hover{color:var(--fg)}
+    .nav-next-arrow{transition:transform .3s cubic-bezier(.16,1,.3,1)}
+    .nav-next:hover .nav-next-arrow{transform:translateX(4px)}
+
+    .cs-hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:120px 5vw 8vh;border-bottom:1px solid var(--line)}
+    .cs-label{font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);margin-bottom:2rem;display:block;opacity:0;transform:translateY(12px);animation:fadeup .7s cubic-bezier(.16,1,.3,1) .2s forwards}
+    .cs-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(3.5rem,10vw,10rem);line-height:.9;letter-spacing:-.03em;margin-bottom:4rem;opacity:0;transform:translateY(60px);animation:fadeup .9s cubic-bezier(.16,1,.3,1) .3s forwards}
+    .cs-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;border-top:1px solid var(--line);padding-top:2.5rem;opacity:0;transform:translateY(20px);animation:fadeup .7s cubic-bezier(.16,1,.3,1) .55s forwards}
+    .cs-meta-label{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.6rem}
+    .cs-meta-val{font-size:.82rem;line-height:1.6;color:var(--fg)}
+    @keyframes fadeup{to{opacity:1;transform:none}}
+
+    .cs-img{width:100%;display:block;object-fit:cover}
+    .cs-img-full{border-bottom:1px solid var(--line)}
+    .cs-img-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+
+    .cs-section{padding:8vh 5vw;border-bottom:1px solid var(--line)}
+    .cs-sec-header{display:grid;grid-template-columns:220px 1fr;gap:6vw;margin-bottom:5rem}
+    .cs-sec-label{font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);padding-top:.3rem}
+    .cs-sec-headline{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(2rem,4vw,3.5rem);line-height:1.15;letter-spacing:-.02em}
+    .cs-text-grid{display:grid;grid-template-columns:220px 1fr;gap:6vw}
+    .cs-text-label{font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);padding-top:.25rem}
+    .cs-text-body{font-size:.92rem;line-height:1.95;color:var(--muted);max-width:68ch;text-wrap:pretty}
+    .cs-text-body strong{color:var(--fg);font-weight:400}
+
+    .cs-challenges{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:3rem}
+    .cs-challenge{background:var(--surface);padding:2.5rem}
+    .cs-ch-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2.5rem;font-weight:300;color:rgba(201,79,79,.25);line-height:1;margin-bottom:1rem}
+    .cs-ch-title{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg);margin-bottom:.8rem;display:block}
+    .cs-ch-desc{font-size:.82rem;line-height:1.8;color:var(--muted)}
+    .cs-ch-desc strong{color:var(--fg);font-weight:400}
+
+    .cs-stats-row{display:flex;gap:6vw;align-items:center;padding:4rem 5vw;background:var(--surface);border-bottom:1px solid var(--line)}
+    .cs-stat{flex-shrink:0}
+    .cs-stat-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(4rem,7vw,6rem);font-weight:300;line-height:1;letter-spacing:-.02em;display:block}
+    .cs-stat-num span{color:var(--accent);font-size:.5em;vertical-align:super}
+    .cs-stat-lbl{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:block;margin-top:.4rem}
+    .cs-stat-divider{width:1px;height:70px;background:var(--line);flex-shrink:0}
+    .cs-stat-desc{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1.2rem,2vw,1.8rem);font-weight:300;line-height:1.55;max-width:52ch}
+    .cs-stat-desc em{color:var(--accent)}
+
+    .cs-action-list{display:flex;flex-direction:column;gap:0;margin-top:3rem}
+    .cs-action-item{display:grid;grid-template-columns:60px 220px 1fr;gap:3rem;align-items:start;padding:2.5rem 0;border-bottom:1px solid var(--line)}
+    .cs-action-item:last-child{border-bottom:none}
+    .cs-action-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.6rem;font-weight:300;color:rgba(201,79,79,.3)}
+    .cs-action-name{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg);padding-top:.2rem}
+    .cs-action-desc{font-size:.85rem;line-height:1.85;color:var(--muted)}
+    .cs-action-desc strong{color:var(--fg);font-weight:400}
+
+    .cs-next{border-top:1px solid var(--line);padding:6vh 5vw;display:flex;justify-content:space-between;align-items:center;text-decoration:none;transition:background .4s}
+    .cs-next:hover{background:var(--surface)}
+    .cs-next-label{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.8rem;display:block}
+    .cs-next-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;letter-spacing:-.02em;line-height:1;color:var(--fg);transition:letter-spacing .4s cubic-bezier(.16,1,.3,1)}
+    .cs-next:hover .cs-next-name{letter-spacing:.01em}
+    .cs-next-arrow{font-size:3rem;color:var(--accent);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+    .cs-next:hover .cs-next-arrow{transform:translateX(12px)}
+
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1)}
+    .reveal.in{opacity:1;transform:none}
+    footer{padding:2.5vh 5vw;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:.6rem;letter-spacing:.1em;color:rgba(138,138,134,.28)}
+  </style>
+</head>
+<body>
+  <div id="cur-ring"></div>
+  <div id="cur-dot"></div>
+  <nav>
+    <a class="nav-back" href="portfolio.html"><span class="nav-back-arrow">←</span> All Work</a>
+    <div class="nav-right">
+      <span class="nav-index">04 / 05</span>
+      <a class="nav-prev" href="tfl.html">← TFL</a>
+      <a class="nav-next" href="marilyn.html">Next <span class="nav-next-arrow">→</span></a>
+    </div>
+  </nav>
+
+  <section class="cs-hero">
+    <span class="cs-label">04 — Mobile Application · Cord Blood Management · 10 Weeks</span>
+    <h1 class="cs-title">Ai Cun Cell</h1>
+    <div class="cs-meta">
+      <div><span class="cs-meta-label">Role</span><span class="cs-meta-val">Lead UI/UX Designer</span></div>
+      <div><span class="cs-meta-label">Timeline</span><span class="cs-meta-val">10 Weeks</span></div>
+      <div><span class="cs-meta-label">Scope</span><span class="cs-meta-val">Market Research · Wireframing<br>Hi-Fi UI · Prototyping</span></div>
+      <div><span class="cs-meta-label">Tools</span><span class="cs-meta-val">Figma · Adobe Suite</span></div>
+    </div>
+  </section>
+
+  <div class="cs-img-full">
+    <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a2c6df5c-28b9-480b-a51f-171dc085410b/1.1+landing+page.jpg" alt="Ai Cun Cell Hero" loading="lazy">
+  </div>
+
+  <!-- OVERVIEW -->
+  <section class="cs-section">
+    <div class="cs-text-grid reveal">
+      <span class="cs-text-label">Overview</span>
+      <p class="cs-text-body">
+        Ai Cun Cell is an <strong>end-to-end cord blood management platform</strong> designed to break geographical barriers. By addressing significant information asymmetry and the "black box" nature of the storage process, the platform provides a comprehensive digital solution — from medical registration and collection to long-term monitoring — instilling a sense of security for new parents across a <strong>20-year emotional and financial commitment</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- CHALLENGES -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Problem</span>
+      <h2 class="cs-sec-headline">Three layers of friction preventing parents from trusting cord blood banking.</h2>
+    </div>
+    <div class="cs-challenges reveal">
+      <div class="cs-challenge">
+        <div class="cs-ch-num">01</div>
+        <span class="cs-ch-title">Information Transparency</span>
+        <p class="cs-ch-desc">Traditional cord blood storage feels like a <strong>"black box"</strong> — severe lack of real-time updates leaves users in the dark regarding sample safety and status.</p>
+      </div>
+      <div class="cs-challenge">
+        <div class="cs-ch-num">02</div>
+        <span class="cs-ch-title">Process Complexity</span>
+        <p class="cs-ch-desc">The legacy application process involves <strong>heavy paperwork and physical constraints</strong>. Navigating medical appointments across regions creates significant friction for expectant parents.</p>
+      </div>
+      <div class="cs-challenge">
+        <div class="cs-ch-num">03</div>
+        <span class="cs-ch-title">Long-term Trust Gap</span>
+        <p class="cs-ch-desc">Cord blood banking is a <strong>20-year commitment</strong>. Building a high-integrity digital platform was essential to instil reliability from the very first interaction.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/5b359742-c695-4c14-ab2d-d24c135ffa32/1.8.jpg" alt="Research" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/81abcad2-c076-4abe-832e-1375bf0d5851/1.9.jpg" alt="Research 2" loading="lazy">
+  </div>
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/48ab0659-6763-45e6-9a81-3c0ca787d6bb/1.10.jpg" alt="Research 3" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6b28cd55-94e7-4a5c-a9dc-b3dc35c70883/1.11.jpg" alt="Research 4" loading="lazy">
+  </div>
+
+  <!-- PROCESS -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Process</span>
+      <h2 class="cs-sec-headline">Discover → Define → Iterate — two rounds of usability testing to earn parental trust.</h2>
+    </div>
+    <div class="cs-action-list reveal">
+      <div class="cs-action-item">
+        <span class="cs-action-num">01</span>
+        <span class="cs-action-name">Discover</span>
+        <p class="cs-action-desc">Market analysis and in-depth interviews with <strong>20+ expectant parents</strong>. Identified "complex contracts" and "geographical barriers" as primary pain points.</p>
+      </div>
+      <div class="cs-action-item">
+        <span class="cs-action-num">02</span>
+        <span class="cs-action-name">Define</span>
+        <p class="cs-action-desc">Developed user personas and mapped task flows — specifically optimising the high-friction experience of <strong>multi-page medical form completion</strong>.</p>
+      </div>
+      <div class="cs-action-item">
+        <span class="cs-action-num">03</span>
+        <span class="cs-action-name">Iteration</span>
+        <p class="cs-action-desc">Two rounds of usability testing. After identifying user hesitation during payment in round one, implemented <strong>progress bars</strong> and <strong>security certification badges</strong> to enhance trust and clarity.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESIGN IMAGES -->
+  <div class="cs-img-full reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/4f80a8e6-0d5a-4b27-91c2-044db5eab340/1.16.jpg" alt="Design" loading="lazy">
+  </div>
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/9df89ea1-dd7a-4800-ad8e-84a1397afe0b/1.17.1.jpg" alt="UI Design" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/5f3621cd-78dd-49ae-9a76-14278002b801/1.17.2+register.jpg" alt="Register" loading="lazy">
+  </div>
+  <div class="cs-img-full reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/139aa9b1-8a50-4960-8429-758db63214f5/1.17.4.jpg" alt="Final UI" loading="lazy">
+  </div>
+  <div class="cs-img-full reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/0a22431c-7e9b-459b-aa51-7d7e5ec7b6ba/1.14+visual+design.jpg" alt="Visual Design" loading="lazy">
+  </div>
+
+  <!-- OUTCOME -->
+  <div class="cs-stats-row reveal">
+    <div class="cs-stat">
+      <span class="cs-stat-num">5K<span>+</span></span>
+      <span class="cs-stat-lbl">Users in week one</span>
+    </div>
+    <div class="cs-stat-divider"></div>
+    <div class="cs-stat">
+      <span class="cs-stat-num">30<span>%</span></span>
+      <span class="cs-stat-lbl">CSAT increase</span>
+    </div>
+    <div class="cs-stat-divider"></div>
+    <p class="cs-stat-desc">Industry's first <em>full-lifecycle</em> cord blood application. Users praised the convenience of the new "Online Contract Signing" feature.</p>
+  </div>
+
+  <a class="cs-next" href="marilyn.html">
+    <div><span class="cs-next-label">Next Project</span><div class="cs-next-name">Marilyn</div></div>
+    <span class="cs-next-arrow">→</span>
+  </a>
+  <footer><span>© 2026 Yu-Hsien (Rowan) Lin</span><span>Ai Cun Cell — 04 / 05</span></footer>
+
+  <script>
+    const ring=document.getElementById('cur-ring'),dot=document.getElementById('cur-dot');
+    let mx=-100,my=-100,rx=-100,ry=-100;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx-2}px,${my-2}px)`});
+    (function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.transform=`translate(${rx-19}px,${ry-19}px)`;requestAnimationFrame(loop)})();
+    document.querySelectorAll('a').forEach(el=>{el.addEventListener('mouseenter',()=>ring.classList.add('expanded'));el.addEventListener('mouseleave',()=>ring.classList.remove('expanded'))});
+    const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  </script>
+</body>
+</html>

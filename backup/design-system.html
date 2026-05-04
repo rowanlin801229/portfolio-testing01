@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rowan Lin — Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0e0e0d;
+      --fg: #8a8a86;
+      --accent: #C94F4F;
+      --muted: rgba(138,138,134,0.6);
+      --line: rgba(138,138,134,0.15);
+      --surface: #161615;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 300;
+    }
+
+    /* ── LAYOUT ── */
+    .ds-header {
+      padding: 4rem 5vw 3rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .ds-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 3.5rem;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .ds-meta {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .ds-meta a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    main {
+      padding: 0 5vw 8rem;
+    }
+
+    .ds-section {
+      padding: 5rem 0 0;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 5rem;
+    }
+
+    .ds-sec-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 3rem;
+    }
+
+    .ds-sec-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 2rem;
+      font-weight: 300;
+      margin-bottom: 3rem;
+      color: var(--fg);
+    }
+
+    /* ── TOKENS ── */
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .token-card {
+      background: var(--surface);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .token-swatch {
+      height: 60px;
+      border-radius: 2px;
+    }
+
+    .token-name {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--fg);
+    }
+
+    .token-value {
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      font-family: monospace;
+    }
+
+    .token-var {
+      font-size: 0.6rem;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      font-family: monospace;
+      opacity: 0.7;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    .type-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .type-row {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 3rem;
+      align-items: baseline;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 2.5rem;
+    }
+
+    .type-meta { display: flex; flex-direction: column; gap: 0.4rem; }
+    .type-label { font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); }
+    .type-spec { font-size: 0.62rem; letter-spacing: 0.08em; color: var(--muted); line-height: 1.8; }
+
+    .t-display {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(3rem, 7vw, 7rem);
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+    }
+    .t-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 2.5rem;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .t-subheading {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1.6rem;
+      line-height: 1.3;
+    }
+    .t-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .t-body {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 300;
+      font-size: 0.88rem;
+      line-height: 1.85;
+      color: var(--muted);
+      max-width: 55ch;
+    }
+    .t-caption {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+
+    /* ── SPACING ── */
+    .spacing-row {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .sp-item {
+      display: grid;
+      grid-template-columns: 120px 1fr 80px;
+      align-items: center;
+      gap: 2rem;
+    }
+    .sp-bar-wrap { background: var(--surface); height: 20px; }
+    .sp-bar { height: 100%; background: var(--accent); opacity: 0.4; }
+    .sp-name { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; }
+    .sp-val { font-size: 0.65rem; color: var(--muted); font-family: monospace; text-align: right; }
+
+    /* ── COMPONENTS ── */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .comp-card {
+      background: var(--surface);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .comp-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* nav component */
+    .c-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: var(--bg);
+    }
+    .c-nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--fg);
+    }
+    .c-nav-links { display: flex; gap: 1.5rem; }
+    .c-nav-link { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+
+    /* work item */
+    .c-work-item {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 40px 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 1.2rem 0;
+    }
+    .c-wi-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.85rem; color: var(--muted); }
+    .c-wi-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.8rem; font-weight: 300; letter-spacing: -0.01em; }
+    .c-wi-type { font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+
+    /* stat block */
+    .c-stat { border-top: 1px solid var(--line); padding-top: 1.5rem; }
+    .c-stat-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 3rem;
+      font-weight: 300;
+      line-height: 1;
+    }
+    .c-stat-val sup { font-size: 0.45em; color: var(--accent); vertical-align: super; }
+    .c-stat-lbl { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-top: 0.4rem; }
+
+    /* link */
+    .c-link {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      position: relative;
+      display: inline-block;
+    }
+    .c-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    /* section label */
+    .c-sec-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* exp item */
+    .c-exp {
+      border-bottom: 1px solid var(--line);
+      padding: 1rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .c-exp-co { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.4rem; font-weight: 300; }
+    .c-exp-role { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+    .c-exp-yr { font-size: 0.6rem; letter-spacing: 0.15em; color: var(--accent); margin-top: 0.2rem; }
+
+    /* visa tag */
+    .c-visa {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.9rem;
+      border: 1px solid var(--line);
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .c-visa-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+    /* ── MOTION ── */
+    .motion-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .motion-card {
+      background: var(--surface);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .motion-demo {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .motion-bar {
+      height: 2px;
+      background: var(--accent);
+      width: 0%;
+      animation: m-expand 2s cubic-bezier(0.16,1,0.3,1) infinite alternate;
+    }
+    @keyframes m-expand { from { width: 0%; } to { width: 100%; } }
+
+    .motion-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: m-bounce 1.8s ease-in-out infinite;
+      position: absolute;
+    }
+    @keyframes m-bounce {
+      0%,100% { transform: translateY(0); opacity: 1; }
+      50% { transform: translateY(-20px); opacity: 0.4; }
+    }
+
+    .motion-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.5rem;
+      font-weight: 300;
+      animation: m-slide 2.5s cubic-bezier(0.16,1,0.3,1) infinite alternate;
+    }
+    @keyframes m-slide {
+      from { transform: translateX(0); opacity: 0.3; }
+      to { transform: translateX(10px); opacity: 1; }
+    }
+
+    .motion-name { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; }
+    .motion-spec { font-size: 0.62rem; color: var(--muted); line-height: 1.7; }
+    .motion-spec code { font-family: monospace; color: var(--accent); font-size: 0.85em; }
+
+    /* ── BACK LINK ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .back-link:hover { color: var(--fg); }
+  </style>
+</head>
+<body>
+
+  <div class="ds-header">
+    <div>
+      <a class="back-link" href="portfolio.html">← Portfolio</a>
+      <h1 class="ds-title" style="margin-top:1rem;">Design System</h1>
+      <p style="font-size:0.7rem;letter-spacing:0.1em;color:var(--muted);margin-top:0.5rem;">Yu-Hsien (Rowan) Lin · Portfolio v1</p>
+    </div>
+    <div class="ds-meta">
+      Last updated April 2026<br>
+      <a href="portfolio.html">View Portfolio →</a>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- ── COLOURS ── -->
+    <section class="ds-section">
+      <span class="ds-sec-label">01 — Colours</span>
+      <div class="token-grid">
+        <div class="token-card">
+          <div class="token-swatch" style="background:#0e0e0d; border: 1px solid rgba(138,138,134,0.2);"></div>
+          <span class="token-name">Background</span>
+          <span class="token-value">#0e0e0d</span>
+          <span class="token-var">--bg</span>
+        </div>
+        <div class="token-card">
+          <div class="token-swatch" style="background:#8a8a86;"></div>
+          <span class="token-name">Foreground</span>
+          <span class="token-value">#8a8a86</span>
+          <span class="token-var">--fg</span>
+        </div>
+        <div class="token-card">
+          <div class="token-swatch" style="background:#C94F4F;"></div>
+          <span class="token-name">Accent</span>
+          <span class="token-value">#C94F4F</span>
+          <span class="token-var">--accent</span>
+        </div>
+        <div class="token-card">
+          <div class="token-swatch" style="background:#161615; border: 1px solid rgba(138,138,134,0.2);"></div>
+          <span class="token-name">Surface</span>
+          <span class="token-value">#161615</span>
+          <span class="token-var">--surface</span>
+        </div>
+        <div class="token-card">
+          <div class="token-swatch" style="background:rgba(138,138,134,0.15); border: 1px solid rgba(138,138,134,0.2);"></div>
+          <span class="token-name">Line / Border</span>
+          <span class="token-value">rgba(138,138,134, 0.15)</span>
+          <span class="token-var">--line</span>
+        </div>
+        <div class="token-card">
+          <div class="token-swatch" style="background:rgba(138,138,134,0.6);"></div>
+          <span class="token-name">Muted Text</span>
+          <span class="token-value">rgba(138,138,134, 0.6)</span>
+          <span class="token-var">--muted</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TYPOGRAPHY ── -->
+    <section class="ds-section">
+      <span class="ds-sec-label">02 — Typography</span>
+      <div class="type-stack">
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="type-label">Display</span>
+            <span class="type-spec">Cormorant Garamond<br>Italic 300<br>clamp(4.5–11rem)<br>ls: -0.03em / lh: 0.93</span>
+          </div>
+          <span class="t-display">Design.</span>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="type-label">Heading</span>
+            <span class="type-spec">Cormorant Garamond<br>Italic 300<br>2.5rem<br>ls: -0.02em</span>
+          </div>
+          <span class="t-heading">Selected Work</span>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="type-label">Subheading</span>
+            <span class="type-spec">Cormorant Garamond<br>Italic 300<br>1.6rem</span>
+          </div>
+          <span class="t-subheading">FainTV — Streaming Platform</span>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="type-label">Label</span>
+            <span class="type-spec">Space Grotesk<br>400<br>0.6rem<br>ls: 0.35em, UPPERCASE</span>
+          </div>
+          <span class="t-label">Selected Work</span>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">
+            <span class="type-label">Body</span>
+            <span class="type-spec">Space Grotesk<br>300<br>0.88rem / lh: 1.85<br>color: --muted</span>
+          </div>
+          <p class="t-body">Based in London. 5+ years designing across mobile, web, wearable and TV — from Taiwan's tech ecosystem to global scale.</p>
+        </div>
+        <div class="type-row" style="border:none; padding-bottom:0;">
+          <div class="type-meta">
+            <span class="type-label">Caption</span>
+            <span class="type-spec">Space Grotesk<br>300<br>0.65rem<br>ls: 0.15em</span>
+          </div>
+          <span class="t-caption">UI/UX Designer · London, UK · 2026</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SPACING ── -->
+    <section class="ds-section">
+      <span class="ds-sec-label">03 — Spacing</span>
+      <div class="spacing-row">
+        <div class="sp-item"><span class="sp-name">xs</span><div class="sp-bar-wrap"><div class="sp-bar" style="width:2%"></div></div><span class="sp-val">0.4rem</span></div>
+        <div class="sp-item"><span class="sp-name">sm</span><div class="sp-bar-wrap"><div class="sp-bar" style="width:5%"></div></div><span class="sp-val">0.8rem</span></div>
+        <div class="sp-item"><span class="sp-name">md</span><div class="sp-bar-wrap"><div class="sp-bar" style="width:10%"></div></div><span class="sp-val">1.5rem</span></div>
+        <div class="sp-item"><span class="sp-name">lg</span><div class="sp-bar-wrap"><div class="sp-bar" style="width:20%"></div></div><span class="sp-val">2.5rem</span></div>
+        <div class="sp-item"><span class="sp-name">xl</span><div class="sp-bar-wrap"><div class="sp-bar" style="width:30%"></div></div><span class="sp-val">4rem</span></div>
+        <div class="sp-item"><span class="sp-name">2xl</span><div class="sp-bar-wrap"><div class="sp-bar" style="width:50%"></div></div><span class="sp-val">8vh–12vh</span></div>
+        <div class="sp-item"><span class="sp-name">page</span><div class="sp-bar-wrap"><div class="sp-bar" style="width:100%"></div></div><span class="sp-val">5vw</span></div>
+      </div>
+    </section>
+
+    <!-- ── COMPONENTS ── -->
+    <section class="ds-section">
+      <span class="ds-sec-label">04 — Components</span>
+      <div class="comp-grid">
+
+        <div class="comp-card">
+          <span class="comp-label">Navigation</span>
+          <div class="c-nav">
+            <span class="c-nav-logo">Rowan Lin</span>
+            <div class="c-nav-links">
+              <span class="c-nav-link">Work</span>
+              <span class="c-nav-link">About</span>
+              <span class="c-nav-link">Contact</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <span class="comp-label">Section Label</span>
+          <span class="c-sec-label">Selected Work</span>
+          <p style="font-size:0.72rem;color:var(--muted);line-height:1.7;">Used to open every section. Cormorant accent colour, 0.35em letter-spacing, uppercase.</p>
+        </div>
+
+        <div class="comp-card">
+          <span class="comp-label">Work List Item</span>
+          <div class="c-work-item">
+            <span class="c-wi-num">01</span>
+            <span class="c-wi-name">FainTV</span>
+            <span class="c-wi-type">Streaming</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <span class="comp-label">Stat Block</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+            <div class="c-stat">
+              <div class="c-stat-val">45<sup>%</sup></div>
+              <div class="c-stat-lbl">Revenue Growth</div>
+            </div>
+            <div class="c-stat">
+              <div class="c-stat-val">5<sup>+</sup></div>
+              <div class="c-stat-lbl">Years Experience</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <span class="comp-label">Experience Row</span>
+          <div class="c-exp">
+            <div>
+              <div class="c-exp-co">Intersense Tech.</div>
+              <div class="c-exp-yr">2020 — 2021</div>
+            </div>
+            <span class="c-exp-role">Lead UI/UX Designer</span>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <span class="comp-label">Link — Underline Reveal</span>
+          <div style="display:flex;gap:2rem;align-items:center;padding:1rem 0;">
+            <a class="c-link" href="#">Email</a>
+            <a class="c-link" href="#">LinkedIn</a>
+            <a class="c-link" href="#">Portfolio</a>
+          </div>
+          <p style="font-size:0.65rem;color:var(--muted);line-height:1.7;">Accent underline reveals left → right on hover. Transition: 0.4s cubic-bezier(0.16,1,0.3,1).</p>
+        </div>
+
+        <div class="comp-card">
+          <span class="comp-label">Visa / Status Tag</span>
+          <div style="padding:1rem 0;">
+            <div class="c-visa">
+              <span class="c-visa-dot"></span>
+              UK Skilled Worker Visa · Taiwan Work Authorisation
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-card">
+          <span class="comp-label">Marquee Skill Item</span>
+          <div style="display:flex;align-items:center;gap:1rem;padding:0.5rem 0;">
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.6rem;font-weight:300;color:var(--muted);">UX Research</span>
+            <span style="width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;"></span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.6rem;font-weight:300;color:var(--muted);">Figma</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── MOTION ── -->
+    <section class="ds-section" style="border-bottom:none;">
+      <span class="ds-sec-label">05 — Motion</span>
+      <div class="motion-grid">
+        <div class="motion-card">
+          <span class="comp-label">Line Expand</span>
+          <div class="motion-demo"><div class="motion-bar"></div></div>
+          <div>
+            <div class="motion-name">Reveal / Hover</div>
+            <div class="motion-spec">
+              <code>scaleX(0→1)</code><br>
+              <code>cubic-bezier(0.16,1,0.3,1)</code><br>
+              duration: 0.5s<br>
+              Used in: work item bg, contact link underline
+            </div>
+          </div>
+        </div>
+        <div class="motion-card">
+          <span class="comp-label">Text Slide-up</span>
+          <div class="motion-demo"><div class="motion-text">Designing</div></div>
+          <div>
+            <div class="motion-name">Hero Entry</div>
+            <div class="motion-spec">
+              <code>translateY(100%→0)</code><br>
+              <code>cubic-bezier(0.16,1,0.3,1)</code><br>
+              duration: 0.9s, staggered 0.15s<br>
+              Used in: hero title lines
+            </div>
+          </div>
+        </div>
+        <div class="motion-card">
+          <span class="comp-label">Scroll Reveal</span>
+          <div class="motion-demo"><div class="motion-dot"></div></div>
+          <div>
+            <div class="motion-name">On Enter Viewport</div>
+            <div class="motion-spec">
+              <code>translateY(36px→0) + opacity</code><br>
+              <code>cubic-bezier(0.16,1,0.3,1)</code><br>
+              duration: 0.85s<br>
+              Used in: all <code>.reveal</code> elements
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>

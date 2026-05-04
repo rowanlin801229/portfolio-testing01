@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marilyn — Rowan Lin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0e0e0d;--fg:#8a8a86;--accent:#C94F4F;--muted:rgba(138,138,134,0.55);--line:rgba(138,138,134,0.13);--surface:#141413}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--fg);font-family:'Space Grotesk',sans-serif;font-weight:300;cursor:none;overflow-x:hidden}
+    #cur-ring{position:fixed;width:38px;height:38px;border:1px solid rgba(201,79,79,0.45);border-radius:50%;pointer-events:none;z-index:9998;top:0;left:0;transition:width .35s,height .35s;will-change:transform}
+    #cur-dot{position:fixed;width:4px;height:4px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;top:0;left:0;will-change:transform}
+    #cur-ring.expanded{width:60px;height:60px;border-color:var(--accent);background:rgba(201,79,79,0.06)}
+    nav{position:fixed;inset:0 0 auto;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:2rem 5vw}
+    .nav-back{display:flex;align-items:center;gap:.7rem;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s}
+    .nav-back:hover{color:var(--fg)}
+    .nav-back-arrow{transition:transform .3s cubic-bezier(.16,1,.3,1)}
+    .nav-back:hover .nav-back-arrow{transform:translateX(-4px)}
+    .nav-right{display:flex;align-items:center;gap:2rem}
+    .nav-index{font-size:.62rem;letter-spacing:.15em;color:var(--muted)}
+    .nav-prev{display:flex;align-items:center;gap:.6rem;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .3s}
+    .nav-prev:hover{color:var(--fg)}
+
+    .cs-hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:120px 5vw 8vh;border-bottom:1px solid var(--line)}
+    .cs-label{font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);margin-bottom:2rem;display:block;opacity:0;transform:translateY(12px);animation:fadeup .7s cubic-bezier(.16,1,.3,1) .2s forwards}
+    .cs-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(5rem,13vw,13rem);line-height:.9;letter-spacing:-.03em;margin-bottom:4rem;opacity:0;transform:translateY(60px);animation:fadeup .9s cubic-bezier(.16,1,.3,1) .3s forwards}
+    .cs-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;border-top:1px solid var(--line);padding-top:2.5rem;opacity:0;transform:translateY(20px);animation:fadeup .7s cubic-bezier(.16,1,.3,1) .55s forwards}
+    .cs-meta-label{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.6rem}
+    .cs-meta-val{font-size:.82rem;line-height:1.6;color:var(--fg)}
+    @keyframes fadeup{to{opacity:1;transform:none}}
+
+    .cs-img{width:100%;display:block;object-fit:cover}
+    .cs-img-full{border-bottom:1px solid var(--line)}
+    .cs-img-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+
+    .cs-section{padding:8vh 5vw;border-bottom:1px solid var(--line)}
+    .cs-sec-header{display:grid;grid-template-columns:220px 1fr;gap:6vw;margin-bottom:5rem}
+    .cs-sec-label{font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);padding-top:.3rem}
+    .cs-sec-headline{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(2rem,4vw,3.5rem);line-height:1.15;letter-spacing:-.02em}
+    .cs-text-grid{display:grid;grid-template-columns:220px 1fr;gap:6vw}
+    .cs-text-label{font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);padding-top:.25rem}
+    .cs-text-body{font-size:.92rem;line-height:1.95;color:var(--muted);max-width:68ch;text-wrap:pretty}
+    .cs-text-body strong{color:var(--fg);font-weight:400}
+
+    .cs-decisions{display:flex;flex-direction:column;gap:0;margin-top:3rem}
+    .cs-decision{display:grid;grid-template-columns:60px 220px 1fr;gap:3rem;align-items:start;padding:2.5rem 0;border-bottom:1px solid var(--line)}
+    .cs-decision:last-child{border-bottom:none}
+    .cs-dec-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.6rem;font-weight:300;color:rgba(201,79,79,.3)}
+    .cs-dec-name{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--fg);padding-top:.2rem}
+    .cs-dec-desc{font-size:.85rem;line-height:1.85;color:var(--muted)}
+    .cs-dec-desc strong{color:var(--fg);font-weight:400}
+
+    .cs-outcome{padding:4rem 5vw;background:var(--surface);border-bottom:1px solid var(--line);display:grid;grid-template-columns:220px 1fr;gap:6vw;align-items:start}
+    .cs-out-label{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--accent)}
+    .cs-out-list{display:flex;flex-direction:column;gap:1.2rem}
+    .cs-out-item{display:flex;flex-direction:column;gap:.3rem}
+    .cs-out-title{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--fg)}
+    .cs-out-desc{font-size:.85rem;line-height:1.8;color:var(--muted)}
+    .cs-out-desc strong{color:var(--fg);font-weight:400}
+
+    .cs-back-home{border-top:1px solid var(--line);padding:6vh 5vw;display:flex;justify-content:space-between;align-items:center;text-decoration:none;transition:background .4s}
+    .cs-back-home:hover{background:var(--surface)}
+    .cs-back-label{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.8rem;display:block}
+    .cs-back-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;letter-spacing:-.02em;line-height:1;color:var(--fg);transition:letter-spacing .4s cubic-bezier(.16,1,.3,1)}
+    .cs-back-home:hover .cs-back-name{letter-spacing:.01em}
+    .cs-back-arrow{font-size:3rem;color:var(--accent);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+    .cs-back-home:hover .cs-back-arrow{transform:translateX(-12px)}
+
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1)}
+    .reveal.in{opacity:1;transform:none}
+    footer{padding:2.5vh 5vw;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:.6rem;letter-spacing:.1em;color:rgba(138,138,134,.28)}
+  </style>
+</head>
+<body>
+  <div id="cur-ring"></div>
+  <div id="cur-dot"></div>
+  <nav>
+    <a class="nav-back" href="portfolio.html"><span class="nav-back-arrow">←</span> All Work</a>
+    <div class="nav-right">
+      <span class="nav-index">05 / 05</span>
+      <a class="nav-prev" href="aicuncell.html">← Ai Cun Cell</a>
+    </div>
+  </nav>
+
+  <section class="cs-hero">
+    <span class="cs-label">05 — Anniversary Campaign Website · 10 Weeks</span>
+    <h1 class="cs-title">Marilyn</h1>
+    <div class="cs-meta">
+      <div><span class="cs-meta-label">Role</span><span class="cs-meta-val">Lead UI/UX Designer</span></div>
+      <div><span class="cs-meta-label">Timeline</span><span class="cs-meta-val">10 Weeks</span></div>
+      <div><span class="cs-meta-label">Scope</span><span class="cs-meta-val">Redesign Strategy<br>Lo-fi · Visual Design · Testing</span></div>
+      <div><span class="cs-meta-label">Client</span><span class="cs-meta-val">Marilyn<br>Luxury Corsets, Taiwan</span></div>
+    </div>
+  </section>
+
+  <div class="cs-img-full">
+    <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a7f85fc8-9e9d-48cc-8b65-d1ea109acdd0/banner.png" alt="Marilyn Banner" loading="lazy">
+  </div>
+
+  <!-- OVERVIEW -->
+  <section class="cs-section">
+    <div class="cs-text-grid reveal">
+      <span class="cs-text-label">Overview</span>
+      <p class="cs-text-body">
+        A dedicated anniversary campaign website for <strong>Marilyn</strong>, Taiwan's leading luxury brand for bespoke medical-grade corsets. I successfully translated the brand's "Elegant & Professional" visual DNA into a high-efficiency digital experience — optimising information architecture and implementing a <strong>centrosymmetric design aesthetic</strong> to strengthen trust among potential customers during the brand's most critical sales period.
+      </p>
+    </div>
+  </section>
+
+  <!-- TASK -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Challenge</span>
+      <h2 class="cs-sec-headline">Translating "Elegant & Dependable" into a frictionless digital campaign that converts.</h2>
+    </div>
+    <div class="cs-text-grid reveal">
+      <span class="cs-text-label">Complexity</span>
+      <p class="cs-text-body">
+        The anniversary event — the brand's most critical sales period — required a sophisticated platform that could showcase bespoke craftsmanship while handling <strong>multiple product categories, complex promotional tiers, and a seamless booking process</strong>. The challenge: making premium complexity feel effortless.
+      </p>
+    </div>
+  </section>
+
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b30a6c5d-ad9d-41cf-96ac-5dd35f4f1a93/discounts.png" alt="Discounts" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/bafd4385-fce8-4777-8fa6-d17709f915fa/3.6+design+strategy.jpg" alt="Design Strategy" loading="lazy">
+  </div>
+
+  <!-- DESIGN DECISIONS -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Design Decisions</span>
+      <h2 class="cs-sec-headline">Four principles anchored in "Refined Temperament."</h2>
+    </div>
+    <div class="cs-decisions reveal">
+      <div class="cs-decision">
+        <span class="cs-dec-num">01</span>
+        <span class="cs-dec-name">Strategic Branding</span>
+        <p class="cs-dec-desc">Developed a design strategy utilising a sophisticated palette of <strong>metallic gold (#B28850) and silver</strong> to reflect premium status. Designed custom iconography to communicate body-shaping functions intuitively.</p>
+      </div>
+      <div class="cs-decision">
+        <span class="cs-dec-num">02</span>
+        <span class="cs-dec-name">Structural Optimisation</span>
+        <p class="cs-dec-desc">Implemented a <strong>four-column grid system</strong> for special discount sections to enhance readability and allow users to compare complex promotional packages at a glance.</p>
+      </div>
+      <div class="cs-decision">
+        <span class="cs-dec-num">03</span>
+        <span class="cs-dec-name">Aesthetic Balance</span>
+        <p class="cs-dec-desc">Employed a <strong>centrosymmetric design principle</strong> on product pages to establish visual equilibrium — fostering security and reassurance for users interacting with high-ticket health products.</p>
+      </div>
+      <div class="cs-decision">
+        <span class="cs-dec-num">04</span>
+        <span class="cs-dec-name">Frictionless Conversion</span>
+        <p class="cs-dec-desc">Redesigned "Booking" forms with extreme simplicity to prevent cognitive overload, ensuring seamless transition from <strong>product discovery to offline appointment scheduling</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="cs-img-full reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/24de6e9e-8913-4202-9abc-cd30a677e6f3/3.10.jpg" alt="Design Detail" loading="lazy">
+  </div>
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/bcb1b0ec-5e66-436f-a757-9c7d5cd6de0a/3.3.jpg" alt="Logic Structure" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/ffc5652d-9a15-40aa-bbbc-88e4285ba18d/3.9.jpg" alt="Structure 2" loading="lazy">
+  </div>
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/4c19b887-9311-41d7-8ea4-928c7be4cd3e/3.5+lo-fi+wireframe.jpg" alt="Lo-fi Wireframe" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/8c8c5d4b-6684-4c1f-91e3-a9054365c4da/3.11.jpg" alt="UX Design" loading="lazy">
+  </div>
+  <div class="cs-img-grid-2 reveal">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/c9a831bf-205b-45a8-b4e2-d58d848c55f3/3.12+usability+testing.jpg" alt="Usability Testing" loading="lazy">
+    <img class="cs-img" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/ef71ba91-c0a1-480c-8f73-8173575e7cb8/3.12-2+clients%27+feedback.jpg" alt="Client Feedback" loading="lazy">
+  </div>
+
+  <!-- OUTCOME -->
+  <div class="cs-outcome reveal">
+    <span class="cs-out-label">Outcome</span>
+    <div class="cs-out-list">
+      <div class="cs-out-item">
+        <span class="cs-out-title">Validated Excellence</span>
+        <p class="cs-out-desc">Usability testing with <strong>10 participants</strong> praised the platform's clear hierarchy and ease of use.</p>
+      </div>
+      <div class="cs-out-item">
+        <span class="cs-out-title">Business Impact</span>
+        <p class="cs-out-desc">Post-launch feedback highlighted a <strong>significant increase in product sales</strong> and successful capture of new potential customers through redesigned lead generation funnels.</p>
+      </div>
+      <div class="cs-out-item">
+        <span class="cs-out-title">Client Affirmation</span>
+        <p class="cs-out-desc">The client specifically lauded the <strong>"reliable and elegant"</strong> design, confirming the new interface effectively elevated brand perception during the high-stakes campaign.</p>
+      </div>
+    </div>
+  </div>
+
+  <a class="cs-back-home" href="portfolio.html">
+    <div><span class="cs-back-label">← Back to Portfolio</span><div class="cs-back-name">All Work</div></div>
+    <span class="cs-back-arrow">←</span>
+  </a>
+  <footer><span>© 2026 Yu-Hsien (Rowan) Lin</span><span>Marilyn — 05 / 05</span></footer>
+
+  <script>
+    const ring=document.getElementById('cur-ring'),dot=document.getElementById('cur-dot');
+    let mx=-100,my=-100,rx=-100,ry=-100;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx-2}px,${my-2}px)`});
+    (function loop(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.transform=`translate(${rx-19}px,${ry-19}px)`;requestAnimationFrame(loop)})();
+    document.querySelectorAll('a').forEach(el=>{el.addEventListener('mouseenter',()=>ring.classList.add('expanded'));el.addEventListener('mouseleave',()=>ring.classList.remove('expanded'))});
+    const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  </script>
+</body>
+</html>

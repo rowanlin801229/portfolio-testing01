@@ -9,22 +9,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #F5F4F0;
-      --surface: #FFFFFF;
-      --surface2: #EFEFEB;
-      --fg: #1a1a18;
-      --mid: #3a3a37;
-      --muted: #6a6a66;
-      --line: rgba(26,26,24,0.12);
+      /* Aligned with Genebook / Ai Cun Cell case study pages */
+      --bg: #0e0e0d;
+      --surface: #141413;
+      --surface2: #1a1a19;
+      --fg: #8a8a86;
+      --mid: rgba(196, 196, 190, 0.88);
+      --muted: rgba(138, 138, 134, 0.55);
+      --line: rgba(138, 138, 134, 0.13);
+      --insight-italic: rgba(212, 212, 206, 0.95);
       --red: #C94F4F;
       --green: #3E9E6F;
-      --blue: #3A72C4;
-      --red-light: rgba(201,79,79,0.08);
-      --green-light: rgba(62,158,111,0.08);
-      --blue-light: rgba(58,114,196,0.08);
-      --red-mid: rgba(201,79,79,0.15);
-      --green-mid: rgba(62,158,111,0.15);
-      --blue-mid: rgba(58,114,196,0.18);
+      --blue: #5a8fd4;
+      --red-light: rgba(201, 79, 79, 0.14);
+      --green-light: rgba(62, 158, 111, 0.14);
+      --blue-light: rgba(90, 143, 212, 0.14);
+      --red-mid: rgba(201, 79, 79, 0.2);
+      --green-mid: rgba(62, 158, 111, 0.18);
+      --blue-mid: rgba(90, 143, 212, 0.22);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -43,7 +45,7 @@
     #cur-ring {
       position: fixed;
       width: 38px; height: 38px;
-      border: 1px solid rgba(201,79,79,0.35);
+      border: 1px solid rgba(201, 79, 79, 0.45);
       border-radius: 50%;
       pointer-events: none;
       z-index: 9998;
@@ -61,7 +63,7 @@
       top: 0; left: 0;
       will-change: transform;
     }
-    #cur-ring.expanded { width: 56px; height: 56px; border-color: var(--red); background: rgba(201,79,79,0.05); }
+    #cur-ring.expanded { width: 56px; height: 56px; border-color: var(--red); background: rgba(201, 79, 79, 0.08); }
 
     /* ── NAV ── */
     nav {
@@ -72,7 +74,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 1.2rem 5vw;
-      background: rgba(245,244,240,0.92);
+      background: rgba(14, 14, 13, 0.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--line);
     }
@@ -98,7 +100,7 @@
     /* ── HERO ── */
     .hero {
       padding: 8rem 5vw 0;
-      background: var(--surface);
+      background: var(--bg);
     }
     .hero-eyebrow {
       font-size: 0.58rem; letter-spacing: 0.35em; text-transform: uppercase;
@@ -139,7 +141,7 @@
       font-size: 0.58rem; letter-spacing: 0.28em; text-transform: uppercase;
       color: var(--red); display: block; margin-bottom: 0.4rem; font-weight: 700;
     }
-    .meta-val { font-size: 0.78rem; line-height: 1.6; color: var(--mid); }
+    .meta-val { font-size: 0.78rem; line-height: 1.6; color: var(--fg); font-weight: 400; }
 
     @keyframes fadeup { to { opacity: 1; transform: none; } }
 
@@ -168,11 +170,11 @@
     .bl-red { color: var(--red); }
     .bl-green { color: var(--green); }
 
-    /* insight block — dark full-width conclusion */
+    /* insight block — elevated band (matches other case studies) */
     .insight-block {
       padding: 1.8rem 5vw;
-      background: var(--fg);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
     }
     .insight-lbl {
       font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
@@ -182,15 +184,15 @@
       font-family: 'Cormorant Garamond', serif;
       font-style: italic; font-weight: 300;
       font-size: clamp(1.2rem, 2.2vw, 1.8rem);
-      line-height: 1.55; color: #F5F4F0;
+      line-height: 1.55; color: var(--insight-italic);
     }
     .insight-text strong { font-weight: 300; }
 
-    /* punchline — full width dark red text */
+    /* punchline — full width accent text */
     .punchline-full {
       padding: 1.5rem 5vw;
-      background: var(--fg);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: var(--surface2);
+      border-bottom: 1px solid var(--line);
     }
     .punchline-full p {
       font-family: 'Cormorant Garamond', serif;
@@ -232,12 +234,12 @@
     /* ── TASK ── */
     .task-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-bottom: 1.5rem; }
     .task-card { padding: 1.5rem; }
-    .task-card.prob { background: rgba(201,79,79,0.07); border: 0.5px solid rgba(201,79,79,0.2); }
-    .task-card.goal { background: rgba(62,158,111,0.07); border: 0.5px solid rgba(62,158,111,0.2); }
+    .task-card.prob { background: rgba(201, 79, 79, 0.1); border: 0.5px solid rgba(201, 79, 79, 0.28); }
+    .task-card.goal { background: rgba(62, 158, 111, 0.1); border: 0.5px solid rgba(62, 158, 111, 0.28); }
     .task-card-lbl {
       font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
       display: block; margin-bottom: 0.9rem;
-      padding-bottom: 0.7rem; border-bottom: 1px solid rgba(26,26,24,0.1);
+      padding-bottom: 0.7rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       font-weight: 700;
     }
     .task-card-lbl.prob { color: var(--red); }
@@ -281,7 +283,7 @@
     .tag-r { background: rgba(58,114,196,0.15); color: var(--blue); }
     .tag-s { background: rgba(201,79,79,0.15); color: var(--red); }
     .tag-d { background: rgba(62,158,111,0.15); color: var(--green); }
-    .tag-t { background: rgba(124,92,191,0.12); color: #6B46C1; }
+    .tag-t { background: rgba(180, 154, 224, 0.12); color: #b49ae0; }
 
     /* ── STRATEGY ── */
     .device-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 0.5px solid var(--line); margin-bottom: 1.8rem; }
@@ -297,7 +299,7 @@
 
     .heatmap-sub { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.8rem; }
     .heatmap-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-bottom: 1.5rem; }
-    .heatmap-table th { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 0 0 0.7rem; border-bottom: 2px solid var(--fg); text-align: left; color: var(--mid); font-weight: 600; }
+    .heatmap-table th { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 0 0 0.7rem; border-bottom: 2px solid rgba(196, 196, 190, 0.35); text-align: left; color: var(--mid); font-weight: 600; }
     .heatmap-table th.hc { text-align: center; width: 80px; }
     .heatmap-table td { padding: 0.5rem 0; border-bottom: 0.5px solid var(--line); color: var(--fg); vertical-align: middle; }
     .heatmap-table tr:last-child td { border-bottom: none; }
@@ -351,13 +353,14 @@
     .hf-top::before, .hf-bottom::before {
       content: '';
       position: absolute; left: 50%; top: 0; bottom: 0;
-      width: 1px; background: var(--line);
+      width: 2px;
+      background: rgba(138, 138, 134, 0.32);
       transform: translateX(-50%); z-index: 0;
     }
     .hf-row { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 0; align-items: center; margin-bottom: 6px; position: relative; z-index: 1; }
     .hf-num {
       width: 48px; height: 48px; border-radius: 50%;
-      border: 1.5px solid var(--line);
+      border: 2px solid rgba(138, 138, 134, 0.4);
       display: flex; align-items: center; justify-content: center;
       font-family: 'Cormorant Garamond', serif; font-style: italic;
       font-size: 1.2rem; color: var(--fg);
@@ -378,15 +381,76 @@
     .hf-card-ho .hf-desc { font-size: 0.72rem; color: var(--mid); line-height: 1.5; }
     .hf-empty { background: transparent; }
 
+    /* Handoff flow — scroll-stepped reveal */
+    .handoff-flow-section .hf-step {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .handoff-flow-section .hf-step.in {
+      opacity: 1;
+      transform: none;
+    }
+    .handoff-flow-intro > .body-text {
+      max-width: none;
+      width: 100%;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .handoff-flow-section .hf-step {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+
     /* ── KEY SCREENS ── */
-    .screens-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border-bottom: 1px solid var(--line); }
-    .screen-card { overflow: hidden; }
-    .screen-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
-    .screen-img-placeholder { height: 200px; background: #DDDDD8; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.3rem; }
-    .screen-info { padding: 0.9rem 1rem; background: var(--surface); border-top: 0.5px solid var(--line); }
-    .si-label { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.25rem; font-weight: 700; display: block; }
-    .si-scope { font-size: 0.55rem; font-weight: 400; opacity: 0.6; margin-left: 0.3rem; }
-    .si-text { font-size: 0.75rem; color: var(--mid); line-height: 1.6; }
+    .key-screens-intro { padding-bottom: clamp(1.25rem, 3vw, 2rem); border-bottom: none; }
+    .screens-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(1.5rem, 4vw, 3rem);
+      padding: 0 clamp(1.5rem, 6vw, 5rem) clamp(2.5rem, 5vw, 4rem);
+      padding-top: clamp(0.5rem, 1.5vw, 1rem);
+      border-bottom: 1px solid var(--line);
+      max-width: 1280px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .screen-card {
+      overflow: visible;
+      padding: 0;
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.85rem, 2vw, 1.25rem);
+    }
+    .screen-card .screen-img-wrap {
+      width: 88%;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .screen-card .screen-img-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: transparent;
+      border-radius: 0;
+    }
+    .screen-img-placeholder { min-height: 200px; background: var(--surface2); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.3rem; }
+    .screen-info {
+      padding: 0 0.25rem;
+      margin: 0;
+      background: transparent;
+      border: none;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 88%;
+    }
+    .si-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.45rem; font-weight: 700; display: block; line-height: 1.35; }
+    .si-scope { font-size: 0.62rem; font-weight: 400; opacity: 0.65; margin-left: 0.35rem; }
+    .si-text { font-size: 0.88rem; color: var(--mid); line-height: 1.65; margin: 0; }
 
     /* ── RESULT / IMPACT ── */
     .impact-split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid var(--line); }
@@ -430,9 +494,9 @@
     .reveal.in { opacity: 1; transform: none; }
 
     /* img placeholder util */
-    .img-ph { background: #DDDDD8; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.3rem; }
-    .img-ph-lbl { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: #999; font-family: 'Space Grotesk', sans-serif; }
-    .img-ph-sub { font-size: 0.55rem; color: #aaa; }
+    .img-ph { background: var(--surface2); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.3rem; }
+    .img-ph-lbl { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); font-family: 'Space Grotesk', sans-serif; }
+    .img-ph-sub { font-size: 0.55rem; color: var(--muted); }
   </style>
 </head>
 <body>
@@ -592,7 +656,7 @@
       <span class="step-tag tag-d">Design</span>
     </div>
     <div class="step">
-      <div class="step-num" style="color:#6B46C1;">04</div>
+      <div class="step-num" style="color:#b49ae0;">04</div>
       <span class="step-name">Test &amp; learn</span>
       <p class="step-desc">Voice search was well-received but <strong>long form-based steps still caused friction</strong> — validating the cross-device solution.</p>
       <span class="step-tag tag-t">Testing</span>
@@ -754,29 +818,35 @@
 </div>
 
 <!-- A: HANDOFF -->
-<section class="section reveal">
-  <div class="sec-stack">
-    <span class="sec-lbl">A — Handoff flow</span>
-    <h2 class="sec-hl">Start on TV. Finish on mobile.</h2>
+<section class="section handoff-flow-section">
+  <div class="handoff-flow-intro reveal">
+    <div class="sec-stack">
+      <span class="sec-lbl">A — Handoff flow</span>
+      <h2 class="sec-hl">Start on TV. Finish on mobile.</h2>
+    </div>
+    <p class="body-text" style="margin-bottom:1.8rem;">TV stays in control of the viewing and decision moment. Mobile takes over the moment high-effort input is required. The handoff is one tap — or one QR scan.</p>
   </div>
-  <p class="body-text" style="margin-bottom:1.8rem;max-width:65ch;">TV stays in control of the viewing and decision moment. Mobile takes over the moment high-effort input is required. The handoff is one tap — or one QR scan.</p>
 
   <!-- top segment with line: 01, 02 -->
   <div class="hf-top">
-    <div class="hf-row">
-      <div class="hf-card-tv"><span class="hf-device">TV</span><p class="hf-title">Product appears during broadcast</p><p class="hf-desc">Lightweight CTA overlay: "Press red to buy"</p></div>
-      <div class="hf-num">01</div>
-      <div class="hf-empty"></div>
+    <div class="hf-step" data-handoff-step>
+      <div class="hf-row">
+        <div class="hf-card-tv"><span class="hf-device">TV</span><p class="hf-title">Product appears during broadcast</p><p class="hf-desc">Lightweight CTA overlay: "Press red to buy"</p></div>
+        <div class="hf-num">01</div>
+        <div class="hf-empty"></div>
+      </div>
     </div>
-    <div class="hf-row">
-      <div class="hf-card-tv"><span class="hf-device">TV</span><p class="hf-title">User confirms intent</p><p class="hf-desc">Product summary + "Send to my phone"</p></div>
-      <div class="hf-num">02</div>
-      <div class="hf-empty"></div>
+    <div class="hf-step" data-handoff-step>
+      <div class="hf-row">
+        <div class="hf-card-tv"><span class="hf-device">TV</span><p class="hf-title">User confirms intent</p><p class="hf-desc">Product summary + "Send to my phone"</p></div>
+        <div class="hf-num">02</div>
+        <div class="hf-empty"></div>
+      </div>
     </div>
   </div>
 
   <!-- handoff row: no line, full width -->
-  <div class="hf-row-ho">
+  <div class="hf-step hf-row-ho" data-handoff-step>
     <div class="hf-card-ho">
       <span class="hf-device">Handoff</span>
       <p class="hf-title">QR code on TV or push notification to phone</p>
@@ -786,20 +856,26 @@
 
   <!-- bottom segment with line: 03, 04, 05 -->
   <div class="hf-bottom">
-    <div class="hf-row">
-      <div class="hf-empty"></div>
-      <div class="hf-num">03</div>
-      <div class="hf-card-mob"><span class="hf-device">Mobile</span><p class="hf-title">Mobile opens checkout</p><p class="hf-desc">Member data pre-filled — address and payment only</p></div>
+    <div class="hf-step" data-handoff-step>
+      <div class="hf-row">
+        <div class="hf-empty"></div>
+        <div class="hf-num">03</div>
+        <div class="hf-card-mob"><span class="hf-device">Mobile</span><p class="hf-title">Mobile opens checkout</p><p class="hf-desc">Member data pre-filled — address and payment only</p></div>
+      </div>
     </div>
-    <div class="hf-row">
-      <div class="hf-empty"></div>
-      <div class="hf-num">04</div>
-      <div class="hf-card-mob"><span class="hf-device">Mobile</span><p class="hf-title">Complete payment on mobile</p><p class="hf-desc">Touchscreen input — typically around 2 minutes</p></div>
+    <div class="hf-step" data-handoff-step>
+      <div class="hf-row">
+        <div class="hf-empty"></div>
+        <div class="hf-num">04</div>
+        <div class="hf-card-mob"><span class="hf-device">Mobile</span><p class="hf-title">Complete payment on mobile</p><p class="hf-desc">Touchscreen input — typically around 2 minutes</p></div>
+      </div>
     </div>
-    <div class="hf-row">
-      <div class="hf-card-tv"><span class="hf-device">TV</span><p class="hf-title">TV confirms success</p><p class="hf-desc">Brief confirmation, then auto-returns to content</p></div>
-      <div class="hf-num">05</div>
-      <div class="hf-empty"></div>
+    <div class="hf-step" data-handoff-step>
+      <div class="hf-row">
+        <div class="hf-card-tv"><span class="hf-device">TV</span><p class="hf-title">TV confirms success</p><p class="hf-desc">Brief confirmation, then auto-returns to content</p></div>
+        <div class="hf-num">05</div>
+        <div class="hf-empty"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -811,7 +887,7 @@
 </div>
 
 <!-- A: KEY SCREENS -->
-<section class="section reveal" style="padding-bottom:0;">
+<section class="section reveal key-screens-intro">
   <div class="sec-stack">
     <span class="sec-lbl">A — Key screens</span>
     <h2 class="sec-hl">Four moments that tell the full story.</h2>
@@ -819,30 +895,34 @@
 </section>
 <div class="screens-grid reveal">
   <div class="screen-card">
-    <!-- Replace with your actual TV CTA screenshot -->
-    <img src="images/faintv-key-tv-cta-overlay.jpg" alt="TV product CTA overlay" style="width:100%;height:200px;object-fit:cover;display:block;">
     <div class="screen-info"><span class="si-label" style="color:var(--red);">TV · Product CTA overlay <span class="si-scope">Shipped</span></span><p class="si-text">Non-intrusive product prompt during broadcast. One button triggers the handoff.</p></div>
+    <div class="screen-img-wrap">
+      <img src="images/faintv-key-tv-cta-overlay.jpg" alt="TV product CTA overlay">
+    </div>
   </div>
   <div class="screen-card">
-    <!-- Replace with your actual TV QR screenshot -->
-    <img src="images/faintv-key-tv-handoff-qr.jpg" alt="TV handoff QR screen" style="width:100%;height:200px;object-fit:cover;display:block;">
     <div class="screen-info"><span class="si-label" style="color:var(--red);">TV · Handoff moment <span class="si-scope">Shipped</span></span><p class="si-text">QR code on screen + push notification sent. The critical device transition.</p></div>
+    <div class="screen-img-wrap">
+      <img src="images/faintv-key-tv-handoff-qr.jpg" alt="TV handoff QR screen">
+    </div>
   </div>
   <div class="screen-card">
-    <!-- Replace with your mobile checkout screenshot -->
-    <img src="images/faintv-key-mobile-checkout.jpg" alt="Mobile checkout conceptual screen" style="width:100%;height:200px;object-fit:cover;display:block;">
     <div class="screen-info"><span class="si-label" style="color:var(--green);">Mobile · Checkout <span class="si-scope">Conceptual</span></span><p class="si-text">Pre-filled member data, touchscreen input. Typically around 2 minutes.</p></div>
+    <div class="screen-img-wrap">
+      <img src="images/faintv-key-mobile-checkout.jpg" alt="Mobile checkout conceptual screen">
+    </div>
   </div>
   <div class="screen-card">
-    <!-- Replace with your TV success state screenshot -->
-    <img src="images/faintv-key-tv-purchase-confirmed.jpg" alt="TV purchase confirmed state" style="width:100%;height:200px;object-fit:cover;display:block;">
     <div class="screen-info"><span class="si-label" style="color:var(--red);">TV · Purchase confirmed <span class="si-scope">Shipped</span></span><p class="si-text">Brief confirmation, then auto-returns to viewing. Loop closed on TV.</p></div>
+    <div class="screen-img-wrap">
+      <img src="images/faintv-key-tv-purchase-confirmed.jpg" alt="TV purchase confirmed state">
+    </div>
   </div>
 </div>
 
 <!-- R: RESULT -->
 <div class="insight-block reveal">
-  <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(1.1rem,2vw,1.6rem);line-height:1.6;color:#F5F4F0;">By moving high-input tasks off the TV and validating a cross-device handoff strategy, the redesign confirmed that <em style="color:var(--green);">device-fit matters more than interface polish.</em></p>
+  <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(1.1rem,2vw,1.6rem);line-height:1.6;color:var(--insight-italic);">By moving high-input tasks off the TV and validating a cross-device handoff strategy, the redesign confirmed that <em style="color:var(--green);">device-fit matters more than interface polish.</em></p>
 </div>
 
 <!-- IMPACT -->
@@ -927,6 +1007,32 @@
     });
   }, { threshold: 0.06 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* Handoff flow — one step at a time while scrolling */
+  (function initHandoffStepReveal() {
+    const section = document.querySelector('.handoff-flow-section');
+    if (!section) return;
+    const steps = section.querySelectorAll('[data-handoff-step]');
+    if (!steps.length) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      steps.forEach((el) => el.classList.add('in'));
+      return;
+    }
+
+    let next = 0;
+    const stepIo = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting || entry.target !== steps[next]) return;
+        entry.target.classList.add('in');
+        stepIo.unobserve(entry.target);
+        next += 1;
+        if (next < steps.length) stepIo.observe(steps[next]);
+      });
+    }, { threshold: 0.32, rootMargin: '0px 0px -15% 0px' });
+
+    stepIo.observe(steps[0]);
+  })();
 </script>
 </body>
 </html>
