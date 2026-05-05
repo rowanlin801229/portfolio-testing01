@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Genebook — Rowan Lin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
       --bg: #0e0e0d;
@@ -18,38 +19,40 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--fg); font-family: 'Space Grotesk', sans-serif; font-weight: 300; cursor: none; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--fg); font-family: 'Inter', system-ui, sans-serif; font-weight: 300; cursor: none; overflow-x: hidden; }
+    .display { font-family: 'Cormorant Garamond', Georgia, serif; }
 
     #cur-ring { position: fixed; width: 38px; height: 38px; border: 1px solid rgba(201,79,79,0.45); border-radius: 50%; pointer-events: none; z-index: 9998; top: 0; left: 0; transition: width .35s, height .35s, border-color .3s, background .3s; will-change: transform; }
     #cur-dot { position: fixed; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; top: 0; left: 0; will-change: transform; }
     #cur-ring.expanded { width: 60px; height: 60px; border-color: var(--accent); background: rgba(201,79,79,0.06); }
 
-    nav { position: fixed; inset: 0 0 auto; z-index: 200; display: flex; justify-content: space-between; align-items: center; padding: 2rem 5vw; }
-    .nav-back { display: flex; align-items: center; gap: 0.7rem; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+    nav { position: fixed; inset: 0 0 auto; z-index: 200; display: flex; justify-content: space-between; align-items: center; padding: 2rem 5vw; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(14,14,13,0.86); backdrop-filter: blur(12px); }
+    .nav-back { display: flex; align-items: center; gap: 0.7rem; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(210,210,205,0.88); text-decoration: none; transition: color 0.3s; }
     .nav-back:hover { color: var(--fg); }
     .nav-back-arrow { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); }
     .nav-back:hover .nav-back-arrow { transform: translateX(-4px); }
     .nav-right { display: flex; align-items: center; gap: 2rem; }
-    .nav-index { font-size: 0.62rem; letter-spacing: 0.15em; color: var(--muted); }
-    .nav-prev, .nav-next { display: flex; align-items: center; gap: 0.6rem; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+    .nav-index { font-size: 0.62rem; letter-spacing: 0.15em; color: rgba(210,210,205,0.72); }
+    .nav-prev, .nav-next { display: flex; align-items: center; gap: 0.6rem; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(210,210,205,0.88); text-decoration: none; transition: color 0.3s; }
     .nav-prev:hover, .nav-next:hover { color: var(--fg); }
     .nav-next-arrow { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); }
     .nav-next:hover .nav-next-arrow { transform: translateX(4px); }
 
     .cs-hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 120px 5vw 8vh; border-bottom: 1px solid var(--line); }
     .cs-label { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 2rem; display: block; opacity: 0; transform: translateY(12px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards; }
-    .cs-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(4rem, 11vw, 11rem); line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 4rem; opacity: 0; transform: translateY(60px); animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
+    .cs-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(4rem, 11vw, 11rem); line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 2rem; opacity: 0; transform: translateY(60px); animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
     .cs-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; border-top: 1px solid var(--line); padding-top: 2.5rem; opacity: 0; transform: translateY(20px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s forwards; }
     .cs-meta-label { font-size: 0.58rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.6rem; }
     .cs-meta-val { font-size: 0.82rem; line-height: 1.6; color: var(--fg); }
     @keyframes fadeup { to { opacity: 1; transform: none; } }
 
-    .cs-img { width: 100%; display: block; object-fit: cover; }
-    .cs-img-full { border-bottom: 1px solid var(--line); }
-    .cs-img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
-    .cs-img-single { padding: 0; border-bottom: 1px solid var(--line); }
+    .cs-img { width: 100%; display: block; object-fit: cover; transition: transform 0.9s cubic-bezier(0.16,1,0.3,1), opacity 0.6s ease; }
+    .cs-img:hover { transform: scale(1.03); }
+    .cs-img-full { border-bottom: 1px solid var(--line); overflow: hidden; }
+    .cs-img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; overflow: hidden; }
+    .cs-img-single { padding: 0; border-bottom: 1px solid var(--line); overflow: hidden; }
 
-    .cs-section { padding: 8vh 5vw; border-bottom: 1px solid var(--line); }
+    .cs-section { padding: clamp(5rem, 9vh, 8rem) 5vw; border-bottom: 1px solid var(--line); }
     .cs-sec-header { display: grid; grid-template-columns: 220px 1fr; gap: 6vw; margin-bottom: 5rem; }
     .cs-sec-label { font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); padding-top: 0.3rem; }
     .cs-sec-headline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.15; letter-spacing: -0.02em; }
@@ -79,7 +82,7 @@
     .cs-process-steps { display: flex; flex-direction: column; gap: 0; margin-top: 3rem; }
     .cs-proc-step { display: grid; grid-template-columns: 60px 220px 1fr; gap: 3rem; align-items: start; padding: 2.5rem 0; border-bottom: 1px solid var(--line); }
     .cs-proc-step:last-child { border-bottom: none; }
-    .cs-proc-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.6rem; font-weight: 300; color: rgba(201,79,79,0.3); }
+    .cs-proc-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.6rem; font-weight: 300; color: rgba(201,79,79,0.72); }
     .cs-proc-name { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg); padding-top: 0.2rem; }
     .cs-proc-desc { font-size: 0.85rem; line-height: 1.85; color: var(--muted); }
     .cs-proc-desc strong { color: var(--fg); font-weight: 400; }
@@ -102,7 +105,7 @@
     .cs-next-arrow { font-size: 3rem; color: var(--accent); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
     .cs-next:hover .cs-next-arrow { transform: translateX(12px); }
 
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1); }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1); }
     .reveal.in { opacity: 1; transform: none; }
 
     footer { padding: 2.5vh 5vw; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 0.6rem; letter-spacing: 0.1em; color: rgba(138,138,134,0.28); }
@@ -114,7 +117,7 @@
   <div id="cur-dot"></div>
 
   <nav>
-    <a class="nav-back" href="portfolio.html"><span class="nav-back-arrow">←</span> All Work</a>
+    <a class="nav-back" href="portfolio.html"><span class="nav-back-arrow">←</span> All Projects</a>
     <div class="nav-right">
       <span class="nav-index">02 / 05</span>
       <a class="nav-prev" href="faintv.html">← FainTV</a>
@@ -126,6 +129,9 @@
   <section class="cs-hero">
     <span class="cs-label">02 — Website · Branding Design · 4 Months</span>
     <h1 class="cs-title">Genebook</h1>
+    <div class="cs-img-full">
+      <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg" alt="Genebook Hero" loading="lazy">
+    </div>
     <div class="cs-meta">
       <div>
         <span class="cs-meta-label">Role</span>
@@ -145,11 +151,6 @@
       </div>
     </div>
   </section>
-
-  <!-- HERO IMAGE -->
-  <div class="cs-img-full">
-    <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg" alt="Genebook Hero" loading="lazy">
-  </div>
 
   <!-- OVERVIEW -->
   <section class="cs-section">
