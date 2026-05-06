@@ -9,15 +9,46 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&amp;family=Space+Grotesk:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      corePlugins: {
+        preflight: false,
+      },
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#ffffff',
+            /* Softer body text on light canvas (DS dark theme uses --fg #8a8a86 on dark bg, not near-black on white) */
+            ink: '#4a4a48',
+            accent: '#C94F4F',
+          },
+          fontFamily: {
+            display: ['Cormorant Garamond', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
   <style>
     :root {
-      --bg: #f5f4f2;
-      --fg: #8a8a86;
-      --accent: #E63A1A;
-      --muted: rgba(138,138,134,0.6);
-      --faint: rgba(138,138,134,0.15);
-      --line: rgba(138,138,134,0.15);
+      --bg: #ffffff;
+      /* DS: foreground on dark surfaces is #8a8a86; light page uses a softer charcoal, not ink #1e1e1c */
+      --fg: #4a4a48;
+      --accent: #C94F4F;
+      --muted: rgba(74, 74, 72, 0.58);
+      --faint: rgba(74, 74, 72, 0.06);
+      --line: rgba(74, 74, 72, 0.14);
+    }
+
+    /* Cursorrules: display / UI sans pairing */
+    .display {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      letter-spacing: -0.02em;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,7 +67,7 @@
     body {
       background: var(--bg);
       color: var(--fg);
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: Inter, system-ui, sans-serif;
       font-weight: 300;
       cursor: none;
       overflow-x: hidden;
@@ -109,7 +140,7 @@
     }
 
     .pl-t {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: Inter, system-ui, sans-serif;
       font-size: 0.85rem;
       letter-spacing: 0.1em;
       color: var(--accent);
@@ -177,9 +208,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.2rem 5vw;
+      padding: 1.25rem 5vw;
       background: #111110;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
     .nav-logo {
       font-family: 'Cormorant Garamond', serif;
@@ -208,7 +239,7 @@
       display: none;
       width: 40px;
       height: 40px;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(255, 255, 255, 0.28);
       background: transparent;
       align-items: center;
       justify-content: center;
@@ -229,11 +260,11 @@
       font-size: 0.68rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #ffffff;
+      color: rgba(255, 255, 255, 0.92);
       text-decoration: none;
       transition: color 0.3s;
     }
-    .nav-links a:hover { color: var(--fg); }
+    .nav-links a:hover { color: var(--accent); }
 
     /* ── SHARED ── */
     section { scroll-margin-top: 80px; }
@@ -629,12 +660,12 @@
       gap: 0.5rem;
       margin-top: 2rem;
       padding: 0.5rem 1.2rem;
-      background: #0e0e0d;
-      border: 1px solid #0e0e0d;
+      background: #ffffff;
+      border: 1px solid var(--line);
       font-size: 0.65rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #f0ede8;
+      color: var(--fg);
     }
     .visa-dot {
       width: 5px; height: 5px;
@@ -673,7 +704,7 @@
       font-size: 0.68rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(30,30,28,0.84);
+      color: rgba(74, 74, 72, 0.82);
       margin-top: 0.5rem;
       font-weight: 500;
     }
@@ -682,13 +713,13 @@
       font-size: 0.64rem;
       letter-spacing: 0.05em;
       text-transform: none;
-      color: rgba(30,30,28,0.72);
+      color: rgba(74, 74, 72, 0.68);
       font-weight: 400;
       line-height: 1.55;
     }
 
     .about-bio-small {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: Inter, system-ui, sans-serif;
       font-style: normal;
       font-size: 0.88rem;
       line-height: 1.9;
@@ -713,13 +744,13 @@
       padding-top: 2rem;
     }
 
-    /* ── SKILLS ── */
+    /* ── SKILLS (marquee between About & Impact) ── */
     #skills {
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding: 5vh 0;
       overflow: hidden;
-      background: #0e0e0d;
+      background: #111110;
     }
 
     .marquee-track {
@@ -752,12 +783,19 @@
       font-style: italic;
       font-size: clamp(1.3rem, 2.5vw, 1.9rem);
       font-weight: 300;
-      color: rgba(240,237,232,0.45);
+      color: rgba(255, 255, 255, 0.42);
       white-space: nowrap;
       transition: color 0.3s;
     }
-    .sk:hover .sk-name { color: #f0ede8; }
-    .sk-dot { width: 5px; height: 5px; border-radius: 50%; background: #E63A1A; opacity: 0.6; flex-shrink: 0; }
+    .sk:hover .sk-name { color: rgba(255, 255, 255, 0.95); }
+    .sk-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.92;
+      flex-shrink: 0;
+    }
 
     /* ── EXPERIENCE ── */
     #experience {
@@ -815,7 +853,7 @@
       gap: 0.2rem;
     }
     .exp-sub {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: Inter, system-ui, sans-serif;
       font-style: normal;
       font-size: 0.65rem;
       letter-spacing: 0.12em;
@@ -891,13 +929,13 @@
       position: relative;
       z-index: 1;
       padding: 3vh 5vw;
-      background: #000;
-      border-top: 1px solid var(--line);
+      background: #111110;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
       justify-content: space-between;
       font-size: 0.6rem;
       letter-spacing: 0.1em;
-      color: #ffffff;
+      color: rgba(255, 255, 255, 0.88);
     }
 
     /* ── RWD: TABLET ── */
@@ -1112,8 +1150,8 @@
       #nav-toggle:checked ~ .nav-links li:nth-child(4) a { transition-delay: 0.21s; }
       #nav-toggle:checked ~ .nav-links li:nth-child(5) a { transition-delay: 0.26s; }
       #nav-toggle:checked + .nav-toggle-btn {
-        border-color: rgba(240,237,232,0.26);
-        background: rgba(17,17,16,0.5);
+        border-color: rgba(255, 255, 255, 0.35);
+        background: rgba(255, 255, 255, 0.1);
       }
       #nav-toggle:checked + .nav-toggle-btn span:nth-child(1) {
         transform: translateY(6px) rotate(45deg);
@@ -1361,14 +1399,14 @@
 
   </style>
 </head>
-<body data-new-gr-c-s-check-loaded="14.1286.0" data-gr-ext-installed="" data-cc-id="cc-1" style="background-color: rgb(0, 0, 0); cursor: crosshair;">
+<body class="antialiased">
 
   <div id="tweaks-root"></div>
 
   <canvas id="stars" width="1044" height="662"></canvas>
 
-  <div id="cur-ring" class="hidden" style="transform: translate(835px, -17px);"></div>
-  <div id="cur-dot" style="transform: translate(852px, 0px);"></div>
+  <div id="cur-ring" class="hidden"></div>
+  <div id="cur-dot"></div>
 
   <!-- ── PRELOADER ── -->
   <div id="preloader" class="exiting" style="display: none;">
@@ -1419,7 +1457,7 @@
             <div class="hero-intro-stack">
               <div class="hero-marquee-strip hero-marquee-strip--ltr">
                 <div class="hero-marquee-viewport">
-                  <h1 class="hero-intro-text">
+                  <h1 class="hero-intro-text display">
                     Hi, I'm <span class="hero-intro-accent">Rowan.</span>
                   </h1>
                 </div>
@@ -1687,7 +1725,7 @@
     <!-- CONTACT -->
     <section id="contact">
       <span class="sec-label reveal in" style="transition-delay: 0.7s;">Let's Connect</span>
-      <h2 class="ct-headline reveal in" style="transition-delay: 0.8s;">
+      <h2 class="ct-headline display reveal in" style="transition-delay: 0.8s;">
         START A<br><em>MISSION</em><br>TOGETHER.
       </h2>
       <div class="ct-links reveal in" style="transition-delay: 0.9s;">
@@ -1717,10 +1755,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
   <script type="text/babel">
     const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-      "bg": "#f5f4f2",
-      "fg": "#1e1e1c",
-      "accent": "#e63a1a",
-      "line": "rgba(138,138,134,0.15)",
+      "bg": "#ffffff",
+      "fg": "#4a4a48",
+      "accent": "#C94F4F",
+      "line": "rgba(74,74,72,0.14)",
       "bodySize": 0.88,
       "letterSpacing": -0.03
     }/*EDITMODE-END*/;
