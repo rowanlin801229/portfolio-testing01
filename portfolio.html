@@ -23,6 +23,16 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
+    /* Hero intro: wheel drives text only until complete */
+    html.hero-intro-lock {
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
+
+    html.hero-intro-lock body {
+      overflow: hidden;
+    }
+
     body {
       background: var(--bg);
       color: var(--fg);
@@ -243,77 +253,191 @@
     }
     .reveal.in { opacity: 1; transform: none; }
 
-    /* ── HERO ── */
+    /* ── HERO (viewport — centered image + scroll cue) ── */
     #hero {
+      overflow-x: clip;
+      min-height: 100vh;
+      min-height: 100dvh;
       height: 100vh;
       height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(0, 1fr) auto;
+      row-gap: 0;
+      align-items: center;
+      justify-items: center;
       padding: 100px 5vw 9vh;
       position: relative;
     }
 
-    .hero-eye {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.9rem;
-      width: 50%;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #f0ede8;
-      background: #000;
-      padding: 1rem 1.35rem;
-      margin-top: 2.2rem;
-      margin-bottom: 0;
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
+    .hero-stage {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: center;
+      justify-self: center;
+      width: min(64vw, 640px);
+      max-width: 100%;
+      position: relative;
+      min-height: 0;
     }
-    .hero-eye-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--accent);
+
+    .hero-visual {
+      position: relative;
+      z-index: 0;
+      isolation: isolate;
+      width: 100%;
+    }
+
+    .hero-intro-line {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Full-viewport-width strips (break out of narrow hero-visual) */
+    .hero-marquee-strip {
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
       flex-shrink: 0;
     }
-    #main.visible .hero-eye { opacity: 1; transform: none; }
 
-    .hero-title {
+    .hero-marquee-viewport {
+      overflow: hidden;
+      width: 100%;
+      min-height: 0;
+    }
+
+    .hero-intro-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      gap: 2rem;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .hero-intro-text {
+      margin: 0;
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-weight: 300;
-      width: min(66.666%, 18ch);
-      max-width: 18ch;
-      font-size: clamp(3rem, 7.2vw, 7.2rem);
-      line-height: 0.98;
-      letter-spacing: -0.03em;
-      margin-bottom: 2.2rem;
-      overflow: hidden;
-    }
-    .h-line {
-      display: block;
+      font-size: clamp(5.25rem, 15.5vw, 12.25rem);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      white-space: nowrap;
       opacity: 0;
-      transform: translateY(105%);
-      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
-                  transform 0.9s cubic-bezier(0.16,1,0.3,1);
+      display: inline-block;
+      text-align: center;
+      will-change: transform, opacity;
     }
-    #main.visible .h-line:nth-child(1) { opacity:1; transform:none; transition-delay:0.1s; }
-    #main.visible .h-line:nth-child(2) { opacity:1; transform:none; transition-delay:0.25s; }
-    #main.visible .h-line:nth-child(3) { opacity:1; transform:none; transition-delay:0.4s; }
 
-    .hero-title .accent { color: var(--accent); }
+    .hero-intro-text .hero-intro-accent {
+      color: var(--accent);
+    }
 
-    .hero-foot {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
+    .hero-intro-sub {
+      margin: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 400;
+      /* Same fluid scale as tag; syncHeroSubFontToTagWidth bumps px to equal width */
+      font-size: clamp(2.4rem, 6.25vw, 4.15rem);
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      white-space: nowrap;
+      visibility: visible;
+      display: inline-block;
+      text-align: center;
+      will-change: transform, opacity;
+    }
+
+    .hero-intro-sub .hero-intro-accent {
+      color: var(--accent);
+    }
+
+    .hero-intro-tag {
+      margin: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(2.4rem, 6.25vw, 4.15rem);
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      white-space: nowrap;
+      visibility: visible;
+      display: inline-block;
+      text-align: center;
+      will-change: transform, opacity;
+    }
+
+    .hero-intro-tag .hero-intro-accent {
+      color: var(--accent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-marquee-viewport {
+        display: flex;
+        justify-content: center;
+      }
+
+      .hero-intro-text,
+      .hero-intro-sub,
+      .hero-intro-tag {
+        transform: none !important;
+      }
+    }
+
+    .hero-scroll {
+      grid-column: 1;
+      grid-row: 2;
+      justify-self: center;
+      align-self: end;
+      margin-top: 2rem;
       opacity: 0;
       transform: translateY(16px);
-      transition: opacity 0.7s ease 0.7s, transform 0.7s ease 0.7s;
+      transition:
+        opacity 0.7s ease 0.75s,
+        transform 0.7s ease 0.75s;
+      pointer-events: none;
     }
-    #main.visible .hero-foot { opacity: 1; transform: none; }
+    #main.visible .hero-scroll {
+      opacity: 1;
+      transform: none;
+    }
+
+    .hero-photo {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: min(70vh, 720px);
+      object-fit: contain;
+      object-position: center;
+      opacity: 0;
+      transform: translateY(28px) scale(0.98);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.45s,
+        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.45s;
+    }
+
+    #main.visible .hero-photo {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .hero-visual:hover .hero-photo {
+      transform: translateY(-2px) scale(1.01);
+    }
 
     .hero-desc {
       max-width: 56ch;
@@ -806,29 +930,53 @@
       #hero {
         min-height: 100vh;
         min-height: 100dvh;
-        height: auto;
+        height: 100vh;
+        height: 100dvh;
         padding: 96px 4vw 8vh;
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+        align-items: center;
+        justify-items: center;
+        row-gap: 0;
       }
-      .hero-title {
-        width: min(85%, 18ch);
-        font-size: clamp(2.8rem, 9vw, 5.8rem);
-        margin-bottom: 1.6rem;
+
+      .hero-stage {
+        grid-column: 1;
+        grid-row: 1;
+        width: min(78vw, 510px);
+        max-width: 100%;
       }
-      .hero-foot {
-        align-items: flex-start;
-        gap: 1.25rem;
+
+      .hero-intro-text {
+        font-size: clamp(4.85rem, 15vw, 10rem);
       }
+
+      .hero-intro-stack {
+        gap: 0.75rem;
+      }
+
+      .hero-intro-sub {
+        font-size: clamp(2.15rem, 6.45vw, 3.65rem);
+      }
+
+      .hero-intro-tag {
+        font-size: clamp(2.15rem, 6.45vw, 3.65rem);
+      }
+
+      .hero-scroll {
+        grid-column: 1;
+        grid-row: 2;
+        margin-top: 1.5rem;
+      }
+
+      .hero-photo {
+        max-height: min(58vh, 560px);
+      }
+
       .hero-desc {
         max-width: 62ch;
         font-size: 0.84rem;
         line-height: 1.75;
-      }
-      .hero-eye {
-        width: 100%;
-        font-size: 0.58rem;
-        letter-spacing: 0.16em;
-        padding: 0.85rem 1rem;
-        margin-top: 1.4rem;
       }
 
       #work,
@@ -987,37 +1135,77 @@
       }
 
       #hero {
-        min-height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
         height: auto;
         padding: 112px 4vw 7vh;
-        justify-content: flex-start;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        align-items: stretch;
+        justify-items: stretch;
+        row-gap: 0;
       }
-      .hero-title {
+
+      .hero-stage {
+        grid-column: 1;
+        grid-row: 1;
         width: 100%;
         max-width: 100%;
-        font-size: clamp(2.3rem, 12vw, 3.8rem);
-        line-height: 1.02;
-        margin-bottom: 1.3rem;
+        align-self: stretch;
       }
-      .hero-foot {
+
+      /* Stack: portrait on top, three headline rows below — no overlap */
+      .hero-visual {
+        display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 0.8rem;
+        align-items: stretch;
+        gap: 2rem;
       }
+
+      .hero-photo {
+        order: -1;
+        flex-shrink: 0;
+        margin-left: auto;
+        margin-right: auto;
+        max-height: min(62vh, 580px);
+      }
+
+      .hero-intro-line {
+        position: relative;
+        inset: auto;
+        flex: 0 0 auto;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      .hero-intro-text {
+        font-size: clamp(4.1rem, 18.5vw, 7.75rem);
+      }
+
+      .hero-intro-stack {
+        gap: 0.5rem;
+      }
+
+      .hero-intro-sub {
+        font-size: clamp(1.85rem, 6.65vw, 3rem);
+      }
+
+      .hero-intro-tag {
+        font-size: clamp(1.85rem, 6.65vw, 3rem);
+      }
+
+      .hero-scroll {
+        grid-column: 1;
+        grid-row: 2;
+        margin-top: 1rem;
+      }
+
       .hero-desc {
         font-size: 0.78rem;
         line-height: 1.7;
       }
-      .scroll-ind {
-        display: none;
-      }
-      .hero-eye {
-        width: 100%;
-        margin-top: 0.9rem;
-        font-size: 0.52rem;
-        letter-spacing: 0.12em;
-        gap: 0.6rem;
-        padding: 0.75rem 0.85rem;
+      .scroll-bar {
+        height: 40px;
       }
 
       #work,
@@ -1224,24 +1412,50 @@
     </nav>
 
     <!-- HERO -->
-    <section id="hero">
-      <h1 class="hero-title">
-        <span class="accent">Cross-screen</span>
-        <span class="h-line">UI/UX &amp; <em class="h-line">Product</em></span>
-        <span class="h-line">Designer.</span>
-      </h1>
-      <div class="hero-foot" style="color: rgb(57, 57, 57)">
-        <p class="hero-desc">
-          Designing scalable product experiences from mobile screens to large displays.
-        </p>
+    <section id="hero" aria-label="Introduction">
+      <div class="hero-stage">
+        <div class="hero-visual">
+          <div class="hero-intro-line">
+            <div class="hero-intro-stack">
+              <div class="hero-marquee-strip hero-marquee-strip--ltr">
+                <div class="hero-marquee-viewport">
+                  <h1 class="hero-intro-text">
+                    Hi, I'm <span class="hero-intro-accent">Rowan.</span>
+                  </h1>
+                </div>
+              </div>
+              <div class="hero-marquee-strip hero-marquee-strip--rtl">
+                <div class="hero-marquee-viewport">
+                  <p class="hero-intro-sub">
+                    Cross-screen UI/UX <span class="hero-intro-accent">Designer</span>
+                  </p>
+                </div>
+              </div>
+              <div class="hero-marquee-strip hero-marquee-strip--ltr">
+                <div class="hero-marquee-viewport">
+                  <p class="hero-intro-tag">
+                    Bridging platforms, <span class="hero-intro-accent">connecting users.</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <img
+            class="hero-photo"
+            src="images/02.png"
+            width="1536"
+            height="2048"
+            alt=""
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      </div>
+      <div class="hero-scroll" aria-hidden="true">
         <div class="scroll-ind">
           <div class="scroll-bar"></div>
           <span>Scroll</span>
         </div>
-      </div>
-      <div class="hero-eye">
-        <span class="hero-eye-dot"></span>
-        <span>Based in London &nbsp;·&nbsp; Authorised to work in the UK and Taiwan</span>
       </div>
     </section>
 
@@ -1481,7 +1695,11 @@
         <span class="ct-sep"></span>
         <a class="ct-link" href="https://www.linkedin.com/in/rowanlin1229/" target="_blank" rel="noopener">LinkedIn</a>
         <span class="ct-sep"></span>
-        <a class="ct-link" href="#download-cv">Download CV</a>
+        <a
+          class="ct-link"
+          href="uploads/rowan-lin-cv.pdf"
+          download="Rowan-Lin-CV.pdf"
+        >Download CV</a>
       </div>
     </section>
 
@@ -1503,7 +1721,6 @@
       "fg": "#1e1e1c",
       "accent": "#e63a1a",
       "line": "rgba(138,138,134,0.15)",
-      "headingSize": 7.5,
       "bodySize": 0.88,
       "letterSpacing": -0.03
     }/*EDITMODE-END*/;
@@ -1519,7 +1736,6 @@
         }
         if (key === 'fg')     document.documentElement.style.setProperty('--fg', val);
         if (key === 'accent') document.documentElement.style.setProperty('--accent', val);
-        if (key === 'headingSize') document.querySelector('.hero-title') && (document.querySelector('.hero-title').style.fontSize = val + 'rem');
         if (key === 'bodySize')    document.querySelectorAll('.hero-desc, .about-bio-small, .cs-text-body').forEach(el => el.style.fontSize = val + 'rem');
       }
 
@@ -1531,8 +1747,7 @@
             React.createElement(TweakColor, { label: "Accent",     value: tweaks.accent, onChange: (v) => set("accent", v) })
           ),
           React.createElement(TweakSection, { label: "Typography" },
-            React.createElement(TweakSlider, { label: "Hero size (rem)", value: tweaks.headingSize, min: 6,   max: 16,  step: 0.5,  onChange: (v) => set("headingSize", v) }),
-            React.createElement(TweakSlider, { label: "Body size (rem)", value: tweaks.bodySize,    min: 0.7, max: 1.2, step: 0.05, onChange: (v) => set("bodySize", v) })
+            React.createElement(TweakSlider, { label: "Body size (rem)", value: tweaks.bodySize, min: 0.7, max: 1.2, step: 0.05, onChange: (v) => set("bodySize", v) })
           )
         )
       );
@@ -1542,6 +1757,332 @@
   </script>
 
   <script>
+    /* ── HERO INTRO: wheel meter → three full-viewport marquee rows (L→R / R→L / L→R); ↑ at page top rewinds ── */
+    (function () {
+      const root = document.documentElement;
+      const hero = document.getElementById('hero');
+      const intro = document.querySelector('.hero-intro-text');
+      const introSub = document.querySelector('.hero-intro-sub');
+      const introTag = document.querySelector('.hero-intro-tag');
+      const visual = document.querySelector('#hero .hero-visual');
+      if (!hero || !intro || !visual || !introSub || !introTag) return;
+
+      const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      /** Match line 2 rendered width to line 3 (line 2 is shorter copy at same nominal size). */
+      function syncHeroSubFontToTagWidth() {
+        introSub.style.removeProperty('font-size');
+        void introTag.offsetWidth;
+        void introSub.offsetWidth;
+
+        const target = introTag.scrollWidth;
+        if (!target || target < 4) return;
+
+        let lo = parseFloat(getComputedStyle(introSub).fontSize);
+        if (!lo || lo < 8) lo = 16;
+
+        let hi = lo;
+        introSub.style.fontSize = hi + 'px';
+        void introSub.offsetWidth;
+        let guard = 0;
+        while (introSub.scrollWidth < target && hi < lo * 6 && guard < 48) {
+          hi *= 1.06;
+          introSub.style.fontSize = hi + 'px';
+          void introSub.offsetWidth;
+          guard += 1;
+        }
+        if (introSub.scrollWidth < target) return;
+
+        for (let i = 0; i < 28; i++) {
+          const mid = (lo + hi) / 2;
+          introSub.style.fontSize = mid + 'px';
+          void introSub.offsetWidth;
+          if (introSub.scrollWidth >= target) hi = mid;
+          else lo = mid;
+        }
+        introSub.style.fontSize = hi + 'px';
+      }
+
+      function getViewportW(el) {
+        const vp = el.closest('.hero-marquee-viewport');
+        return vp && vp.offsetWidth > 0 ? vp.offsetWidth : window.innerWidth;
+      }
+
+      function getTextW(el) {
+        return Math.max(el.offsetWidth || 0, el.scrollWidth || 0, 48);
+      }
+
+      function insetPad(W) {
+        return Math.min(56, Math.max(24, W * 0.05));
+      }
+
+      /** Scroll fraction (0–1) → motion for text (same endpoints, gentler / slower feel) */
+      function scrollToMotion(raw) {
+        const t = Math.max(0, Math.min(1, raw));
+        return Math.pow(t, 1.42);
+      }
+
+      /** Row 1 & 3: marquee left → right into horizontal center */
+      function applyPhase1Progress(p) {
+        const clamped = Math.max(0, Math.min(1, p));
+        const W = getViewportW(intro);
+        const Tw = getTextW(intro);
+        const pad = insetPad(W);
+        const start = -Tw - pad;
+        const end = (W - Tw) / 2;
+        const x = start + (end - start) * clamped;
+        const o = clamped <= 0 ? 0 : Math.min(1, Math.pow(clamped, 1.15));
+        if (window.gsap) gsap.set(intro, { x, opacity: o });
+        else {
+          intro.style.transform = 'translate3d(' + x + 'px,0,0)';
+          intro.style.opacity = String(o);
+        }
+      }
+
+      /** Row 2: marquee right → left into center */
+      function applyPhase2Progress(p) {
+        const clamped = Math.max(0, Math.min(1, p));
+        const W = getViewportW(introSub);
+        const Tw = getTextW(introSub);
+        const pad = insetPad(W);
+        const start = W + pad;
+        const end = (W - Tw) / 2;
+        const x = start + (end - start) * clamped;
+        const o = 0.35 + 0.65 * clamped;
+        if (window.gsap) gsap.set(introSub, { x, opacity: o });
+        else {
+          introSub.style.transform = 'translate3d(' + x + 'px,0,0)';
+          introSub.style.opacity = String(o);
+        }
+      }
+
+      function revealSubRail() {
+        if (window.gsap) gsap.set(introSub, { visibility: 'visible' });
+        else introSub.style.visibility = 'visible';
+      }
+
+      function hideSubInitially() {
+        const W = getViewportW(introSub);
+        const Tw = getTextW(introSub);
+        const pad = insetPad(W);
+        const start = W + pad;
+        if (window.gsap) gsap.set(introSub, { opacity: 0, x: start, visibility: 'hidden' });
+        else {
+          introSub.style.opacity = '0';
+          introSub.style.visibility = 'hidden';
+          introSub.style.transform = 'translate3d(' + start + 'px,0,0)';
+        }
+      }
+
+      /** Row 3: same as row 1 (L → R) */
+      function applyPhase3Progress(p) {
+        const clamped = Math.max(0, Math.min(1, p));
+        const W = getViewportW(introTag);
+        const Tw = getTextW(introTag);
+        const pad = insetPad(W);
+        const start = -Tw - pad;
+        const end = (W - Tw) / 2;
+        const x = start + (end - start) * clamped;
+        const o = 0.35 + 0.65 * clamped;
+        if (window.gsap) gsap.set(introTag, { x, opacity: o });
+        else {
+          introTag.style.transform = 'translate3d(' + x + 'px,0,0)';
+          introTag.style.opacity = String(o);
+        }
+      }
+
+      function revealTagRail() {
+        if (window.gsap) gsap.set(introTag, { visibility: 'visible' });
+        else introTag.style.visibility = 'visible';
+      }
+
+      function hideTagInitially() {
+        const W = getViewportW(introTag);
+        const Tw = getTextW(introTag);
+        const pad = insetPad(W);
+        const start = -Tw - pad;
+        if (window.gsap) gsap.set(introTag, { opacity: 0, x: start, visibility: 'hidden' });
+        else {
+          introTag.style.opacity = '0';
+          introTag.style.visibility = 'hidden';
+          introTag.style.transform = 'translate3d(' + start + 'px,0,0)';
+        }
+      }
+
+      /* Higher MAX = slower slide per wheel tick; still lighter than original ~1000 */
+      const MAX_P1 = 380;
+      const MAX_P2 = 380;
+      const MAX_P3 = 380;
+      const M12 = MAX_P1 + MAX_P2;
+      const MAX_TOTAL = M12 + MAX_P3;
+
+      let meter = 0;
+      let unlocked = false;
+
+      function unlockScroll() {
+        root.classList.remove('hero-intro-lock');
+      }
+
+      function lockScroll() {
+        root.classList.add('hero-intro-lock');
+      }
+
+      function polishAtEnd() {
+        if (window.gsap)
+          gsap.set([intro, introSub, introTag], {
+            visibility: 'visible',
+            clearProps: 'willChange',
+          });
+        else {
+          intro.style.willChange = 'auto';
+          introSub.style.willChange = 'auto';
+          introTag.style.willChange = 'auto';
+        }
+      }
+
+      /** 0→P1→P12→TOTAL : line1 (L→R), line2 (R→L), line3 (L→R); bidirectional */
+      function applyFromMeter() {
+        meter = Math.max(0, Math.min(MAX_TOTAL, meter));
+
+        if (meter < MAX_P1) {
+          applyPhase1Progress(scrollToMotion(meter / MAX_P1));
+          hideSubInitially();
+          hideTagInitially();
+        } else if (meter < M12) {
+          applyPhase1Progress(1);
+          revealSubRail();
+          applyPhase2Progress(scrollToMotion((meter - MAX_P1) / MAX_P2));
+          hideTagInitially();
+        } else {
+          applyPhase1Progress(1);
+          revealSubRail();
+          applyPhase2Progress(1);
+          revealTagRail();
+          applyPhase3Progress(scrollToMotion((meter - M12) / MAX_P3));
+        }
+
+        const atEnd = meter >= MAX_TOTAL * 0.999;
+
+        if (atEnd && !unlocked) {
+          unlocked = true;
+          unlockScroll();
+          polishAtEnd();
+        } else if (!atEnd && unlocked) {
+          unlocked = false;
+          lockScroll();
+        }
+      }
+
+      if (mqReduce.matches) {
+        syncHeroSubFontToTagWidth();
+        meter = MAX_TOTAL;
+        unlocked = true;
+        revealSubRail();
+        revealTagRail();
+        applyPhase1Progress(1);
+        applyPhase2Progress(1);
+        applyPhase3Progress(1);
+        polishAtEnd();
+        return;
+      }
+
+      if (window.scrollY > 48) {
+        syncHeroSubFontToTagWidth();
+        meter = MAX_TOTAL;
+        unlocked = true;
+        revealSubRail();
+        revealTagRail();
+        applyPhase1Progress(1);
+        applyPhase2Progress(1);
+        applyPhase3Progress(1);
+        polishAtEnd();
+        return;
+      }
+
+      lockScroll();
+      meter = 0;
+      syncHeroSubFontToTagWidth();
+      applyFromMeter();
+
+      /* Recalculate travel after webfonts (fixes “Rowan” edge before metrics settle) */
+      if (document.fonts && typeof document.fonts.ready !== 'undefined') {
+        document.fonts.ready.then(() => {
+          syncHeroSubFontToTagWidth();
+          if (!unlocked) applyFromMeter();
+        });
+      }
+
+      function normWheelDy(e) {
+        let dy = e.deltaY;
+        if (e.deltaMode === 1) dy *= 16;
+        else if (e.deltaMode === 2) dy *= window.innerHeight;
+        return dy;
+      }
+
+      function ingestDelta(dy) {
+        meter += dy;
+        applyFromMeter();
+      }
+
+      function onWheel(e) {
+        if (e.ctrlKey || e.metaKey) return;
+
+        const dy = normWheelDy(e);
+
+        /* After intro complete: scroll up while at page top rewinds along the same path */
+        if (unlocked) {
+          if (window.scrollY > 48) return;
+          if (dy >= 0) return;
+          e.preventDefault();
+          ingestDelta(dy);
+          return;
+        }
+
+        e.preventDefault();
+        ingestDelta(dy);
+      }
+
+      window.addEventListener('wheel', onWheel, { passive: false });
+
+      let touchLastY = null;
+      hero.addEventListener(
+        'touchstart',
+        (e) => {
+          if (unlocked) return;
+          touchLastY = e.touches[0].clientY;
+        },
+        { passive: true },
+      );
+      hero.addEventListener(
+        'touchmove',
+        (e) => {
+          if (unlocked) return;
+          if (touchLastY === null) return;
+          e.preventDefault();
+          const y = e.touches[0].clientY;
+          ingestDelta(touchLastY - y);
+          touchLastY = y;
+        },
+        { passive: false },
+      );
+      hero.addEventListener(
+        'touchend',
+        () => {
+          touchLastY = null;
+        },
+        { passive: true },
+      );
+
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          syncHeroSubFontToTagWidth();
+          applyFromMeter();
+        }, 120);
+      });
+    })();
+
     /* ── EXPERIENCE ACCORDION ENTRANCE ── */
     (function () {
       const expSection = document.getElementById('experience');
