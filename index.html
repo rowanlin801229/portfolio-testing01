@@ -2430,6 +2430,13 @@
       const bar = document.getElementById('pl-progress-fill');
       const main = document.getElementById('main');
       if (!pl || words.some(Boolean) === false || !counter || !bar || !main) return;
+      const PRELOADER_KEY = 'portfolio_preloader_seen';
+
+      if (sessionStorage.getItem(PRELOADER_KEY) === '1') {
+        pl.style.display = 'none';
+        main.classList.add('visible');
+        return;
+      }
 
       const DURATION = 2700;
 
@@ -2476,6 +2483,7 @@
         setTimeout(() => {
           pl.classList.add('fade-out');
           main.classList.add('visible');
+          sessionStorage.setItem(PRELOADER_KEY, '1');
           setTimeout(() => {
             pl.style.display = 'none';
           }, 650);
