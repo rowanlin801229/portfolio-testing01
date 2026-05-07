@@ -1637,7 +1637,14 @@
     <!-- ABOUT -->
     <section id="about">
       <div class="about-photo-wrap">
-        <img class="about-photo" src="uploads/rowan%20sdie%20left.jpg" alt="Rowan Lin" onerror="this.onerror=null;this.src='uploads/rowan-side-left.jpg';">
+        <img
+          class="about-photo"
+          src="./images/about-rowan.jpg"
+          alt="Rowan Lin"
+          loading="lazy"
+          decoding="async"
+          onerror="this.onerror=null;this.src='./images/02.png';"
+        >
         <div class="visa-tag reveal" style="margin-top:1.5rem;">
           <span class="visa-dot"></span>
           UK Skilled Worker Visa &nbsp;·&nbsp; Taiwan Work Authorisation
@@ -2455,6 +2462,18 @@
         link.addEventListener('click', () => {
           navToggle.checked = false;
         });
+      });
+    })();
+
+    /* ── ABOUT PHOTO FALLBACK ── */
+    (function () {
+      const aboutPhoto = document.querySelector('.about-photo');
+      if (!aboutPhoto) return;
+
+      window.addEventListener('load', () => {
+        if (aboutPhoto.complete && aboutPhoto.naturalWidth === 0) {
+          aboutPhoto.src = './images/02.png';
+        }
       });
     })();
   </script>
