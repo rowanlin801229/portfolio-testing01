@@ -541,7 +541,7 @@
     /* ── WORK ── */
     #work {
       padding: 10vh 5vw;
-      border-top: 1px solid var(--line);
+      border-top: none;
     }
 
     .work-list { list-style: none; margin-top: 1rem; }
@@ -669,7 +669,7 @@
     /* ── ABOUT ── */
     #about {
       padding: 12vh 5vw;
-      border-top: 1px solid var(--line);
+      border-top: none;
       display: grid;
       grid-template-columns: 320px 1fr;
       gap: 5vw;
@@ -771,7 +771,7 @@
     /* ── IMPACT ── */
     #impact {
       padding: 10vh 5vw;
-      border-top: 1px solid var(--line);
+      border-top: none;
     }
     .stats-grid-full {
       display: grid;
@@ -786,8 +786,8 @@
 
     /* ── SKILLS (marquee between About & Impact) ── */
     #skills {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: none;
+      border-bottom: none;
       padding: 5vh 0;
       overflow: hidden;
       background: #111110;
@@ -840,7 +840,7 @@
     /* ── EXPERIENCE ── */
     #experience {
       padding: 10vh 5vw;
-      border-top: 1px solid var(--line);
+      border-top: none;
     }
     #experience .sec-label {
       font-size: 1rem;
@@ -920,7 +920,7 @@
     /* ── CONTACT ── */
     #contact {
       padding: 14vh 5vw 10vh;
-      border-top: 1px solid var(--line);
+      border-top: none;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -2113,6 +2113,42 @@
         applyPhase2Progress(1);
         applyPhase3Progress(1);
         polishAtEnd();
+        return;
+      }
+
+      if (IS_MOBILE_HERO) {
+        lockScroll();
+        meter = 0;
+        syncHeroSubFontToTagWidth();
+        applyFromMeter();
+
+        const MOBILE_AUTO_INTRO_MS = 980;
+        let introStart = null;
+        function runMobileAutoIntro(ts) {
+          if (!introStart) introStart = ts;
+          const t = Math.min(1, (ts - introStart) / MOBILE_AUTO_INTRO_MS);
+          const eased = 1 - Math.pow(1 - t, 3);
+          meter = MAX_TOTAL * eased;
+          applyFromMeter();
+          if (t < 1) requestAnimationFrame(runMobileAutoIntro);
+        }
+        requestAnimationFrame(runMobileAutoIntro);
+
+        if (document.fonts && typeof document.fonts.ready !== 'undefined') {
+          document.fonts.ready.then(() => {
+            syncHeroSubFontToTagWidth();
+            if (!unlocked) applyFromMeter();
+          });
+        }
+
+        let resizeTimer = null;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            syncHeroSubFontToTagWidth();
+            applyFromMeter();
+          }, 120);
+        });
         return;
       }
 
