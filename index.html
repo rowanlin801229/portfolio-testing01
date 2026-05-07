@@ -112,84 +112,77 @@
       z-index: 0;
     }
 
-    /* ── PRELOADER ── */
+    /* ── PRELOADER (legacy Design / Create / Inspire) ── */
     #preloader {
       position: fixed;
       inset: 0;
-      background: var(--bg);
+      background: var(--accent);
       z-index: 5000;
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #preloader.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #word-container {
+      position: absolute;
+      inset: 0;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2.5rem;
-    }
-
-    .pl-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    #pl-countdown {
-      position: relative;
-      display: flex;
-      align-items: baseline;
-      gap: 0.6rem;
-    }
-
-    .pl-t {
-      font-family: Inter, system-ui, sans-serif;
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
-      color: var(--accent);
-      margin-bottom: 0.2em;
-    }
-
-    #pl-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: clamp(6rem, 16vw, 13rem);
-      line-height: 1;
-      letter-spacing: -0.02em;
-      color: var(--fg);
-      min-width: 2.2ch;
-      text-align: center;
-      display: inline-block;
-    }
-
-    #pl-progress {
-      width: 180px;
-      height: 1px;
-      background: var(--line);
       overflow: hidden;
     }
-    #pl-bar {
-      height: 100%;
-      background: var(--accent);
-      width: 0%;
-      transition: width 0.9s linear;
-    }
-
-    #pl-ignition {
-      font-size: 0.65rem;
-      letter-spacing: 0.45em;
-      text-transform: uppercase;
-      color: var(--accent);
+    .pl-word {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      color: #ffffff;
+      line-height: 1;
+      position: absolute;
       opacity: 0;
-      transition: opacity 0.4s;
-      height: 1em;
+      transform: translateY(20px);
+      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    #pl-ignition.show { opacity: 1; }
+    .pl-word.enter { opacity: 0.95; transform: translateY(0); }
+    .pl-word.exit { opacity: 0; transform: translateY(-20px); }
 
-    @keyframes pl-exit {
-      0%   { opacity: 1; clip-path: inset(0 0 0 0); }
-      40%  { opacity: 1; clip-path: inset(0 0 0 0); }
-      100% { opacity: 0; clip-path: inset(50% 0 50% 0); }
+    #pl-counter {
+      position: absolute;
+      right: clamp(2rem, 3vw, 3rem);
+      bottom: clamp(2rem, 3vw, 3rem);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(4rem, 10vw, 8rem);
+      line-height: 1;
+      color: #ffffff;
+      font-variant-numeric: tabular-nums;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 0.6s 0.1s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    #preloader.exiting { animation: pl-exit 0.9s cubic-bezier(0.7, 0, 0.3, 1) forwards; }
+    #pl-counter.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #pl-progress-track {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      background: var(--faint);
+    }
+    #pl-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.1s linear;
+    }
 
     /* ── MAIN ── */
     #main {
@@ -1479,18 +1472,20 @@
   <div id="cur-dot"></div>
 
   <!-- ── PRELOADER ── -->
-  <div id="preloader" class="exiting" style="display: none;">
-    <div class="pl-label">Mission Control — Launch Sequence</div>
-    <div id="pl-countdown">
-      <span class="pl-t">T —</span>
-      <span id="pl-num" style="transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); opacity: 1; transform: translateY(0px);">00</span>
+  <div id="preloader">
+    <div id="word-container">
+      <span class="pl-word" id="pl-w0">Design</span>
+      <span class="pl-word" id="pl-w1">Adapt</span>
+      <span class="pl-word" id="pl-w2">Scale</span>
     </div>
-    <div id="pl-progress"><div id="pl-bar" style="width: 100%; transition: width 0.85s linear;"></div></div>
-    <div id="pl-ignition" class="show">Ignition</div>
+    <div id="pl-counter">000</div>
+    <div id="pl-progress-track">
+      <div id="pl-progress-fill"></div>
+    </div>
   </div>
 
   <!-- ── MAIN ── -->
-  <div id="main" class="visible">
+  <div id="main">
     <nav>
       <a class="nav-logo" href="#hero" aria-label="Back to top">
         <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.63 35.01" role="img">
@@ -2393,59 +2388,64 @@
     /* ── PRELOADER ── */
     (function () {
       const pl = document.getElementById('preloader');
-      const numEl = document.getElementById('pl-num');
-      const bar = document.getElementById('pl-bar');
-      const ign = document.getElementById('pl-ignition');
+      const words = ['pl-w0', 'pl-w1', 'pl-w2'].map(id => document.getElementById(id));
+      const counter = document.getElementById('pl-counter');
+      const bar = document.getElementById('pl-progress-fill');
       const main = document.getElementById('main');
-      let count = 5;
+      if (!pl || words.some(Boolean) === false || !counter || !bar || !main) return;
 
-      function flipNum(n) {
-        numEl.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
-        numEl.style.opacity = '0';
-        numEl.style.transform = 'translateY(-18px)';
-        setTimeout(() => {
-          numEl.textContent = String(Math.max(n, 0)).padStart(2, '0');
-          numEl.style.transition = 'none';
-          numEl.style.transform = 'translateY(18px)';
-          numEl.style.opacity = '0';
-          requestAnimationFrame(() => requestAnimationFrame(() => {
-            numEl.style.transition = 'opacity 0.3s cubic-bezier(0.16,1,0.3,1), transform 0.3s cubic-bezier(0.16,1,0.3,1)';
-            numEl.style.opacity = '1';
-            numEl.style.transform = 'translateY(0)';
-          }));
-        }, 190);
+      const DURATION = 2700;
+
+      function padded(n) {
+        return Math.round(n).toString().padStart(3, '0');
       }
 
-      bar.style.width = '0%';
-      flipNum(5);
+      requestAnimationFrame(() => {
+        counter.classList.add('visible');
+        words[0].classList.add('enter');
+      });
 
-      const total = 5;
-      const tick = setInterval(() => {
-        count--;
-        const pct = ((total - count) / total) * 100;
-        bar.style.transition = 'width 0.85s linear';
-        bar.style.width = pct + '%';
-
-        if (count <= 0) {
-          clearInterval(tick);
-          flipNum(0);
-
-          setTimeout(() => {
-            ign.classList.add('show');
-          }, 500);
-
-          setTimeout(() => {
-            pl.classList.add('exiting');
-            main.classList.add('visible');
-          }, 1300);
-
-          setTimeout(() => {
-            pl.style.display = 'none';
-          }, 2200);
+      let wi = 0;
+      const wordTimer = setInterval(() => {
+        if (wi >= words.length - 1) {
+          clearInterval(wordTimer);
           return;
         }
-        flipNum(count);
+        const cur = words[wi];
+        cur.classList.remove('enter');
+        cur.classList.add('exit');
+        wi += 1;
+        const next = words[wi];
+        next.classList.remove('exit');
+        void next.offsetWidth;
+        next.classList.add('enter');
       }, 900);
+
+      let startTime = null;
+      let done = false;
+      function tick(ts) {
+        if (!startTime) startTime = ts;
+        const p = Math.min(((ts - startTime) / DURATION) * 100, 100);
+        counter.textContent = padded(p);
+        bar.style.width = p + '%';
+
+        if (p < 100) {
+          requestAnimationFrame(tick);
+          return;
+        }
+        if (done) return;
+        done = true;
+
+        setTimeout(() => {
+          pl.classList.add('fade-out');
+          main.classList.add('visible');
+          setTimeout(() => {
+            pl.style.display = 'none';
+          }, 650);
+        }, 400);
+      }
+
+      requestAnimationFrame(tick);
     })();
 
     /* ── SCROLL REVEAL ── */
