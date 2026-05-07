@@ -76,13 +76,34 @@
     .reveal{opacity:0;transform:translateY(24px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1)}
     .reveal.in{opacity:1;transform:none}
     footer{padding:2.5vh 5vw;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:.6rem;letter-spacing:.1em;color:rgba(138,138,134,.28)}
+
+    @media (max-width: 767px){
+      body{cursor:auto}
+      #cur-ring,#cur-dot{display:none}
+      nav{padding:1rem 4vw;align-items:flex-start;gap:.75rem}
+      .nav-right{gap:.8rem;flex-wrap:wrap;justify-content:flex-end}
+      .nav-prev,.nav-back{font-size:.56rem;letter-spacing:.14em}
+      .cs-hero{padding:96px 4vw 6vh}
+      .cs-title{font-size:clamp(3.2rem,17vw,5.2rem)}
+      .cs-meta{grid-template-columns:1fr 1fr;gap:1rem;padding-top:1.5rem}
+      .cs-section{padding:7vh 4vw}
+      .cs-sec-header,.cs-text-grid,.cs-outcome{grid-template-columns:1fr;gap:1.2rem}
+      .cs-sec-header{margin-bottom:2.2rem}
+      .cs-text-body,.cs-dec-desc,.cs-out-desc{font-size:.82rem;line-height:1.75}
+      .cs-decision{grid-template-columns:32px 1fr;gap:.8rem 1rem;padding:1.2rem 0}
+      .cs-dec-name,.cs-dec-desc{grid-column:2}
+      .cs-img-grid-2{grid-template-columns:1fr}
+      .cs-back-home{padding:5vh 4vw;align-items:flex-end}
+      .cs-back-arrow{font-size:2rem}
+      footer{padding:2vh 4vw;flex-direction:column;gap:.45rem;align-items:flex-start}
+    }
   </style>
 </head>
 <body>
   <div id="cur-ring"></div>
   <div id="cur-dot"></div>
   <nav>
-    <a class="nav-back" href="portfolio.html"><span class="nav-back-arrow">←</span> All Projects</a>
+    <a class="nav-back" href="index.html"><span class="nav-back-arrow">←</span> All Projects</a>
     <div class="nav-right">
       <span class="nav-index">05 / 05</span>
       <a class="nav-prev" href="aicuncell.html">← Ai Cun Cell</a>
@@ -197,7 +218,7 @@
     </div>
   </div>
 
-  <a class="cs-back-home" href="portfolio.html">
+  <a class="cs-back-home" href="index.html">
     <div><span class="cs-back-label">← Back to Portfolio</span><div class="cs-back-name">All Projects</div></div>
     <span class="cs-back-arrow">←</span>
   </a>

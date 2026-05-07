@@ -85,6 +85,29 @@
     .reveal{opacity:0;transform:translateY(24px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1)}
     .reveal.in{opacity:1;transform:none}
     footer{padding:2.5vh 5vw;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:.6rem;letter-spacing:.1em;color:rgba(138,138,134,.28)}
+
+    @media (max-width: 767px){
+      body{cursor:auto}
+      #cur-ring,#cur-dot{display:none}
+      nav{padding:1rem 4vw;align-items:flex-start;gap:.75rem}
+      .nav-right{gap:.8rem;flex-wrap:wrap;justify-content:flex-end}
+      .nav-prev,.nav-next,.nav-back{font-size:.56rem;letter-spacing:.14em}
+      .cs-hero{padding:96px 4vw 6vh}
+      .cs-title{font-size:clamp(3rem,16vw,4.6rem)}
+      .cs-meta{grid-template-columns:1fr 1fr;gap:1rem;padding-top:1.5rem}
+      .cs-section{padding:7vh 4vw}
+      .cs-sec-header,.cs-text-grid,.cs-quote{grid-template-columns:1fr;gap:1.2rem}
+      .cs-sec-header{margin-bottom:2.2rem}
+      .cs-text-body,.cs-str-desc{font-size:.82rem;line-height:1.75}
+      .cs-stats-row{padding:2.2rem 4vw;flex-direction:column;align-items:flex-start;gap:1rem}
+      .cs-stat-divider{display:none}
+      .cs-str-item{grid-template-columns:32px 1fr;gap:.8rem 1rem;padding:1.2rem 0}
+      .cs-str-name,.cs-str-desc{grid-column:2}
+      .cs-img-grid-2,.cs-img-grid-3{grid-template-columns:1fr}
+      .cs-next{padding:5vh 4vw;align-items:flex-end}
+      .cs-next-arrow{font-size:2rem}
+      footer{padding:2vh 4vw;flex-direction:column;gap:.45rem;align-items:flex-start}
+    }
   </style>
 </head>
 <body>
@@ -92,7 +115,7 @@
   <div id="cur-dot"></div>
 
   <nav>
-    <a class="nav-back" href="portfolio.html"><span class="nav-back-arrow">←</span> All Projects</a>
+    <a class="nav-back" href="index.html"><span class="nav-back-arrow">←</span> All Projects</a>
     <div class="nav-right">
       <span class="nav-index">03 / 05</span>
       <a class="nav-prev" href="genebook.html">← Genebook</a>
