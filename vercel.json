@@ -1,0 +1,10 @@
+{
+  "buildCommand": "true",
+  "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/:path((?!.*\\..*$|.*\\..*$).*)",
+      "destination": "/$1.html"
+    }
+  ]
+}

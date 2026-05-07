@@ -182,6 +182,69 @@ All projects follow a consistent narrative flow:
 
 ---
 
+## 🚀 Publishing & Future Roadmap
+
+### Current Status (as of May 2026)
+- **Location:** Based in London
+- **Work Authorization:** UK & Taiwan
+- **Career Stage:** Actively job hunting
+- **Current Design Focus:** Cross-screen UI/UX Designer - designing scalable interfaces across multiple device sizes while maintaining design system consistency
+
+### Phase 1: Official Launch (May 2026)
+**Goal:** Deploy portfolio.html to production quickly
+- **Platform:** Vercel (free tier, automatic HTTPS, URL-permanent)
+- **Deployment:** Git-based auto-deploy
+- **Timeline:** Immediate (5-10 minutes to launch)
+- **Key Requirements:**
+  - URL must remain constant for future features
+  - Support seamless backend integration without URL changes
+
+### Phase 2: Backend Infrastructure (Post-Launch, 1-2 weeks)
+**Goal:** Enable dynamic content management and analytics
+
+#### 2a. Project Management System 📋
+- **Purpose:** Admin panel to show/hide projects dynamically
+- **Tech Stack:** 
+  - Database: Supabase (PostgreSQL) or Firebase
+  - API: Vercel Serverless Functions
+- **Features:**
+  - CRUD operations for project visibility
+  - Draft/published states
+  - Schedule project releases
+
+#### 2b. User Analytics & Tracking 📈
+- **Purpose:** Understand user behavior and engagement
+- **Metrics Needed:**
+  - User flow/journey tracking
+  - Time spent on sections
+  - Geographical origin of visitors
+- **Tools Options:**
+  - Posthog (open-source, free tier) - Recommended
+  - Plausible Analytics (privacy-focused)
+  - Google Analytics (standard option)
+- **Implementation:** Single script injection, no code changes needed
+
+#### 2c. Multi-Language System 🌍
+- **Purpose:** Support internationalization (i18n)
+- **Priority Languages:** English, Traditional Chinese (台灣), Potential future: 日本語
+- **Implementation Path:**
+  - **Phase 2c (MVP):** Simple JSON translation + vanilla JS switcher
+  - **Phase 3 (Enhancement):** Migrate to Next.js with next-intl library for better performance
+- **Current State:** Portfolio currently in English only
+
+### Phase 3: Technology Migration (Optional, 2-3 months)
+**Goal:** Modernize stack for better scalability (if needed)
+- **From:** HTML5 + CSS3 + Vanilla JavaScript
+- **To:** Next.js 14+ with Tailwind CSS + TypeScript
+- **Benefits:**
+  - Native i18n support
+  - Built-in API routes (no separate serverless functions needed)
+  - Better performance optimizations
+  - Easier state management for future features
+- **Consideration:** Only pursue if Phase 2 demands exceed HTML capabilities
+
+---
+
 ## 📝 Notes for Future Collaboration
 
 - Portfolio is version controlled (`.git` folder present)
@@ -189,3 +252,17 @@ All projects follow a consistent narrative flow:
 - Clean separation between display code (HTML) and backup versions
 - React component available for potential interactive enhancements
 - All projects use semantic HTML and modern CSS practices
+
+### Collaboration Preferences (Rowan Lin)
+- **Work Mode:** Discuss approach first → Claude writes Cursor prompts → User implements in Cursor
+- **Code Changes:** Always ask before making changes; stay in discussion mode until explicitly asked to edit
+- **Design Philosophy:** Maintain "Cross-screen Designer" identity throughout all implementations
+
+### Hero Section (Current Design, as of May 7, 2026)
+- **Layout:** Left-right two-column grid
+  - Left: "Hi, I'm Rowan." + "Cross-screen UI/UX Designer" + "Read More" CTA → links to #about
+  - Right: Person portrait image (with fade-up animation) + Large tagline
+- **Tagline:** "Design at Scale" (short, powerful, reflects core value of scalable cross-device design)
+- **Typography:** Left text is body-size (0.875-1rem), right tagline is large display text
+- **Animations Preserved:** All wheel-lock marquee animations, fade-in effects maintained
+- **Visual Hierarchy:** Clean, minimal - person image and right tagline are focal points
