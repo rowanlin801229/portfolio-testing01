@@ -284,7 +284,7 @@
     }
     .reveal.in { opacity: 1; transform: none; }
 
-    /* ── HERO (viewport — centered image + scroll cue) ── */
+    /* ── HERO (centered image + three-line marquee) ── */
     #hero {
       overflow-x: clip;
       min-height: 100vh;
@@ -297,12 +297,12 @@
       row-gap: 0;
       align-items: center;
       justify-items: center;
-      padding: 100px 5vw 9vh;
+      padding: 100px 5vw 8vh;
       position: relative;
     }
 
     .hero-stage {
-      grid-column: 1;
+      grid-column: 1 / -1;
       grid-row: 1;
       align-self: center;
       justify-self: center;
@@ -329,7 +329,6 @@
       pointer-events: none;
     }
 
-    /* Full-viewport-width strips (break out of narrow hero-visual) */
     .hero-marquee-strip {
       width: 100vw;
       max-width: 100vw;
@@ -349,7 +348,7 @@
       flex-direction: column;
       align-items: stretch;
       justify-content: center;
-      gap: 2rem;
+      gap: 0.8rem;
       width: 100%;
       max-width: 100%;
     }
@@ -359,7 +358,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-weight: 300;
-      font-size: clamp(5.25rem, 15.5vw, 12.25rem);
+      font-size: clamp(3.9rem, 11.5vw, 7.8rem);
       line-height: 1.08;
       letter-spacing: -0.02em;
       color: var(--fg);
@@ -380,7 +379,7 @@
       font-style: italic;
       font-weight: 400;
       /* Same fluid scale as tag; syncHeroSubFontToTagWidth bumps px to equal width */
-      font-size: clamp(2.4rem, 6.25vw, 4.15rem);
+      font-size: clamp(1.65rem, 4.9vw, 2.9rem);
       line-height: 1.4;
       letter-spacing: -0.01em;
       color: var(--fg);
@@ -400,7 +399,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-weight: 400;
-      font-size: clamp(2.4rem, 6.25vw, 4.15rem);
+      font-size: clamp(1.65rem, 4.9vw, 2.9rem);
       line-height: 1.4;
       letter-spacing: -0.01em;
       color: var(--fg);
@@ -418,7 +417,7 @@
     @media (prefers-reduced-motion: reduce) {
       .hero-marquee-viewport {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
       }
 
       .hero-intro-text,
@@ -428,22 +427,42 @@
       }
     }
 
-    .hero-scroll {
-      grid-column: 1;
-      grid-row: 2;
-      justify-self: center;
-      align-self: end;
-      margin-top: 2rem;
-      opacity: 0;
-      transform: translateY(16px);
-      transition:
-        opacity 0.7s ease 0.75s,
-        transform 0.7s ease 0.75s;
-      pointer-events: none;
+    .hero-live-track {
+      display: flex;
+      align-items: center;
+      width: max-content;
+      min-width: 200%;
+      gap: 0;
+      will-change: transform;
     }
-    #main.visible .hero-scroll {
-      opacity: 1;
-      transform: none;
+
+    .hero-live-item {
+      flex-shrink: 0;
+      white-space: nowrap;
+      margin: 0;
+      padding-right: clamp(2rem, 4.5vw, 4.5rem);
+      opacity: 1 !important;
+      transform: none !important;
+      visibility: visible !important;
+      text-align: center;
+    }
+
+    html.hero-marquee-live .hero-live-track--ltr {
+      animation: hero-mq-ltr 12s linear infinite;
+    }
+
+    html.hero-marquee-live .hero-live-track--rtl {
+      animation: hero-mq-rtl 14s linear infinite;
+    }
+
+    @keyframes hero-mq-ltr {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    @keyframes hero-mq-rtl {
+      from { transform: translateX(-50%); }
+      to { transform: translateX(0); }
     }
 
     .hero-photo {
@@ -456,26 +475,33 @@
       object-fit: contain;
       object-position: center;
       opacity: 0;
-      transform: translateY(28px) scale(0.98);
-      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.45s,
-        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.45s;
+      transform: translateY(50px);
+      will-change: opacity, transform;
     }
 
-    #main.visible .hero-photo {
-      opacity: 1;
-      transform: translateY(0) scale(1);
+    .hero-photo.hero-photo-in {
+      animation: hero-photo-fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
     }
 
     .hero-visual:hover .hero-photo {
-      transform: translateY(-2px) scale(1.01);
+      transform: translateY(-2px);
     }
 
-    .hero-desc {
-      max-width: 56ch;
-      font-size: 0.88rem;
-      line-height: 1.85;
-      color: var(--muted);
-      font-weight: 400;
+    .hero-scroll {
+      position: absolute;
+      left: 50%;
+      bottom: 0.35rem;
+      opacity: 0;
+      transform: translate(-50%, 16px);
+      transition:
+        opacity 0.7s ease 0.75s,
+        transform 0.7s ease 0.75s;
+      pointer-events: none;
+      z-index: 3;
+    }
+    #main.visible .hero-scroll {
+      opacity: 1;
+      transform: translate(-50%, 0);
     }
 
     .scroll-ind {
@@ -489,13 +515,34 @@
       color: var(--muted);
     }
     .scroll-bar {
-      width: 1px; height: 55px;
+      width: 1px;
+      height: 55px;
       background: linear-gradient(to bottom, var(--accent), transparent);
       animation: scrl 2.2s ease-in-out infinite;
     }
     @keyframes scrl {
-      0%,100% { transform: scaleY(0); transform-origin: top; opacity: 0; }
-      50%      { transform: scaleY(1); opacity: 1; }
+      0%,
+      100% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+      50% { transform: scaleY(1); opacity: 1; }
+    }
+
+    @keyframes hero-photo-fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-desc {
+      max-width: 56ch;
+      font-size: 0.88rem;
+      line-height: 1.85;
+      color: var(--muted);
+      font-weight: 400;
     }
 
     /* ── WORK ── */
@@ -660,12 +707,12 @@
       gap: 0.5rem;
       margin-top: 2rem;
       padding: 0.5rem 1.2rem;
-      background: #ffffff;
-      border: 1px solid var(--line);
+      background: #111110;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       font-size: 0.65rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--fg);
+      color: rgba(255, 255, 255, 0.9);
     }
     .visa-dot {
       width: 5px; height: 5px;
@@ -986,29 +1033,27 @@
       }
 
       .hero-intro-text {
-        font-size: clamp(4.85rem, 15vw, 10rem);
+        font-size: clamp(3.5rem, 10.4vw, 6.6rem);
       }
 
       .hero-intro-stack {
-        gap: 0.75rem;
+        gap: 0.55rem;
       }
 
       .hero-intro-sub {
-        font-size: clamp(2.15rem, 6.45vw, 3.65rem);
+        font-size: clamp(1.5rem, 4.5vw, 2.5rem);
       }
 
       .hero-intro-tag {
-        font-size: clamp(2.15rem, 6.45vw, 3.65rem);
-      }
-
-      .hero-scroll {
-        grid-column: 1;
-        grid-row: 2;
-        margin-top: 1.5rem;
+        font-size: clamp(1.5rem, 4.5vw, 2.5rem);
       }
 
       .hero-photo {
         max-height: min(58vh, 560px);
+      }
+
+      .hero-scroll {
+        bottom: 0.2rem;
       }
 
       .hero-desc {
@@ -1178,7 +1223,7 @@
         height: auto;
         padding: 112px 4vw 7vh;
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto;
+        grid-template-rows: auto;
         align-items: stretch;
         justify-items: stretch;
         row-gap: 0;
@@ -1192,7 +1237,6 @@
         align-self: stretch;
       }
 
-      /* Stack: portrait on top, three headline rows below — no overlap */
       .hero-visual {
         display: flex;
         flex-direction: column;
@@ -1202,7 +1246,7 @@
 
       .hero-photo {
         order: -1;
-        flex-shrink: 0;
+        width: min(78vw, 360px);
         margin-left: auto;
         margin-right: auto;
         max-height: min(62vh, 580px);
@@ -1211,41 +1255,42 @@
       .hero-intro-line {
         position: relative;
         inset: auto;
+        order: 0;
         flex: 0 0 auto;
         align-items: flex-start;
         justify-content: flex-start;
       }
 
       .hero-intro-text {
-        font-size: clamp(4.1rem, 18.5vw, 7.75rem);
+        font-size: clamp(2.9rem, 12.8vw, 5.1rem);
       }
 
       .hero-intro-stack {
-        gap: 0.5rem;
+        gap: 0.4rem;
       }
 
       .hero-intro-sub {
-        font-size: clamp(1.85rem, 6.65vw, 3rem);
+        font-size: clamp(1.2rem, 5.3vw, 2rem);
       }
 
       .hero-intro-tag {
-        font-size: clamp(1.85rem, 6.65vw, 3rem);
+        font-size: clamp(1.2rem, 5.3vw, 2rem);
       }
 
       .hero-scroll {
-        grid-column: 1;
-        grid-row: 2;
+        position: relative;
+        left: auto;
+        bottom: auto;
+        justify-self: center;
+        align-self: start;
         margin-top: 1rem;
+        transform: none;
       }
 
       .hero-desc {
         font-size: 0.78rem;
         line-height: 1.7;
       }
-      .scroll-bar {
-        height: 40px;
-      }
-
       #work,
       #about,
       #impact,
@@ -1513,21 +1558,10 @@
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg')"></div></li>
-        <li class="work-item reveal in" data-name="Training for Life" data-type="Mobile · Wearable" style="transition-delay: 0s;" onclick="location.href='tfl.html'">
-          <div class="wi-bg"></div>
-          <div class="work-inner">
-            <span class="wi-num">02</span>
-            <span class="wi-name">Training for Life</span>
-            <div class="wi-right">
-              <span class="wi-type">Mobile · Wearable</span>
-              <span class="wi-arrow">→</span>
-            </div>
-          </div>
-        <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg')"></div></li>
         <li class="work-item reveal in" data-name="Health GeneTech" data-type="Responsive Web · Branding" style="transition-delay: 0s;" onclick="location.href='genebook.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
-            <span class="wi-num">03</span>
+            <span class="wi-num">02</span>
             <span class="wi-name">Health GeneTech</span>
             <div class="wi-right">
               <span class="wi-type">Responsive Web · Branding</span>
@@ -1535,6 +1569,17 @@
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg')"></div></li>
+        <li class="work-item reveal in" data-name="Training for Life" data-type="Mobile · Wearable" style="transition-delay: 0s;" onclick="location.href='tfl.html'">
+          <div class="wi-bg"></div>
+          <div class="work-inner">
+            <span class="wi-num">03</span>
+            <span class="wi-name">Training for Life</span>
+            <div class="wi-right">
+              <span class="wi-type">Mobile · Wearable</span>
+              <span class="wi-arrow">→</span>
+            </div>
+          </div>
+        <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg')"></div></li>
         <li class="work-item reveal in" data-name="Ai Cun Cell" data-type="Mobile · Healthcare" style="transition-delay: 0s;" onclick="location.href='aicuncell.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
@@ -1866,7 +1911,8 @@
         const W = getViewportW(intro);
         const Tw = getTextW(intro);
         const pad = insetPad(W);
-        const start = -Tw - pad;
+        // Ensure line 1 always enters from fully off-screen left.
+        const start = -Math.max(Tw + pad, W + pad);
         const end = (W - Tw) / 2;
         const x = start + (end - start) * clamped;
         const o = clamped <= 0 ? 0 : Math.min(1, Math.pow(clamped, 1.15));
@@ -1959,10 +2005,12 @@
 
       function unlockScroll() {
         root.classList.remove('hero-intro-lock');
+        root.classList.add('hero-intro-done');
       }
 
       function lockScroll() {
         root.classList.add('hero-intro-lock');
+        root.classList.remove('hero-intro-done');
       }
 
       function polishAtEnd() {
@@ -2015,6 +2063,7 @@
         syncHeroSubFontToTagWidth();
         meter = MAX_TOTAL;
         unlocked = true;
+        root.classList.add('hero-intro-done');
         revealSubRail();
         revealTagRail();
         applyPhase1Progress(1);
@@ -2028,6 +2077,7 @@
         syncHeroSubFontToTagWidth();
         meter = MAX_TOTAL;
         unlocked = true;
+        root.classList.add('hero-intro-done');
         revealSubRail();
         revealTagRail();
         applyPhase1Progress(1);
@@ -2119,6 +2169,45 @@
           applyFromMeter();
         }, 120);
       });
+    })();
+
+    /* ── HERO PHOTO ENTRANCE ── */
+    (function () {
+      const root = document.documentElement;
+      const hero = document.getElementById('hero');
+      const photo = document.querySelector('.hero-photo');
+      if (!hero || !photo) return;
+
+      let played = false;
+      let inView = false;
+      function play() {
+        const mobileFirst = window.matchMedia('(max-width: 767px)').matches;
+        if (played || !inView) return;
+        if (!mobileFirst && !root.classList.contains('hero-intro-done')) return;
+        played = true;
+        photo.classList.add('hero-photo-in');
+      }
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            inView = entry.isIntersecting;
+            play();
+            if (played) io.disconnect();
+          });
+        },
+        { threshold: 0.35 },
+      );
+
+      io.observe(hero);
+
+      const mo = new MutationObserver(() => {
+        play();
+        if (played) mo.disconnect();
+      });
+      mo.observe(root, { attributes: true, attributeFilter: ['class'] });
+
+      window.addEventListener('load', play);
     })();
 
     /* ── EXPERIENCE ACCORDION ENTRANCE ── */
