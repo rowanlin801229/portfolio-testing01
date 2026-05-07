@@ -2017,12 +2017,14 @@
         }
       }
 
-      /* Higher MAX = slower slide per wheel tick; still lighter than original ~1000 */
-      const MAX_P1 = 380;
-      const MAX_P2 = 380;
-      const MAX_P3 = 380;
+      /* Mobile fast params: lower thresholds, quicker intro response on touch. */
+      const IS_MOBILE_HERO = window.matchMedia('(max-width: 767px)').matches;
+      const MAX_P1 = IS_MOBILE_HERO ? 130 : 380;
+      const MAX_P2 = IS_MOBILE_HERO ? 130 : 380;
+      const MAX_P3 = IS_MOBILE_HERO ? 130 : 380;
       const M12 = MAX_P1 + MAX_P2;
       const MAX_TOTAL = M12 + MAX_P3;
+      const TOUCH_DELTA_MULTIPLIER = IS_MOBILE_HERO ? 2.4 : 1;
 
       let meter = 0;
       let unlocked = false;
@@ -2172,7 +2174,7 @@
           if (touchLastY === null) return;
           e.preventDefault();
           const y = e.touches[0].clientY;
-          ingestDelta(touchLastY - y);
+          ingestDelta((touchLastY - y) * TOUCH_DELTA_MULTIPLIER);
           touchLastY = y;
         },
         { passive: false },
