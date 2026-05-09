@@ -482,8 +482,9 @@
       will-change: opacity, transform;
     }
 
+    /* Keep durations in sync with HERO_PHOTO_*_MS in hero intro script */
     .hero-photo.hero-photo-in {
-      animation: hero-photo-fade-up 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+      animation: hero-photo-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s forwards;
     }
 
     .hero-visual:hover .hero-photo {
@@ -1880,7 +1881,15 @@
       const introSub = document.querySelector('.hero-intro-sub');
       const introTag = document.querySelector('.hero-intro-tag');
       const visual = document.querySelector('#hero .hero-visual');
+      const photo = document.querySelector('.hero-photo');
       if (!hero || !intro || !visual || !introSub || !introTag) return;
+
+      let photoIntroPlayed = false;
+      function triggerHeroPhoto() {
+        if (!photo || photoIntroPlayed) return;
+        photoIntroPlayed = true;
+        photo.classList.add('hero-photo-in');
+      }
 
       const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -2034,8 +2043,53 @@
       const MAX_TOTAL = M12 + MAX_P3;
       const TOUCH_DELTA_MULTIPLIER = IS_MOBILE_HERO ? 2.4 : 1;
 
+      const HERO_PHOTO_ANIM_DELAY_MS = 120;
+      const HERO_PHOTO_ANIM_DURATION_MS = 850;
+      const HERO_PHOTO_UNLOCK_FALLBACK_MS =
+        HERO_PHOTO_ANIM_DELAY_MS + HERO_PHOTO_ANIM_DURATION_MS + 80;
+
       let meter = 0;
       let unlocked = false;
+      let unlockPending = false;
+      let photoUnlockTimer = null;
+      let photoAnimHandler = null;
+
+      function clearUnlockSchedule() {
+        if (photoUnlockTimer) {
+          clearTimeout(photoUnlockTimer);
+          photoUnlockTimer = null;
+        }
+        if (photo && photoAnimHandler) {
+          photo.removeEventListener('animationend', photoAnimHandler);
+          photoAnimHandler = null;
+        }
+      }
+
+      function finalizeUnlock() {
+        if (unlocked) return;
+        clearUnlockSchedule();
+        unlockPending = false;
+        unlocked = true;
+        unlockScroll();
+      }
+
+      /** Page scroll unlocks only after the portrait entrance animation ends */
+      function scheduleUnlockAfterPhoto() {
+        if (unlockPending || unlocked) return;
+        unlockPending = true;
+
+        if (!photo) {
+          finalizeUnlock();
+          return;
+        }
+
+        photoAnimHandler = function (e) {
+          if (e.animationName !== 'hero-photo-fade-up') return;
+          finalizeUnlock();
+        };
+        photo.addEventListener('animationend', photoAnimHandler);
+        photoUnlockTimer = setTimeout(finalizeUnlock, HERO_PHOTO_UNLOCK_FALLBACK_MS);
+      }
 
       function unlockScroll() {
         root.classList.remove('hero-intro-lock');
@@ -2083,41 +2137,47 @@
 
         const atEnd = meter >= MAX_TOTAL * 0.999;
 
-        if (atEnd && !unlocked) {
-          unlocked = true;
-          unlockScroll();
+        if (atEnd) {
+          triggerHeroPhoto();
           polishAtEnd();
-        } else if (!atEnd && unlocked) {
-          unlocked = false;
-          lockScroll();
+          if (!unlocked) scheduleUnlockAfterPhoto();
+        } else {
+          if (unlockPending) {
+            clearUnlockSchedule();
+            unlockPending = false;
+          }
+          if (unlocked) {
+            unlocked = false;
+            lockScroll();
+          }
         }
       }
 
       if (mqReduce.matches) {
         syncHeroSubFontToTagWidth();
         meter = MAX_TOTAL;
-        unlocked = true;
-        root.classList.add('hero-intro-done');
         revealSubRail();
         revealTagRail();
         applyPhase1Progress(1);
         applyPhase2Progress(1);
         applyPhase3Progress(1);
         polishAtEnd();
+        triggerHeroPhoto();
+        finalizeUnlock();
         return;
       }
 
       if (window.scrollY > 48) {
         syncHeroSubFontToTagWidth();
         meter = MAX_TOTAL;
-        unlocked = true;
-        root.classList.add('hero-intro-done');
         revealSubRail();
         revealTagRail();
         applyPhase1Progress(1);
         applyPhase2Progress(1);
         applyPhase3Progress(1);
         polishAtEnd();
+        triggerHeroPhoto();
+        finalizeUnlock();
         return;
       }
 
@@ -2239,45 +2299,6 @@
           applyFromMeter();
         }, 120);
       });
-    })();
-
-    /* ── HERO PHOTO ENTRANCE ── */
-    (function () {
-      const root = document.documentElement;
-      const hero = document.getElementById('hero');
-      const photo = document.querySelector('.hero-photo');
-      if (!hero || !photo) return;
-
-      let played = false;
-      let inView = false;
-      function play() {
-        const mobileFirst = window.matchMedia('(max-width: 767px)').matches;
-        if (played || !inView) return;
-        if (!mobileFirst && !root.classList.contains('hero-intro-done')) return;
-        played = true;
-        photo.classList.add('hero-photo-in');
-      }
-
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            inView = entry.isIntersecting;
-            play();
-            if (played) io.disconnect();
-          });
-        },
-        { threshold: 0.35 },
-      );
-
-      io.observe(hero);
-
-      const mo = new MutationObserver(() => {
-        play();
-        if (played) mo.disconnect();
-      });
-      mo.observe(root, { attributes: true, attributeFilter: ['class'] });
-
-      window.addEventListener('load', play);
     })();
 
     /* ── EXPERIENCE ACCORDION ENTRANCE ── */

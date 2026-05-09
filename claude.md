@@ -258,6 +258,15 @@ All projects follow a consistent narrative flow:
 - **Code Changes:** Always ask before making changes; stay in discussion mode until explicitly asked to edit
 - **Design Philosophy:** Maintain "Cross-screen Designer" identity throughout all implementations
 
+### Deployment Updates (May 8, 2026)
+- **Vercel 403 Fixed:** Disabled Vercel Authentication (Deployment Protection was blocking public access)
+- **Custom Domain:** `www.rowanlin1229.com` bound to Vercel production (DNS propagating via Squarespace)
+  - CNAME record added in Squarespace DNS: `www` → `71ee6ec06e83a752.vercel-dns-017.com.`
+  - Squarespace Defaults DNS preset deleted; custom record added manually
+- **Google Analytics:** GA4 installed on all 7 HTML files
+  - Property: "Rowan Portfolio" (G-ERYYE1R633)
+  - Tracking ID injected into `<head>` of all HTML files
+
 ### Hero Section (Current Design, as of May 7, 2026)
 - **Layout:** Left-right two-column grid
   - Left: "Hi, I'm Rowan." + "Cross-screen UI/UX Designer" + "Read More" CTA → links to #about
