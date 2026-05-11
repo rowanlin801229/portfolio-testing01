@@ -304,6 +304,33 @@
       position: relative;
     }
 
+    /* ── WAVE BACKGROUND ── */
+    #wave-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    #wave-bg svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Scroll parallax layers (transform updated by JS; subtle depth vs portrait) */
+    .hero-photo-parallax {
+      position: relative;
+      z-index: 1;
+      transform: translate3d(0, 0, 0);
+      will-change: transform;
+    }
+    /* Hero main column above wave; exclude .hero-scroll so it keeps position: absolute */
+    #hero > *:not(#wave-bg):not(.hero-scroll) {
+      position: relative;
+      z-index: 1;
+    }
+
     .hero-stage {
       grid-column: 1 / -1;
       grid-row: 1;
@@ -428,6 +455,12 @@
       .hero-intro-tag {
         transform: none !important;
       }
+
+      #wave-bg,
+      .hero-intro-line,
+      .hero-photo-parallax {
+        transform: none !important;
+      }
     }
 
     .hero-live-track {
@@ -470,7 +503,6 @@
 
     .hero-photo {
       position: relative;
-      z-index: 1;
       display: block;
       width: 100%;
       height: auto;
@@ -1242,11 +1274,15 @@
         gap: 2rem;
       }
 
-      .hero-photo {
+      .hero-photo-parallax {
         order: -1;
         width: min(78vw, 360px);
         margin-left: auto;
         margin-right: auto;
+      }
+
+      .hero-photo {
+        width: 100%;
         max-height: min(62vh, 580px);
       }
 
@@ -1442,6 +1478,17 @@
       }
     }
 
+    /* Hero intro: three stacked lines — slightly larger type on desktop only (not mobile / not ≤1024 tablet rules) */
+    @media (min-width: 1025px) {
+      .hero-intro-text {
+        font-size: clamp(4.1rem, 11.5vw, 8.35rem);
+      }
+      .hero-intro-sub,
+      .hero-intro-tag {
+        font-size: clamp(1.85rem, 5.1vw, 3.45rem);
+      }
+    }
+
     /* ── RWD: LARGE DESKTOP ── */
     @media (min-width: 1440px) {
       nav,
@@ -1513,6 +1560,7 @@
 
     <!-- HERO -->
     <section id="hero" aria-label="Introduction">
+      <div id="wave-bg" aria-hidden="true"></div>
       <div class="hero-stage">
         <div class="hero-visual">
           <div class="hero-intro-line">
@@ -1540,15 +1588,17 @@
               </div>
             </div>
           </div>
-          <img
-            class="hero-photo"
-            src="images/02.png"
-            width="1536"
-            height="2048"
-            alt=""
-            loading="eager"
-            decoding="async"
-          />
+          <div class="hero-photo-parallax">
+            <img
+              class="hero-photo"
+              src="images/02.png"
+              width="1536"
+              height="2048"
+              alt=""
+              loading="eager"
+              decoding="async"
+            />
+          </div>
         </div>
       </div>
       <div class="hero-scroll" aria-hidden="true">
@@ -2547,7 +2597,179 @@
         }
       });
     })();
+
+    /* ── HERO：依「頁面捲動」的視差（滾輪／觸控板／手指捲動皆觸發 scroll；非游標位置） ── */
+    (function () {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const hero = document.getElementById('hero');
+      const wave = document.getElementById('wave-bg');
+      const introLine = document.querySelector('.hero-intro-line');
+      const photoParallax = document.querySelector('.hero-photo-parallax');
+      if (!hero || !wave || !introLine || !photoParallax) return;
+
+      function clearParallax() {
+        wave.style.transform = '';
+        introLine.style.transform = '';
+        photoParallax.style.transform = '';
+      }
+
+      let ticking = false;
+      function tick() {
+        ticking = false;
+        if (reduce.matches) {
+          clearParallax();
+          return;
+        }
+        const rect = hero.getBoundingClientRect();
+        const vh = window.innerHeight || 1;
+        if (rect.bottom < -80 || rect.top > vh + 80) {
+          clearParallax();
+          return;
+        }
+        const centerOff = rect.top + rect.height * 0.5 - vh * 0.5;
+        const norm = Math.max(-1, Math.min(1, centerOff / (vh * 0.82)));
+        const px = norm * 52;
+        wave.style.transform = 'translate3d(0, ' + (px * 0.48).toFixed(2) + 'px, 0)';
+        introLine.style.transform = 'translate3d(0, ' + (px * 0.19).toFixed(2) + 'px, 0)';
+        photoParallax.style.transform = 'translate3d(0, ' + (-px * 0.34).toFixed(2) + 'px, 0)';
+      }
+
+      function req() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(tick);
+      }
+
+      window.addEventListener('scroll', req, { passive: true });
+      window.addEventListener('resize', req, { passive: true });
+      reduce.addEventListener('change', req);
+      req();
+    })();
   </script>
 
+  <script type="module">
+  import { createNoise2D } from 'https://cdn.jsdelivr.net/npm/simplex-noise@4.0.1/dist/esm/simplex-noise.js';
+
+  (function initWave() {
+    const container = document.getElementById('wave-bg');
+    if (!container) return;
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    container.appendChild(svg);
+
+    const STROKE_COLOR = 'rgba(184,69,69,0.13)';
+    /** Vertical spacing between horizontal lines (larger = fewer lines). */
+    const ROW_GAP = 44;
+    /** Horizontal spacing between points along each line (larger = sparser polyline). */
+    const COL_GAP = 28;
+
+    const noise = createNoise2D();
+    let bounding = null;
+    let lines = [];
+    let paths = [];
+    let raf = null;
+
+    function setSize() {
+      bounding = container.getBoundingClientRect();
+      svg.style.width = bounding.width + 'px';
+      svg.style.height = bounding.height + 'px';
+    }
+
+    function setLines() {
+      paths.forEach(p => p.remove());
+      paths = [];
+      lines = [];
+
+      const { width, height } = bounding;
+      const oWidth = width + 200;
+      const oHeight = height + 30;
+      const totalRows = Math.ceil(oHeight / ROW_GAP);
+      const totalCols = Math.ceil(oWidth / COL_GAP);
+      const xStart = (width - COL_GAP * totalCols) / 2;
+      const yStart = (height - ROW_GAP * totalRows) / 2;
+
+      for (let i = 0; i < totalRows; i++) {
+        const points = [];
+        for (let j = 0; j < totalCols; j++) {
+          points.push({
+            x: xStart + COL_GAP * j,
+            y: yStart + ROW_GAP * i,
+            wave: { x: 0, y: 0 },
+          });
+        }
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', STROKE_COLOR);
+        path.setAttribute('stroke-width', '1');
+        svg.appendChild(path);
+        paths.push(path);
+        lines.push(points);
+      }
+    }
+
+    function moved(point) {
+      return {
+        x: point.x + point.wave.x,
+        y: point.y + point.wave.y,
+      };
+    }
+
+    function movePoints(time) {
+      lines.forEach(points => {
+        points.forEach(p => {
+          const move = noise(
+            (p.x + time * 0.008) * 0.003,
+            (p.y + time * 0.003) * 0.002
+          ) * 8;
+          /* Horizontal baselines: emphasize vertical undulation */
+          p.wave.x = Math.cos(move) * 6;
+          p.wave.y = Math.sin(move) * 12;
+        });
+      });
+    }
+
+    function drawLines() {
+      lines.forEach((points, i) => {
+        if (points.length < 2 || !paths[i]) return;
+        const first = moved(points[0]);
+        let d = `M ${first.x} ${first.y}`;
+        for (let j = 1; j < points.length; j++) {
+          const c = moved(points[j]);
+          d += ` L ${c.x} ${c.y}`;
+        }
+        paths[i].setAttribute('d', d);
+      });
+    }
+
+    function tick(time) {
+      movePoints(time);
+      drawLines();
+      raf = requestAnimationFrame(tick);
+    }
+
+    function onResize() {
+      setSize();
+      setLines();
+    }
+
+    const heroEl = document.getElementById('hero');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          if (!raf) raf = requestAnimationFrame(tick);
+        } else {
+          if (raf) { cancelAnimationFrame(raf); raf = null; }
+        }
+      });
+    }, { threshold: 0 });
+    if (heroEl) observer.observe(heroEl);
+
+    setSize();
+    setLines();
+    window.addEventListener('resize', onResize);
+    raf = requestAnimationFrame(tick);
+  })();
+  </script>
 
 <grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></body></html>
