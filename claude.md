@@ -287,3 +287,42 @@ All projects follow a consistent narrative flow:
 - **Typography:** Left text is body-size (0.875-1rem), right tagline is large display text
 - **Animations Preserved:** All wheel-lock marquee animations, fade-in effects maintained
 - **Visual Hierarchy:** Clean, minimal - person image and right tagline are focal points
+
+### Updates (May 11, 2026)
+
+#### /impeccable Critique 完成
+- **Design Health Score:** 29/40（Good — 有基礎，有待改進）
+- **最大問題：** 跨頁視覺不一致（index 白底 vs. case study 暗底）+ 小字問題
+- **PRODUCT.md 新增：** 已建立 PRODUCT.md 於專案根目錄，記錄 brand register、目標受眾、品牌個性、anti-reference、設計原則
+
+#### 設計方向決定
+- **Case study 設計語言：** 跟著 faintv.html 走（Space Grotesk body font + dark zinc-950 系統）
+- **Landing page（index.html）：** 維持白底，獨立設計語言
+
+#### 已實作的修改（透過 Cursor Prompt）
+
+**Prompt #1 — Typography & Contrast Audit（index.html）**
+- Nav links: `0.68rem` → `0.75rem`（原 10.9px，低於 WCAG AA）
+- `.wi-type`: `0.6rem` → `0.7rem`
+- `.exp-sub`, `.exp-period`: `0.65rem` → `0.7rem`
+- `.stat-lbl`: `0.68rem` → `0.72rem`
+- `.stat-note`: `0.64rem` → `0.7rem`
+- `.wi-num`: `0.95rem` → `1rem`
+- **Accent color 更新：** `--accent: #C94F4F` → `#B84545`（對比從剛好 4.5:1 提升至 ~5.0:1）
+- 白字白底 bug 修復（`#ffffff on #ffffff`）
+- faintv.html 黑字黑底 bug 修復（`#000000 on #0e0e0d`）
+
+**Prompt #2 — Case Studies Font Alignment（所有 5 個 case study）**
+- genebook / tfl / aicuncell / marilyn：body font `Inter` → `Space Grotesk`
+- Google Fonts URL 更新（移除 Inter，加入 Space Grotesk）
+- 全部 5 個頁面的 nav 字體提升：`.nav-back/.nav-prev/.nav-next` → `0.75rem`
+- Case study section label（`.cs-label`, `.cs-meta-label`, `.cs-sec-label`, `.cs-text-label`）字體提升
+
+#### 待實作（已有 Prompt，尚未跑）
+
+**Prompt #4 — Layout Animation 修復（低優先，P2）**
+- Case study cursor ring：`transition: width, height` → `scale` property（不觸發 layout recalculation）
+- index.html experience accordion：`@keyframes max-height` → `grid-template-rows: 0fr → 1fr`
+
+#### 設計決定記錄
+- **Impact section stats grid：** 嘗試改為 editorial list 排版後還原，保留原本四欄大數字格子
