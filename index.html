@@ -32,7 +32,7 @@
             canvas: '#ffffff',
             /* Softer body text on light canvas (DS dark theme uses --fg #8a8a86 on dark bg, not near-black on white) */
             ink: '#4a4a48',
-            accent: '#C94F4F',
+            accent: '#B84545',
           },
           fontFamily: {
             display: ['Cormorant Garamond', 'Georgia', 'serif'],
@@ -47,7 +47,7 @@
       --bg: #ffffff;
       /* DS: foreground on dark surfaces is #8a8a86; light page uses a softer charcoal, not ink #1e1e1c */
       --fg: #4a4a48;
-      --accent: #C94F4F;
+      --accent: #B84545;
       --muted: rgba(74, 74, 72, 0.58);
       --faint: rgba(74, 74, 72, 0.06);
       --line: rgba(74, 74, 72, 0.14);
@@ -260,7 +260,7 @@
     .nav-links a {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 500;
-      font-size: 0.68rem;
+      font-size: 0.75rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: rgba(255, 255, 255, 0.92);
@@ -575,7 +575,7 @@
     .wi-bg {
       position: absolute;
       inset: 0;
-      background: rgba(201,79,79,0.04);
+      background: rgba(184,69,69,0.04);
       transform: scaleX(0);
       transform-origin: left;
       transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
@@ -585,7 +585,7 @@
     .wi-num {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 0.95rem;
+      font-size: 1rem;
       color: var(--muted);
       transition: color 0.3s;
       z-index: 1;
@@ -612,7 +612,7 @@
       z-index: 1;
     }
     .wi-type {
-      font-size: 0.6rem;
+      font-size: 0.7rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--muted);
@@ -665,7 +665,8 @@
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-size: 1.6rem;
-      color: rgba(240,237,232,0.9);
+      color: var(--fg);
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.75), 0 1px 2px rgba(255, 255, 255, 0.9);
       position: relative;
       z-index: 1;
     }
@@ -673,7 +674,7 @@
       font-size: 0.55rem;
       letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: rgba(201,79,79,0.85);
+      color: rgba(184,69,69,0.85);
       position: relative;
       z-index: 1;
     }
@@ -753,7 +754,7 @@
     .stat-val .u { color: var(--accent); font-size: 0.6em; vertical-align: super; }
     .stat-lbl {
       display: block;
-      font-size: 0.68rem;
+      font-size: 0.72rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: rgba(74, 74, 72, 0.82);
@@ -762,7 +763,7 @@
     }
     .stat-note {
       margin-top: 0.55rem;
-      font-size: 0.64rem;
+      font-size: 0.7rem;
       letter-spacing: 0.05em;
       text-transform: none;
       color: rgba(74, 74, 72, 0.68);
@@ -907,14 +908,14 @@
     .exp-sub {
       font-family: Inter, system-ui, sans-serif;
       font-style: normal;
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--muted);
       font-weight: 400;
     }
     .exp-period {
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--accent);
@@ -1009,7 +1010,7 @@
         justify-content: flex-end;
       }
       .nav-links a {
-        font-size: 0.6rem;
+        font-size: 0.75rem;
         letter-spacing: 0.14em;
       }
 
@@ -1089,7 +1090,7 @@
         font-size: clamp(1.8rem, 6vw, 3rem);
       }
       .wi-type {
-        font-size: 0.56rem;
+        font-size: 0.7rem;
         letter-spacing: 0.16em;
       }
 
@@ -1395,7 +1396,7 @@
         font-size: clamp(1.45rem, 8vw, 2.2rem);
       }
       .wi-type {
-        font-size: 0.52rem;
+        font-size: 0.7rem;
       }
 
       .stats-grid {
@@ -1422,7 +1423,9 @@
         font-size: clamp(1.15rem, 6.5vw, 1.65rem);
       }
       .exp-period,
-      .exp-sub,
+      .exp-sub {
+        font-size: 0.7rem;
+      }
       .exp-role {
         font-size: 0.58rem;
       }
@@ -1835,7 +1838,7 @@
     const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "bg": "#ffffff",
       "fg": "#4a4a48",
-      "accent": "#C94F4F",
+      "accent": "#B84545",
       "line": "rgba(74,74,72,0.14)",
       "bodySize": 0.88,
       "letterSpacing": -0.03
@@ -2398,7 +2401,7 @@
           ctx.beginPath();
           ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
           ctx.fillStyle = s.blue
-            ? `rgba(201,79,79,${alpha * 0.7})`
+            ? `rgba(184,69,69,${alpha * 0.7})`
             : `rgba(138,138,134,${alpha * 0.45})`;
           ctx.fill();
         });
