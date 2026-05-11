@@ -267,6 +267,18 @@ All projects follow a consistent narrative flow:
   - Property: "Rowan Portfolio" (G-ERYYE1R633)
   - Tracking ID injected into `<head>` of all HTML files
 
+### Updates (May 9, 2026)
+- **GitHub 狀態：** 確認 repo `rowanlin801229/portfolio-testing01` 與本地完全同步，branch master up to date
+- **Claude Code Skill 新增：** Emil Kowalski 的 design engineering skill 加入全域指令 `~/.claude/commands/design-review.md`，可在任何專案用 `/design-review` 呼叫，套用 animation review 標準
+- **n8n 自動化計畫（待執行）：**
+  - 工具：n8n.cloud（免費試用 14 天）
+  - 第一個 workflow：GA4 週報自動寄信（每週一抓上週數據 → 寄到 Gmail）
+  - 第二個 workflow：高意願訪客即時通知（看超過 3 頁 → 手機收通知）
+  - 狀態：尚未開始，明天繼續
+- **下次任務：Hero Section 重新設計**
+  - Reference：https://landonorris.com/
+  - 狀態：待開始
+
 ### Hero Section (Current Design, as of May 7, 2026)
 - **Layout:** Left-right two-column grid
   - Left: "Hi, I'm Rowan." + "Cross-screen UI/UX Designer" + "Read More" CTA → links to #about
