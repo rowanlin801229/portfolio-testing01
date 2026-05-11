@@ -1478,17 +1478,6 @@
       }
     }
 
-    /* Hero intro: three stacked lines — slightly larger type on desktop only (not mobile / not ≤1024 tablet rules) */
-    @media (min-width: 1025px) {
-      .hero-intro-text {
-        font-size: clamp(4.1rem, 11.5vw, 8.35rem);
-      }
-      .hero-intro-sub,
-      .hero-intro-tag {
-        font-size: clamp(1.85rem, 5.1vw, 3.45rem);
-      }
-    }
-
     /* ── RWD: LARGE DESKTOP ── */
     @media (min-width: 1440px) {
       nav,
@@ -1501,6 +1490,20 @@
       footer {
         padding-left: 6vw;
         padding-right: 6vw;
+      }
+    }
+
+    /*
+      Hero intro type: desktop / wide tablet — must beat .hero-intro-* inside @media (max-width: 1024px)
+      (same 1024px viewport would otherwise keep tablet sizes). #hero … raises specificity.
+    */
+    @media (min-width: 1024px) {
+      #hero .hero-intro-text {
+        font-size: clamp(4.35rem, 11.8vw, 8.85rem);
+      }
+      #hero .hero-intro-sub,
+      #hero .hero-intro-tag {
+        font-size: clamp(2rem, 5.4vw, 3.75rem);
       }
     }
 
