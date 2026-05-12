@@ -409,7 +409,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-weight: 400;
-      /* Fluid scale; syncHeroThreeLinesEqualWidth matches rendered widths across lines */
+      /* Fluid scale; desktop sync matches three lines — see syncHeroIntroWidths() */
       font-size: clamp(1.85rem, 5.2vw, 3.15rem);
       line-height: 1.4;
       letter-spacing: -0.01em;
@@ -1323,8 +1323,8 @@
       .hero-intro-text,
       .hero-intro-sub,
       .hero-intro-tag {
-        display: inline-block;
-        max-width: 100%;
+        display: block;
+        width: 100%;
         text-align: center;
       }
 
@@ -1941,7 +1941,7 @@
 
       const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-      /** Match all three hero lines to the same rendered pixel width (widest natural line sets target). */
+      /** Desktop/tablet (≥768px): match all three hero lines to the same rendered pixel width. */
       function syncHeroThreeLinesEqualWidth() {
         const lines = [intro, introSub, introTag];
         lines.forEach((el) => el.style.removeProperty('font-size'));
@@ -1954,6 +1954,52 @@
         if (!target || target < 8) return;
 
         lines.forEach((el) => fitLineToScrollWidth(el, target));
+      }
+
+      /** Mobile (≤767px): line 2 width matches line 3 only (legacy; mobile CSS untouched). */
+      function syncHeroSubFontToTagWidth() {
+        introSub.style.removeProperty('font-size');
+        void introTag.offsetWidth;
+        void introSub.offsetWidth;
+
+        const target = introTag.scrollWidth;
+        if (!target || target < 4) return;
+
+        let lo = parseFloat(getComputedStyle(introSub).fontSize);
+        if (!lo || lo < 8) lo = 16;
+
+        let hi = lo;
+        introSub.style.fontSize = hi + 'px';
+        void introSub.offsetWidth;
+        let guard = 0;
+        while (introSub.scrollWidth < target && hi < lo * 6 && guard < 48) {
+          hi *= 1.06;
+          introSub.style.fontSize = hi + 'px';
+          void introSub.offsetWidth;
+          guard += 1;
+        }
+        if (introSub.scrollWidth < target) return;
+
+        for (let i = 0; i < 28; i++) {
+          const mid = (lo + hi) / 2;
+          introSub.style.fontSize = mid + 'px';
+          void introSub.offsetWidth;
+          if (introSub.scrollWidth >= target) hi = mid;
+          else lo = mid;
+        }
+        introSub.style.fontSize = hi + 'px';
+      }
+
+      const mqDesktopHero = window.matchMedia('(min-width: 768px)');
+
+      function syncHeroIntroWidths() {
+        if (!mqDesktopHero.matches) {
+          intro.style.removeProperty('font-size');
+          introTag.style.removeProperty('font-size');
+          syncHeroSubFontToTagWidth();
+          return;
+        }
+        syncHeroThreeLinesEqualWidth();
       }
 
       function fitLineToScrollWidth(el, target) {
@@ -2232,7 +2278,7 @@
       }
 
       if (mqReduce.matches) {
-        syncHeroThreeLinesEqualWidth();
+        syncHeroIntroWidths();
         meter = MAX_TOTAL;
         revealSubRail();
         revealTagRail();
@@ -2246,7 +2292,7 @@
       }
 
       if (window.scrollY > 48) {
-        syncHeroThreeLinesEqualWidth();
+        syncHeroIntroWidths();
         meter = MAX_TOTAL;
         revealSubRail();
         revealTagRail();
@@ -2262,7 +2308,7 @@
       if (IS_MOBILE_HERO) {
         lockScroll();
         meter = 0;
-        syncHeroThreeLinesEqualWidth();
+        syncHeroIntroWidths();
         applyFromMeter();
 
         const MOBILE_AUTO_INTRO_MS = 980;
@@ -2279,7 +2325,7 @@
 
         if (document.fonts && typeof document.fonts.ready !== 'undefined') {
           document.fonts.ready.then(() => {
-            syncHeroThreeLinesEqualWidth();
+            syncHeroIntroWidths();
             if (!unlocked) applyFromMeter();
           });
         }
@@ -2288,7 +2334,7 @@
         window.addEventListener('resize', () => {
           clearTimeout(resizeTimer);
           resizeTimer = setTimeout(() => {
-            syncHeroThreeLinesEqualWidth();
+            syncHeroIntroWidths();
             applyFromMeter();
           }, 120);
         });
@@ -2297,13 +2343,13 @@
 
       lockScroll();
       meter = 0;
-      syncHeroThreeLinesEqualWidth();
+      syncHeroIntroWidths();
       applyFromMeter();
 
       /* Recalculate travel after webfonts (fixes “Rowan” edge before metrics settle) */
       if (document.fonts && typeof document.fonts.ready !== 'undefined') {
         document.fonts.ready.then(() => {
-          syncHeroThreeLinesEqualWidth();
+          syncHeroIntroWidths();
           if (!unlocked) applyFromMeter();
         });
       }
@@ -2373,7 +2419,7 @@
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-          syncHeroThreeLinesEqualWidth();
+          syncHeroIntroWidths();
           applyFromMeter();
         }, 120);
       });
