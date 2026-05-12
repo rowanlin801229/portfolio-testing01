@@ -373,14 +373,15 @@
       min-height: 0;
     }
 
+    /* ~70vw matches hero headline band (≈15% inset each side on wide screens) */
     .hero-intro-stack {
       display: flex;
       flex-direction: column;
       align-items: stretch;
       justify-content: center;
       gap: 0.8rem;
-      width: 100%;
-      max-width: 100%;
+      width: min(70vw, 1120px);
+      box-sizing: border-box;
     }
 
     .hero-intro-text {
@@ -388,7 +389,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-weight: 300;
-      font-size: clamp(3.9rem, 11.5vw, 7.8rem);
+      font-size: clamp(4.2rem, 12vw, 8.25rem);
       line-height: 1.08;
       letter-spacing: -0.02em;
       color: var(--fg);
@@ -408,8 +409,8 @@
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-weight: 400;
-      /* Same fluid scale as tag; syncHeroSubFontToTagWidth bumps px to equal width */
-      font-size: clamp(1.65rem, 4.9vw, 2.9rem);
+      /* Fluid scale; syncHeroThreeLinesEqualWidth matches rendered widths across lines */
+      font-size: clamp(1.85rem, 5.2vw, 3.15rem);
       line-height: 1.4;
       letter-spacing: -0.01em;
       color: var(--fg);
@@ -429,7 +430,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-weight: 400;
-      font-size: clamp(1.65rem, 4.9vw, 2.9rem);
+      font-size: clamp(1.85rem, 5.2vw, 3.15rem);
       line-height: 1.4;
       letter-spacing: -0.01em;
       color: var(--fg);
@@ -1062,8 +1063,12 @@
         max-width: 100%;
       }
 
+      .hero-intro-stack {
+        width: min(82vw, 720px);
+      }
+
       .hero-intro-text {
-        font-size: clamp(3.5rem, 10.4vw, 6.6rem);
+        font-size: clamp(3.75rem, 11vw, 7rem);
       }
 
       .hero-intro-stack {
@@ -1071,11 +1076,11 @@
       }
 
       .hero-intro-sub {
-        font-size: clamp(1.5rem, 4.5vw, 2.5rem);
+        font-size: clamp(1.7rem, 4.85vw, 2.75rem);
       }
 
       .hero-intro-tag {
-        font-size: clamp(1.5rem, 4.5vw, 2.5rem);
+        font-size: clamp(1.7rem, 4.85vw, 2.75rem);
       }
 
       .hero-photo {
@@ -1298,6 +1303,9 @@
 
       .hero-intro-stack {
         align-items: center;
+        width: 100%;
+        max-width: 100%;
+        gap: 0.4rem;
       }
 
       .hero-marquee-strip {
@@ -1315,25 +1323,21 @@
       .hero-intro-text,
       .hero-intro-sub,
       .hero-intro-tag {
-        display: block;
-        width: 100%;
+        display: inline-block;
+        max-width: 100%;
         text-align: center;
       }
 
       .hero-intro-text {
-        font-size: clamp(2.9rem, 12.8vw, 5.1rem);
-      }
-
-      .hero-intro-stack {
-        gap: 0.4rem;
+        font-size: clamp(3.2rem, 13.5vw, 5.45rem);
       }
 
       .hero-intro-sub {
-        font-size: clamp(1.2rem, 5.3vw, 2rem);
+        font-size: clamp(1.38rem, 5.85vw, 2.2rem);
       }
 
       .hero-intro-tag {
-        font-size: clamp(1.2rem, 5.3vw, 2rem);
+        font-size: clamp(1.38rem, 5.85vw, 2.2rem);
       }
 
       .hero-scroll {
@@ -1499,11 +1503,11 @@
     */
     @media (min-width: 1024px) {
       #hero .hero-intro-text {
-        font-size: clamp(4.35rem, 11.8vw, 8.85rem);
+        font-size: clamp(4.65rem, 12.3vw, 9.35rem);
       }
       #hero .hero-intro-sub,
       #hero .hero-intro-tag {
-        font-size: clamp(2rem, 5.4vw, 3.75rem);
+        font-size: clamp(2.2rem, 5.75vw, 4.05rem);
       }
     }
 
@@ -1937,38 +1941,68 @@
 
       const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-      /** Match line 2 rendered width to line 3 (line 2 is shorter copy at same nominal size). */
-      function syncHeroSubFontToTagWidth() {
-        introSub.style.removeProperty('font-size');
-        void introTag.offsetWidth;
-        void introSub.offsetWidth;
+      /** Match all three hero lines to the same rendered pixel width (widest natural line sets target). */
+      function syncHeroThreeLinesEqualWidth() {
+        const lines = [intro, introSub, introTag];
+        lines.forEach((el) => el.style.removeProperty('font-size'));
+        void intro.offsetWidth;
 
-        const target = introTag.scrollWidth;
-        if (!target || target < 4) return;
+        const w1 = intro.scrollWidth;
+        const w2 = introSub.scrollWidth;
+        const w3 = introTag.scrollWidth;
+        const target = Math.max(w1, w2, w3, 24);
+        if (!target || target < 8) return;
 
-        let lo = parseFloat(getComputedStyle(introSub).fontSize);
-        if (!lo || lo < 8) lo = 16;
+        lines.forEach((el) => fitLineToScrollWidth(el, target));
+      }
 
-        let hi = lo;
-        introSub.style.fontSize = hi + 'px';
-        void introSub.offsetWidth;
+      function fitLineToScrollWidth(el, target) {
+        el.style.removeProperty('font-size');
+        void el.offsetWidth;
+
+        const cssFs = parseFloat(getComputedStyle(el).fontSize) || 16;
+
+        const setFs = (px) => {
+          el.style.fontSize = Math.max(6, px) + 'px';
+          void el.offsetWidth;
+        };
+        const getW = () => el.scrollWidth;
+
+        setFs(cssFs);
+        if (Math.abs(getW() - target) <= 1.5) return;
+
+        setFs(6);
+        const wAtMin = getW();
+        if (wAtMin > target) {
+          setFs(6);
+          return;
+        }
+
+        let hi = Math.max(480, cssFs * 5);
+        setFs(hi);
         let guard = 0;
-        while (introSub.scrollWidth < target && hi < lo * 6 && guard < 48) {
-          hi *= 1.06;
-          introSub.style.fontSize = hi + 'px';
-          void introSub.offsetWidth;
+        while (getW() < target && hi < 8000 && guard < 100) {
+          hi *= 1.08;
+          setFs(hi);
           guard += 1;
         }
-        if (introSub.scrollWidth < target) return;
 
-        for (let i = 0; i < 28; i++) {
+        if (getW() < target) return;
+
+        let lo = 6;
+        for (let i = 0; i < 42; i++) {
           const mid = (lo + hi) / 2;
-          introSub.style.fontSize = mid + 'px';
-          void introSub.offsetWidth;
-          if (introSub.scrollWidth >= target) hi = mid;
+          setFs(mid);
+          const w = getW();
+          if (w > target) hi = mid;
           else lo = mid;
         }
-        introSub.style.fontSize = hi + 'px';
+
+        setFs(hi);
+        const over = getW();
+        setFs(lo);
+        const under = getW();
+        setFs(Math.abs(over - target) <= Math.abs(under - target) ? hi : lo);
       }
 
       function getViewportW(el) {
@@ -2198,7 +2232,7 @@
       }
 
       if (mqReduce.matches) {
-        syncHeroSubFontToTagWidth();
+        syncHeroThreeLinesEqualWidth();
         meter = MAX_TOTAL;
         revealSubRail();
         revealTagRail();
@@ -2212,7 +2246,7 @@
       }
 
       if (window.scrollY > 48) {
-        syncHeroSubFontToTagWidth();
+        syncHeroThreeLinesEqualWidth();
         meter = MAX_TOTAL;
         revealSubRail();
         revealTagRail();
@@ -2228,7 +2262,7 @@
       if (IS_MOBILE_HERO) {
         lockScroll();
         meter = 0;
-        syncHeroSubFontToTagWidth();
+        syncHeroThreeLinesEqualWidth();
         applyFromMeter();
 
         const MOBILE_AUTO_INTRO_MS = 980;
@@ -2245,7 +2279,7 @@
 
         if (document.fonts && typeof document.fonts.ready !== 'undefined') {
           document.fonts.ready.then(() => {
-            syncHeroSubFontToTagWidth();
+            syncHeroThreeLinesEqualWidth();
             if (!unlocked) applyFromMeter();
           });
         }
@@ -2254,7 +2288,7 @@
         window.addEventListener('resize', () => {
           clearTimeout(resizeTimer);
           resizeTimer = setTimeout(() => {
-            syncHeroSubFontToTagWidth();
+            syncHeroThreeLinesEqualWidth();
             applyFromMeter();
           }, 120);
         });
@@ -2263,13 +2297,13 @@
 
       lockScroll();
       meter = 0;
-      syncHeroSubFontToTagWidth();
+      syncHeroThreeLinesEqualWidth();
       applyFromMeter();
 
       /* Recalculate travel after webfonts (fixes “Rowan” edge before metrics settle) */
       if (document.fonts && typeof document.fonts.ready !== 'undefined') {
         document.fonts.ready.then(() => {
-          syncHeroSubFontToTagWidth();
+          syncHeroThreeLinesEqualWidth();
           if (!unlocked) applyFromMeter();
         });
       }
@@ -2339,7 +2373,7 @@
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-          syncHeroSubFontToTagWidth();
+          syncHeroThreeLinesEqualWidth();
           applyFromMeter();
         }, 120);
       });
