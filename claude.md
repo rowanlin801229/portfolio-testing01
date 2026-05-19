@@ -326,3 +326,46 @@ All projects follow a consistent narrative flow:
 
 #### 設計決定記錄
 - **Impact section stats grid：** 嘗試改為 editorial list 排版後還原，保留原本四欄大數字格子
+
+---
+
+### Updates (May 19, 2026)
+
+#### /impeccable audit 完成（index.html）
+- **Audit Health Score:** 11/20（Acceptable）
+- **PRODUCT.md:** 已存在 ✓
+- **DESIGN.md:** 尚未建立 — 下次用 `/impeccable document` 生成
+
+#### Cursor Prompts 狀態（本次新增，共 7 個）
+
+| Prompt | 內容 | 狀態 |
+|--------|------|------|
+| 1 | tiny-text：scroll-ind/wk-prev-tag/visa-badge/footer 字體 → 0.7rem | 待確認已跑 |
+| 2 | layout-transition：progress bar `width` → `transform: scaleX()` | 待確認已跑 |
+| 3 | all-caps-body：`.wi-type` 移除 `text-transform: uppercase` | 待確認已跑 |
+| 4 | Inter 字型：body/about-bio-small/exp-sub 改 system-ui，移除 Google Fonts Inter | 待確認已跑 |
+| 5 | `--muted` 對比：`rgba(74,74,72,0.58)` → `0.78`（2.8:1 → ~4.8:1） | 待確認已跑 |
+| 6 | Semantic HTML：`<div id="main">` → `<main>`，`<span class="sec-label">` → `<h2>` | 待確認已跑 |
+| 7 | Cursor media query：`@media (max-width: 767px)` → `@media (pointer: coarse)` | **尚未跑** |
+
+#### 已確認的設計決定
+- **Impact section 大數字保留**（1M+/45%/40%/30→80%）：策略性決定，方便 recruiter 快速掃描，不改
+
+#### 剩餘待做事項
+
+**技術（P2，下次繼續）**
+- [ ] Prompt 7：cursor media query fix（一行 CSS）
+- [ ] `will-change: top` 修正（line 753，改為 `will-change: opacity`）
+- [ ] Impact stats `font-size: 70px` inline → 移至 CSS class 用 clamp()
+- [ ] Production 版本移除 tweaks panel 的 React + Babel CDN（~500KB）
+- [ ] `/impeccable document` — 生成 DESIGN.md
+
+**設計（待定）**
+- [ ] Hero section 視覺方向（先前嘗試 lando 風格 + 簽名，待決定）
+  - 簽名圖檔路徑：`images/signtrue-rowan.png`（注意：是 hyphen 不是空格）
+  - hero-mockup.html 有三個版本可對比（現狀/A輕版/A重版）
+- [ ] faintv.html `<video>` 加字幕 `<track>`（a11y，低優先）
+
+**其他專案**
+- [ ] HUD wireframe（~/hud-wireframe）：四個警示狀態完成，尚未推 Figma
+- [ ] n8n 自動化：GA4 週報 + 訪客通知（尚未開始）
