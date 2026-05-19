@@ -19,7 +19,7 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&amp;family=Inter:wght@300;400;500&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -221,18 +221,28 @@
       font-size: 1.15rem;
       font-weight: 600;
       letter-spacing: 0.05em;
-      color: var(--accent);
+      color: #ffffff;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 0.75rem;
+      transition: color 0.3s ease;
     }
     .nav-logo svg {
       height: 26px;
       width: auto;
       display: block;
     }
-    .nav-logo .cls-1 { fill: var(--accent); }
+    .nav-logo .cls-1 {
+      fill: #ffffff;
+      transition: fill 0.3s ease;
+    }
+    .nav-logo:hover {
+      color: rgba(255, 255, 255, 0.72);
+    }
+    .nav-logo:hover .cls-1 {
+      fill: rgba(255, 255, 255, 0.72);
+    }
     .nav-toggle {
       position: absolute;
       opacity: 0;
@@ -263,7 +273,7 @@
       font-size: 0.75rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.92);
+      color: #ffffff;
       text-decoration: none;
       transition: color 0.3s;
     }
@@ -304,6 +314,14 @@
       position: relative;
     }
 
+    /* Hide desktop hero layers on phone only */
+    @media (max-width: 767px) {
+      .hero-bg,
+      .hero-center {
+        display: none;
+      }
+    }
+
     /* ── WAVE BACKGROUND ── */
     #wave-bg {
       position: absolute;
@@ -325,8 +343,13 @@
       transform: translate3d(0, 0, 0);
       will-change: transform;
     }
-    /* Hero main column above wave; exclude .hero-scroll so it keeps position: absolute */
-    #hero > *:not(#wave-bg):not(.hero-scroll) {
+    /* Pass-through on mobile so #hero grid layout is unchanged */
+    .hero-sticky {
+      display: contents;
+    }
+
+    /* Hero main column above wave; exclude desktop layers + .hero-scroll */
+    .hero-sticky > *:not(#wave-bg):not(.hero-scroll):not(.hero-bg):not(.hero-center):not(.hero-mobile-stage) {
       position: relative;
       z-index: 1;
     }
@@ -451,6 +474,13 @@
         justify-content: flex-start;
       }
 
+      html.hero-marquee-live .hero-live-track {
+        animation: none !important;
+        justify-content: center;
+        min-width: 100%;
+        width: 100%;
+      }
+
       .hero-intro-text,
       .hero-intro-sub,
       .hero-intro-tag {
@@ -459,7 +489,10 @@
 
       #wave-bg,
       .hero-intro-line,
-      .hero-photo-parallax {
+      .hero-photo-parallax,
+      .hero-photo-bg,
+      .hero-center,
+      .hero-sig-draw {
         transform: none !important;
       }
     }
@@ -484,12 +517,309 @@
       text-align: center;
     }
 
+    /* Full-bleed marquee — Lando Norris–style scale & rhythm */
+    html.hero-marquee-live .hero-intro-line {
+      align-items: stretch;
+      justify-content: center;
+      width: 100%;
+      padding-top: clamp(80px, 10vh, 112px);
+    }
+
+    html.hero-marquee-live .hero-intro-stack {
+      width: 100%;
+      max-width: none;
+      align-items: stretch;
+      justify-content: center;
+      gap: clamp(4px, 0.85vh, 10px);
+    }
+
+    html.hero-marquee-live .hero-marquee-strip {
+      width: 100%;
+      max-width: none;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    html.hero-marquee-live .hero-marquee-viewport {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    html.hero-marquee-live #hero .hero-intro-text {
+      font-size: clamp(2.65rem, 5.8vw, 5.4rem);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+    }
+
+    html.hero-marquee-live #hero .hero-intro-sub,
+    html.hero-marquee-live #hero .hero-intro-tag {
+      font-size: clamp(1.35rem, 2.85vw, 2.35rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    /* 跑馬燈三行：沿用 .hero-intro-* / .display 的 Cormorant 襯線，不改成黑體 */
+    html.hero-marquee-live .hero-live-item.hero-intro-text,
+    html.hero-marquee-live .hero-live-item.hero-intro-sub,
+    html.hero-marquee-live .hero-live-item.hero-intro-tag {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      text-transform: none;
+    }
+
+    html.hero-marquee-live .hero-live-item.hero-intro-text,
+    html.hero-marquee-live .hero-intro-text.display {
+      font-weight: 300;
+    }
+
+    html.hero-marquee-live .hero-live-item.hero-intro-sub,
+    html.hero-marquee-live .hero-live-item.hero-intro-tag {
+      font-weight: 400;
+    }
+
+    html.hero-marquee-live .hero-live-item {
+      padding-right: clamp(2.5rem, 5vw, 5.5rem);
+    }
+
     html.hero-marquee-live .hero-live-track--ltr {
-      animation: hero-mq-ltr 12s linear infinite;
+      animation-name: hero-mq-ltr;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
     }
 
     html.hero-marquee-live .hero-live-track--rtl {
-      animation: hero-mq-rtl 14s linear infinite;
+      animation-name: hero-mq-rtl;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    /* Three full-bleed rows, each phrase ×4 infinite repeat */
+    html.hero-marquee-live .hero-live-track--repeat.hero-live-track--ltr {
+      animation: hero-mq-repeat 20s linear infinite;
+    }
+
+    html.hero-marquee-live .hero-live-track--repeat.hero-live-track--rtl {
+      animation: hero-mq-repeat-rtl 22s linear infinite;
+    }
+
+    html.hero-marquee-live .hero-marquee-strip:nth-child(3) .hero-live-track--repeat {
+      animation-duration: 21s;
+    }
+
+    @keyframes hero-mq-repeat {
+      from { transform: translateX(0); }
+      to { transform: translateX(-16.6667%); }
+    }
+
+    @keyframes hero-mq-repeat-rtl {
+      from { transform: translateX(-16.6667%); }
+      to { transform: translateX(0); }
+    }
+
+    /* Shared Lando tokens (desktop + mobile/tablet hero) */
+    html.hero-lando {
+      --lando-canvas: #111110;
+      --lando-ink: rgba(158, 154, 148, 0.88);
+      --lando-ink-soft: rgba(158, 154, 148, 0.5);
+    }
+
+    /* ── Lando Norris hero (desktop): dark canvas, light type, cover photo ── */
+    @media (min-width: 768px) {
+      html.hero-lando {
+        /* 調人物大小／裁切：改這三個值即可 */
+        /* Phase 1: 0 → reveal-end 由下往上＋白光出場 */
+        --hero-reveal-end: 0.4;
+        /* Phase 2: reveal-end → 1 人物後退＋變暗 */
+        --hero-photo-scale-start: 1;
+        /* 由 JS 計算；終點高度取 max(跑馬燈×ratio, 簽名×sig-ratio) */
+        --hero-photo-marquee-ratio: 2;
+        --hero-photo-sig-ratio: 1.32;
+        --hero-photo-scale-end: 0.92;
+        --hero-photo-lift-end: 0px;
+        --hero-photo-dim-amount: 0.86;
+        /* Phase 3: 後退進度達此比例時開始簽名（愈小＝愈早開始、書寫愈慢） */
+        --hero-sig-recede-at: 0.62;
+        --hero-sig-ease: 1.05;
+        /* 每筆之間留白比例；單筆書寫 ease 指數（愈大收尾愈慢） */
+        /* 簽名紅：略降彩度，避免過於鮮豔 */
+        --hero-sig-color: #876060;
+        --hero-sig-saturate: 0.52;
+        --hero-photo-reveal-inset: 100%;
+        --hero-photo-inset-top: clamp(100px, 12vh, 132px);
+        --hero-photo-inset-x: clamp(20px, 4vw, 48px);
+        --hero-photo-inset-bottom: clamp(36px, 6vh, 72px);
+      }
+
+      @supports (background: color-mix(in srgb, red, blue)) {
+        html.hero-lando {
+          --hero-sig-color: color-mix(in srgb, var(--accent) 40%, #5c4a4a 60%);
+        }
+      }
+
+      html.hero-lando #hero .hero-sticky {
+        background: var(--lando-canvas);
+      }
+
+      /* 第一幕起 nav 維持全站預設黑底（#111110），不改成透明 */
+      html.hero-marquee-live:not(.hero-scrolled) nav,
+      html.hero-lando:not(.hero-scrolled) nav,
+      html.hero-marquee-live.hero-scrolled nav,
+      html.hero-lando.hero-scrolled nav {
+        background: #111110;
+        border-bottom-color: rgba(255, 255, 255, 0.08);
+        transition: background 0.45s ease, border-color 0.45s ease;
+      }
+
+      html.hero-lando .hero-live-item,
+      html.hero-lando .hero-intro-text,
+      html.hero-lando .hero-intro-sub,
+      html.hero-lando .hero-intro-tag,
+      html.hero-lando .hero-intro-text .hero-intro-accent,
+      html.hero-lando .hero-intro-sub .hero-intro-accent,
+      html.hero-lando .hero-intro-tag .hero-intro-accent {
+        color: var(--lando-ink);
+      }
+
+      html.hero-lando #hero .hero-intro-text {
+        font-size: clamp(2.85rem, 7.2vw, 6.75rem);
+        line-height: 0.92;
+      }
+
+      html.hero-lando #hero .hero-intro-sub,
+      html.hero-lando #hero .hero-intro-tag {
+        font-size: clamp(1.65rem, 4.2vw, 3.5rem);
+        line-height: 0.95;
+      }
+
+      html.hero-lando .hero-intro-stack {
+        gap: 0.35rem;
+      }
+
+      html.hero-lando .hero-live-item {
+        padding-right: clamp(3rem, 6vw, 6rem);
+      }
+
+      html.hero-lando .hero-sticky > .hero-bg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--hero-photo-inset-top) var(--hero-photo-inset-x)
+          var(--hero-photo-inset-bottom);
+        box-sizing: border-box;
+      }
+
+      html.hero-lando .hero-photo-stage {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 100%;
+        max-height: 100%;
+        clip-path: inset(var(--hero-photo-reveal-inset) 0 0 0);
+        transform-origin: center center;
+        will-change: clip-path, transform;
+        isolation: isolate;
+      }
+
+      html.hero-lando .hero-photo-sheen {
+        display: block;
+        position: absolute;
+        left: -18%;
+        width: 136%;
+        height: clamp(40px, 8vh, 96px);
+        top: 0;
+        transform: translateY(-50%);
+        pointer-events: none;
+        z-index: 4;
+        opacity: 0;
+        border-radius: 999px;
+        background: linear-gradient(
+          180deg,
+          transparent 0%,
+          rgba(220, 232, 255, 0.45) 15%,
+          rgba(255, 255, 255, 1) 50%,
+          rgba(220, 232, 255, 0.45) 85%,
+          transparent 100%
+        );
+        box-shadow:
+          0 0 32px rgba(255, 255, 255, 0.95),
+          0 0 80px rgba(230, 240, 255, 0.75),
+          0 0 120px rgba(255, 255, 255, 0.45);
+        filter: blur(12px);
+        mix-blend-mode: screen;
+        will-change: top, opacity;
+      }
+
+      html.hero-lando .hero-photo-flash {
+        display: block;
+        position: absolute;
+        inset: -8% -12%;
+        z-index: 3;
+        pointer-events: none;
+        opacity: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(245, 248, 255, 0.72) 0%,
+          rgba(255, 255, 255, 0.94) 38%,
+          #ffffff 52%,
+          rgba(255, 255, 255, 0.98) 100%
+        );
+        mix-blend-mode: screen;
+        will-change: opacity;
+      }
+
+      html.hero-lando .hero-photo-bg {
+        position: relative;
+        z-index: 1;
+        inset: auto;
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        object-position: center center;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html.hero-lando .hero-photo-stage {
+          clip-path: inset(0 0 0 0);
+        }
+
+        html.hero-lando .hero-photo-sheen,
+        html.hero-lando .hero-photo-flash {
+          display: none;
+        }
+      }
+
+      html.hero-lando .hero-center {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      html.hero-lando.hero-sig-visible .hero-center {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      html.hero-lando .hero-scroll span {
+        color: var(--lando-ink-soft);
+        letter-spacing: 0.22em;
+      }
+
+    }
+
+    html.hero-marquee-live .hero-live-track {
+      width: max-content;
+      min-width: 200%;
+    }
+
+    html.hero-marquee-live .hero-intro-text,
+    html.hero-marquee-live .hero-intro-sub,
+    html.hero-marquee-live .hero-intro-tag {
+      opacity: 1;
+      visibility: visible;
     }
 
     @keyframes hero-mq-ltr {
@@ -1043,55 +1373,7 @@
         scroll-margin-top: 72px;
       }
 
-      #hero {
-        min-height: 100vh;
-        min-height: 100dvh;
-        height: 100vh;
-        height: 100dvh;
-        padding: 96px 4vw 8vh;
-        grid-template-columns: 1fr;
-        grid-template-rows: minmax(0, 1fr) auto;
-        align-items: center;
-        justify-items: center;
-        row-gap: 0;
-      }
-
-      .hero-stage {
-        grid-column: 1;
-        grid-row: 1;
-        width: min(78vw, 510px);
-        max-width: 100%;
-      }
-
-      .hero-intro-stack {
-        width: min(82vw, 720px);
-      }
-
-      .hero-intro-text {
-        font-size: clamp(3.75rem, 11vw, 7rem);
-      }
-
-      .hero-intro-stack {
-        gap: 0.55rem;
-      }
-
-      .hero-intro-sub {
-        font-size: clamp(1.7rem, 4.85vw, 2.75rem);
-      }
-
-      .hero-intro-tag {
-        font-size: clamp(1.7rem, 4.85vw, 2.75rem);
-      }
-
-      .hero-photo {
-        max-height: min(58vh, 560px);
-      }
-
-      .hero-scroll {
-        bottom: 0.2rem;
-      }
-
-      .hero-desc {
+      #hero .hero-desc {
         max-width: 62ch;
         font-size: 0.84rem;
         line-height: 1.75;
@@ -1262,6 +1544,7 @@
         align-items: center;
         justify-items: center;
         row-gap: 0;
+        background: var(--bg);
       }
 
       .hero-stage {
@@ -1328,6 +1611,17 @@
         text-align: center;
       }
 
+      /* 等寬量測：inline-block 才能取得真實文字寬度 */
+      html.hero-mobile-static-intro .hero-intro-text,
+      html.hero-mobile-static-intro .hero-intro-sub,
+      html.hero-mobile-static-intro .hero-intro-tag {
+        display: inline-block;
+        width: auto;
+        max-width: 92vw;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
       .hero-intro-text {
         font-size: clamp(3.2rem, 13.5vw, 5.45rem);
       }
@@ -1342,6 +1636,91 @@
 
       .hero-scroll {
         display: none;
+      }
+
+      /* 移動端三句跑馬燈：靜態顯示，無滑入動畫，深灰字 */
+      #hero .hero-intro-text,
+      #hero .hero-intro-sub,
+      #hero .hero-intro-tag,
+      #hero .hero-intro-text .hero-intro-accent,
+      #hero .hero-intro-sub .hero-intro-accent,
+      #hero .hero-intro-tag .hero-intro-accent {
+        color: var(--fg);
+      }
+
+      html.hero-mobile-static-intro .hero-intro-text,
+      html.hero-mobile-static-intro .hero-intro-sub,
+      html.hero-mobile-static-intro .hero-intro-tag {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+      }
+
+      /* Mobile: 捲動驅動 — 簽名疊在照片上（胸口區） */
+      html.hero-mobile-sig-stage {
+        --hero-sig-saturate: 0.52;
+      }
+
+      html.hero-mobile-sig-stage #hero {
+        position: relative;
+      }
+
+      html.hero-mobile-sig-stage .hero-photo-parallax {
+        position: relative;
+        isolation: isolate;
+        z-index: 2;
+      }
+
+      html.hero-mobile-sig-stage .hero-center {
+        display: flex !important;
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 63% 0 0;
+        box-sizing: border-box;
+        pointer-events: none;
+        opacity: 1;
+        visibility: visible;
+        width: 100%;
+        height: 100%;
+      }
+
+      html.hero-mobile-sig-stage .hero-sig-draw {
+        width: min(172%, 860px);
+        max-width: 100vw;
+        max-height: 78%;
+        margin: 0 auto;
+        transform: translateY(24%);
+      }
+
+      html.hero-mobile-sig-stage .hero-sig-write {
+        position: relative;
+        display: block;
+        width: 100%;
+        --sig-reveal: 0%;
+        -webkit-clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+        clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+        visibility: hidden;
+      }
+
+      html.hero-mobile-sig-stage.hero-sig-visible .hero-sig-write {
+        visibility: visible;
+      }
+
+      html.hero-mobile-sig-stage .hero-sig-write .hero-sig-fallback,
+      html.hero-mobile-sig-stage .hero-sig-write .hero-sig-color,
+      html.hero-mobile-sig-stage .hero-sig-write .hero-sig-ink {
+        display: none;
+      }
+
+      html.hero-mobile-sig-stage .hero-sig-final {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        filter: saturate(var(--hero-sig-saturate, 0.52));
       }
 
       .hero-desc {
@@ -1485,7 +1864,6 @@
     /* ── RWD: LARGE DESKTOP ── */
     @media (min-width: 1440px) {
       nav,
-      #hero,
       #work,
       #about,
       #impact,
@@ -1498,10 +1876,9 @@
     }
 
     /*
-      Hero intro type: desktop / wide tablet — must beat .hero-intro-* inside @media (max-width: 1024px)
-      (same 1024px viewport would otherwise keep tablet sizes). #hero … raises specificity.
+      Hero intro type: desktop / tablet (≥768px) — beat legacy #hero rules in max-width: 767px only.
     */
-    @media (min-width: 1024px) {
+    @media (min-width: 768px) {
       #hero .hero-intro-text {
         font-size: clamp(4.65rem, 12.3vw, 9.35rem);
       }
@@ -1509,6 +1886,250 @@
       #hero .hero-intro-tag {
         font-size: clamp(2.2rem, 5.75vw, 4.05rem);
       }
+
+      html.hero-marquee-live #hero .hero-intro-text {
+        font-size: clamp(2.8rem, 6vw, 5.6rem);
+      }
+      html.hero-marquee-live #hero .hero-intro-sub,
+      html.hero-marquee-live #hero .hero-intro-tag {
+        font-size: clamp(1.4rem, 2.9vw, 2.45rem);
+      }
+    }
+
+    /* Desktop hero — full-bleed photo + signature stacked on top (≥768px; phone uses mobile hero) */
+    @media (min-width: 768px) {
+
+      html.hero-lando .hero-sticky > #wave-bg {
+        display: block;
+        z-index: 1;
+        opacity: 1;
+      }
+
+      .hero-bg,
+      .hero-center,
+      .hero-mobile-stage {
+        display: block;
+      }
+
+      .hero-sticky {
+        display: block;
+        position: sticky;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100svh;
+        min-height: 100svh;
+        overflow: hidden;
+        z-index: 2;
+      }
+
+      .hero-sticky > .hero-mobile-stage {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .hero-mobile-stage .hero-stage {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        grid-column: unset;
+        grid-row: unset;
+        align-self: stretch;
+        justify-self: stretch;
+      }
+
+      .hero-mobile-stage .hero-visual {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+      }
+
+      .hero-mobile-stage .hero-photo-parallax {
+        display: none;
+      }
+
+      .hero-mobile-stage .hero-intro-line {
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding-top: clamp(96px, 14vh, 152px);
+      }
+
+      .hero-mobile-stage .hero-intro-stack {
+        width: min(92vw, 1120px);
+        margin: 0 auto;
+        gap: 0.65rem;
+      }
+
+      html.hero-marquee-live .hero-mobile-stage .hero-visual,
+      html.hero-marquee-live .hero-mobile-stage .hero-intro-line {
+        width: 100%;
+        max-width: none;
+      }
+
+      html.hero-marquee-live .hero-sticky {
+        overflow-x: hidden;
+        overflow-y: hidden;
+      }
+
+      #hero {
+        position: relative;
+        width: 100%;
+        min-height: 280vh;
+        height: auto;
+        overflow: visible;
+        display: block;
+        padding: 0 !important;
+      }
+
+      /* Photo layer above marquee (Lando: centered in safe area below nav) */
+      .hero-sticky > .hero-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--hero-photo-inset-top) var(--hero-photo-inset-x)
+          var(--hero-photo-inset-bottom);
+        box-sizing: border-box;
+        pointer-events: none;
+        isolation: isolate;
+      }
+
+      .hero-sticky > .hero-center {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        padding: var(--hero-photo-inset-top) var(--hero-photo-inset-x)
+          var(--hero-photo-inset-bottom);
+        box-sizing: border-box;
+        pointer-events: none;
+        will-change: transform;
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      html.hero-sig-visible .hero-sticky > .hero-center {
+        opacity: 1;
+        visibility: visible;
+        transition: none;
+      }
+
+      .hero-photo-stage {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      .hero-photo-sheen,
+      .hero-photo-flash {
+        display: none;
+      }
+
+      .hero-photo-bg {
+        position: relative;
+        z-index: 1;
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        object-position: center center;
+        transform-origin: center center;
+        display: block;
+      }
+
+      html.hero-marquee-live .hero-mobile-stage .hero-intro-line {
+        z-index: 0;
+        align-items: center;
+        justify-content: center;
+        padding-top: 0;
+        height: 100%;
+      }
+
+      .hero-sig-draw {
+        width: 100%;
+        max-width: min(92vw, 720px);
+        margin: 0 auto;
+        opacity: 1;
+        pointer-events: none;
+        mix-blend-mode: normal;
+      }
+
+      .hero-sig-write {
+        position: relative;
+        display: block;
+        width: 100%;
+        --sig-reveal: 0%;
+        -webkit-clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+        clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+        visibility: hidden;
+        will-change: clip-path;
+      }
+
+      html.hero-sig-visible .hero-sig-write {
+        visibility: visible;
+      }
+
+      .hero-sig-write .hero-sig-fallback,
+      .hero-sig-write .hero-sig-color,
+      .hero-sig-write .hero-sig-ink {
+        display: none;
+      }
+
+      .hero-sig-final {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        object-position: center center;
+        filter: saturate(var(--hero-sig-saturate, 0.52));
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html.hero-lando .hero-sig-write {
+          clip-path: inset(0 0 0 0);
+          -webkit-clip-path: inset(0 0 0 0);
+        }
+      }
+
+      .hero-sticky > .hero-scroll {
+        z-index: 5;
+        bottom: clamp(12px, 2vh, 24px);
+      }
+
+      /* Lando overrides (after generic desktop hero rules) */
+      html.hero-lando.hero-marquee-live #hero .hero-intro-text {
+        font-size: clamp(2.85rem, 7.2vw, 6.75rem);
+        line-height: 0.92;
+      }
+
+      html.hero-lando.hero-marquee-live #hero .hero-intro-sub,
+      html.hero-lando.hero-marquee-live #hero .hero-intro-tag {
+        font-size: clamp(1.65rem, 4.2vw, 3.5rem);
+        line-height: 0.95;
+      }
+
     }
 
   </style>
@@ -1567,12 +2188,50 @@
 
     <!-- HERO -->
     <section id="hero" aria-label="Introduction">
+      <div class="hero-sticky">
       <div id="wave-bg" aria-hidden="true"></div>
-      <div class="hero-stage">
+
+      <div class="hero-bg">
+        <div class="hero-photo-stage">
+          <img
+            class="hero-photo-bg"
+            src="images/rowan.png"
+            alt="Portrait of Rowan Lin"
+            loading="eager"
+            decoding="async"
+          />
+          <div class="hero-photo-flash" aria-hidden="true"></div>
+          <div class="hero-photo-sheen" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="hero-center">
+        <div class="hero-sig-draw" role="img" aria-label="林昱嫻">
+          <div class="hero-sig-write">
+            <img
+              class="hero-sig-fallback"
+              src="images/signtrue-rowan.png"
+              alt="林昱嫻"
+              decoding="async"
+            />
+            <img
+              class="hero-sig-final"
+              src="images/signtrue-rowan.png"
+              alt=""
+              decoding="async"
+              aria-hidden="true"
+            />
+            <div class="hero-sig-color" aria-hidden="true"></div>
+            <div class="hero-sig-ink" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-stage hero-mobile-stage">
         <div class="hero-visual">
           <div class="hero-intro-line">
             <div class="hero-intro-stack">
-              <div class="hero-marquee-strip hero-marquee-strip--ltr">
+              <div class="hero-marquee-strip hero-marquee-strip--ltr hero-marquee-strip--primary">
                 <div class="hero-marquee-viewport">
                   <h1 class="hero-intro-text display">
                     Hi, I'm <span class="hero-intro-accent">Rowan.</span>
@@ -1608,11 +2267,6 @@
           </div>
         </div>
       </div>
-      <div class="hero-scroll" aria-hidden="true">
-        <div class="scroll-ind">
-          <div class="scroll-bar"></div>
-          <span>Scroll</span>
-        </div>
       </div>
     </section>
 
@@ -1879,6 +2533,7 @@
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
   <script type="text/babel" src="tweaks-panel.jsx"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous"></script>
   <script type="text/babel">
     const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "bg": "#ffffff",
@@ -1899,7 +2554,13 @@
           document.body.style.backgroundColor = val;
         }
         if (key === 'fg')     document.documentElement.style.setProperty('--fg', val);
-        if (key === 'accent') document.documentElement.style.setProperty('--accent', val);
+        if (key === 'accent') {
+          document.documentElement.style.setProperty('--accent', val);
+          document.documentElement.style.setProperty(
+            '--hero-sig-color',
+            'color-mix(in srgb, ' + val + ' 40%, #5c4a4a 60%)',
+          );
+        }
         if (key === 'bodySize')    document.querySelectorAll('.hero-desc, .about-bio-small, .cs-text-body').forEach(el => el.style.fontSize = val + 'rem');
       }
 
@@ -1930,6 +2591,7 @@
       const introTag = document.querySelector('.hero-intro-tag');
       const visual = document.querySelector('#hero .hero-visual');
       const photo = document.querySelector('.hero-photo');
+      const heroSigWrite = document.querySelector('.hero-sig-write');
       if (!hero || !intro || !visual || !introSub || !introTag) return;
 
       let photoIntroPlayed = false;
@@ -1940,6 +2602,8 @@
       }
 
       const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const mqFullBleedHero = window.matchMedia('(min-width: 768px)');
+      const mqMobileHero = window.matchMedia('(max-width: 767px)');
 
       /** Desktop/tablet (≥768px): match all three hero lines to the same rendered pixel width. */
       function syncHeroThreeLinesEqualWidth() {
@@ -1956,47 +2620,29 @@
         lines.forEach((el) => fitLineToScrollWidth(el, target));
       }
 
-      /** Mobile (≤767px): line 2 width matches line 3 only (legacy; mobile CSS untouched). */
-      function syncHeroSubFontToTagWidth() {
-        introSub.style.removeProperty('font-size');
-        void introTag.offsetWidth;
-        void introSub.offsetWidth;
-
-        const target = introTag.scrollWidth;
-        if (!target || target < 4) return;
-
-        let lo = parseFloat(getComputedStyle(introSub).fontSize);
-        if (!lo || lo < 8) lo = 16;
-
-        let hi = lo;
-        introSub.style.fontSize = hi + 'px';
-        void introSub.offsetWidth;
-        let guard = 0;
-        while (introSub.scrollWidth < target && hi < lo * 6 && guard < 48) {
-          hi *= 1.06;
-          introSub.style.fontSize = hi + 'px';
-          void introSub.offsetWidth;
-          guard += 1;
-        }
-        if (introSub.scrollWidth < target) return;
-
-        for (let i = 0; i < 28; i++) {
-          const mid = (lo + hi) / 2;
-          introSub.style.fontSize = mid + 'px';
-          void introSub.offsetWidth;
-          if (introSub.scrollWidth >= target) hi = mid;
-          else lo = mid;
-        }
-        introSub.style.fontSize = hi + 'px';
-      }
-
       const mqDesktopHero = window.matchMedia('(min-width: 768px)');
 
+      function syncHeroLiveDupes() {
+        document.querySelectorAll('.hero-live-track').forEach(function (track) {
+          const items = track.querySelectorAll('.hero-live-item');
+          if (items.length < 2) return;
+          const fs = getComputedStyle(items[0]).fontSize;
+          for (let i = 1; i < items.length; i += 1) {
+            items[i].style.fontSize = fs;
+          }
+        });
+      }
+
       function syncHeroIntroWidths() {
+        if (root.classList.contains('hero-marquee-live')) {
+          syncHeroLiveDupes();
+          return;
+        }
         if (!mqDesktopHero.matches) {
-          intro.style.removeProperty('font-size');
-          introTag.style.removeProperty('font-size');
-          syncHeroSubFontToTagWidth();
+          [intro, introSub, introTag].forEach(function (el) {
+            el.style.removeProperty('font-size');
+          });
+          syncHeroThreeLinesEqualWidth();
           return;
         }
         syncHeroThreeLinesEqualWidth();
@@ -2158,14 +2804,278 @@
         }
       }
 
-      /* Mobile fast params: lower thresholds, quicker intro response on touch. */
-      const IS_MOBILE_HERO = window.matchMedia('(max-width: 767px)').matches;
-      const MAX_P1 = IS_MOBILE_HERO ? 130 : 380;
-      const MAX_P2 = IS_MOBILE_HERO ? 130 : 380;
-      const MAX_P3 = IS_MOBILE_HERO ? 130 : 380;
+      /** 愈大＝需捲動愈多才能完成簽名（愈慢） */
+      const MOBILE_FINALE_MAX = 580;
+      const MOBILE_SIG_EASE = 3.65;
+      const photoParallax = document.querySelector('#hero .hero-photo-parallax');
+      const heroCenterEl = document.querySelector('.hero-center');
+
+      let mobileFinaleReady = false;
+      let mobileFinaleScheduled = false;
+      let mobileFinaleMeter = 0;
+
+      function mountMobileSignatureOnPhoto() {
+        if (!photoParallax || !heroCenterEl) return;
+        if (heroCenterEl.dataset.mobileMounted === '1') return;
+        photoParallax.appendChild(heroCenterEl);
+        heroCenterEl.dataset.mobileMounted = '1';
+      }
+
+      /** 0→1：左→右寫簽名（由使用者下滑驅動；人像不變暗） */
+      function applyMobileFinaleProgress(p) {
+        const t = Math.max(0, Math.min(1, p));
+        const sigT = t;
+
+        if (photo) {
+          photo.style.filter = 'none';
+          photo.classList.remove('hero-photo-dim');
+        }
+
+        if (sigT > 0.001) {
+          root.classList.add('hero-sig-visible');
+          if (heroSigWrite) {
+            heroSigWrite.style.visibility = 'visible';
+            const eased = 1 - Math.pow(1 - sigT, MOBILE_SIG_EASE);
+            heroSigWrite.style.setProperty(
+              '--sig-reveal',
+              (eased * 100).toFixed(2) + '%',
+            );
+          }
+        } else {
+          root.classList.remove('hero-sig-visible');
+          if (heroSigWrite) {
+            heroSigWrite.style.visibility = 'hidden';
+            heroSigWrite.style.setProperty('--sig-reveal', '0%');
+          }
+        }
+
+        if (t >= 0.999 && heroSigWrite) {
+          heroSigWrite.style.setProperty('--sig-reveal', '100%');
+        }
+      }
+
+      function ingestMobileFinaleDelta(dy) {
+        if (!mobileFinaleReady || unlocked) return;
+        mobileFinaleMeter = Math.max(
+          0,
+          Math.min(MOBILE_FINALE_MAX, mobileFinaleMeter + dy),
+        );
+        applyMobileFinaleProgress(mobileFinaleMeter / MOBILE_FINALE_MAX);
+        if (mobileFinaleMeter >= MOBILE_FINALE_MAX * 0.998) {
+          finalizeUnlock();
+        }
+      }
+
+      function enableMobileFinaleScroll() {
+        mountMobileSignatureOnPhoto();
+        root.classList.add('hero-mobile-sig-stage');
+        mobileFinaleReady = true;
+        mobileFinaleMeter = 0;
+        applyMobileFinaleProgress(0);
+      }
+
+      /** 移動端：三句文字直接置中顯示，不做 L→R 滑入 */
+      function showMobileIntroLinesStatic() {
+        syncHeroIntroWidths();
+        revealSubRail();
+        revealTagRail();
+        applyPhase1Progress(1);
+        applyPhase2Progress(1);
+        applyPhase3Progress(1);
+        polishAtEnd();
+        [intro, introSub, introTag].forEach(function (el) {
+          if (window.gsap) {
+            gsap.set(el, { x: 0, opacity: 1, visibility: 'visible' });
+          } else {
+            el.style.transform = 'translate3d(0,0,0)';
+            el.style.opacity = '1';
+            el.style.visibility = 'visible';
+          }
+        });
+        meter = MAX_TOTAL;
+      }
+
+      function initMobileHero() {
+        lockScroll();
+        root.classList.add('hero-mobile-static-intro');
+        showMobileIntroLinesStatic();
+        triggerHeroPhoto();
+        scheduleMobilePhotoReadyForScroll();
+      }
+
+      /** 桌面跑馬燈會搬走 DOM；縮回手機寬度前須還原三句到 viewport */
+      function restoreIntroFromLiveMarquee() {
+        if (!root.classList.contains('hero-marquee-live')) return;
+        document.querySelectorAll('#hero .hero-marquee-viewport').forEach(function (vp) {
+          var track = vp.querySelector('.hero-live-track');
+          if (!track) return;
+          var item = track.querySelector('.hero-live-item');
+          if (!item) return;
+          item.classList.remove('hero-live-item');
+          item.removeAttribute('aria-hidden');
+          if (window.gsap) {
+            gsap.set(item, {
+              clearProps: 'transform,opacity,visibility,x,fontSize',
+            });
+          }
+          item.style.opacity = '1';
+          item.style.visibility = 'visible';
+          item.style.transform = 'none';
+          item.style.removeProperty('font-size');
+          vp.innerHTML = '';
+          vp.appendChild(item);
+        });
+        root.classList.remove('hero-marquee-live');
+        [intro, introSub, introTag].forEach(function (el) {
+          el.style.removeProperty('font-size');
+        });
+      }
+
+      function resetMobileHeroState() {
+        mobileFinaleReady = false;
+        mobileFinaleScheduled = false;
+        mobileFinaleMeter = 0;
+        photoIntroPlayed = false;
+        unlocked = false;
+        unlockPending = false;
+        clearUnlockSchedule();
+        root.classList.remove(
+          'hero-mobile-static-intro',
+          'hero-mobile-sig-stage',
+          'hero-sig-visible',
+          'hero-intro-lock',
+        );
+        if (photo) {
+          photo.classList.remove('hero-photo-in', 'hero-photo-dim');
+          photo.style.cssText = '';
+        }
+        if (heroCenterEl && heroCenterEl.dataset.mobileMounted === '1') {
+          var sticky = document.querySelector('.hero-sticky');
+          var stage = sticky && sticky.querySelector('.hero-mobile-stage');
+          if (sticky && stage && heroCenterEl.parentElement !== sticky) {
+            sticky.insertBefore(heroCenterEl, stage);
+          }
+          delete heroCenterEl.dataset.mobileMounted;
+        }
+        if (heroSigWrite) {
+          heroSigWrite.style.removeProperty('--sig-reveal');
+          heroSigWrite.style.visibility = '';
+        }
+      }
+
+      function finishMobileHeroInstant() {
+        root.classList.add('hero-mobile-static-intro');
+        showMobileIntroLinesStatic();
+        triggerHeroPhoto();
+        if (photo) photo.classList.add('hero-photo-in');
+        enableMobileFinaleScroll();
+        applyMobileFinaleProgress(1);
+        finalizeUnlock();
+      }
+
+      function applyHeroBreakpoint() {
+        if (
+          !mqFullBleedHero.matches &&
+          typeof window.__teardownDesktopHero === 'function'
+        ) {
+          window.__teardownDesktopHero();
+        }
+        root.classList.remove('hero-lando', 'hero-scrolled');
+
+        function finishDesktopHeroInstant() {
+          resetMobileHeroState();
+          restoreIntroFromLiveMarquee();
+          enableHeroLiveMarquee();
+          finalizeUnlock();
+          if (typeof window.__bootDesktopHero === 'function') {
+            window.__bootDesktopHero();
+          }
+        }
+
+        if (mqReduce.matches) {
+          if (mqMobileHero.matches) {
+            resetMobileHeroState();
+            restoreIntroFromLiveMarquee();
+            finishMobileHeroInstant();
+          } else if (mqFullBleedHero.matches) {
+            finishDesktopHeroInstant();
+          }
+          return;
+        }
+
+        if (window.scrollY > 48) {
+          if (mqMobileHero.matches) {
+            resetMobileHeroState();
+            restoreIntroFromLiveMarquee();
+            finishMobileHeroInstant();
+          } else if (mqFullBleedHero.matches) {
+            finishDesktopHeroInstant();
+          }
+          return;
+        }
+
+        if (mqFullBleedHero.matches) {
+          resetMobileHeroState();
+          restoreIntroFromLiveMarquee();
+          enableHeroLiveMarquee();
+          finalizeUnlock();
+          if (typeof window.__bootDesktopHero === 'function') {
+            window.__bootDesktopHero();
+          }
+          return;
+        }
+
+        if (mqMobileHero.matches) {
+          resetMobileHeroState();
+          restoreIntroFromLiveMarquee();
+          initMobileHero();
+          return;
+        }
+
+        resetMobileHeroState();
+        restoreIntroFromLiveMarquee();
+        enableHeroLiveMarquee();
+        finalizeUnlock();
+        if (typeof window.__bootDesktopHero === 'function') {
+          window.__bootDesktopHero();
+        }
+      }
+
+      /** 人像入場完成後，等待使用者下滑觸發變暗＋簽名 */
+      function scheduleMobilePhotoReadyForScroll() {
+        if (mobileFinaleScheduled || unlocked) return;
+        mobileFinaleScheduled = true;
+
+        function onPhotoIn() {
+          if (mobileFinaleReady) return;
+          enableMobileFinaleScroll();
+        }
+
+        if (!photo) {
+          onPhotoIn();
+          return;
+        }
+
+        photoAnimHandler = function (e) {
+          if (e.animationName !== 'hero-photo-fade-up') return;
+          photo.removeEventListener('animationend', photoAnimHandler);
+          photoAnimHandler = null;
+          onPhotoIn();
+        };
+        photo.addEventListener('animationend', photoAnimHandler);
+        photoUnlockTimer = setTimeout(function () {
+          photoUnlockTimer = null;
+          onPhotoIn();
+        }, HERO_PHOTO_UNLOCK_FALLBACK_MS);
+      }
+
+      /* Tablet wheel intro params (mobile uses static lines + scroll finale) */
+      const MAX_P1 = 380;
+      const MAX_P2 = 380;
+      const MAX_P3 = 380;
       const M12 = MAX_P1 + MAX_P2;
       const MAX_TOTAL = M12 + MAX_P3;
-      const TOUCH_DELTA_MULTIPLIER = IS_MOBILE_HERO ? 2.4 : 1;
+      const TOUCH_DELTA_MULTIPLIER = 2.4;
 
       const HERO_PHOTO_ANIM_DELAY_MS = 120;
       const HERO_PHOTO_ANIM_DURATION_MS = 850;
@@ -2195,6 +3105,16 @@
         unlockPending = false;
         unlocked = true;
         unlockScroll();
+        if (
+          !mqFullBleedHero.matches &&
+          !mqMobileHero.matches &&
+          window.__heroMarquee &&
+          window.__heroMarquee.enableLive
+        ) {
+          window.__heroMarquee.enableLive();
+          window.__heroMarquee.syncWidths();
+          window.__heroMarquee.polish();
+        }
       }
 
       /** Page scroll unlocks only after the portrait entrance animation ends */
@@ -2238,6 +3158,52 @@
         }
       }
 
+      /** Desktop: full-bleed "Hi, I'm Rowan" ×4 infinite marquee (Lando-style) */
+      function buildRepeatMarquee(el, dir) {
+        if (!el || el.closest('.hero-live-track')) return;
+        const vp = el.closest('.hero-marquee-viewport');
+        if (!vp) return;
+
+        const track = document.createElement('div');
+        track.className =
+          'hero-live-track hero-live-track--' +
+          dir +
+          ' hero-live-track--repeat';
+
+        const copies = 6;
+        for (let i = 0; i < copies; i += 1) {
+          const node = i === 0 ? el : el.cloneNode(true);
+          if (i > 0) node.setAttribute('aria-hidden', 'true');
+          node.classList.add('hero-live-item');
+          if (window.gsap) {
+            gsap.set(node, { clearProps: 'transform,opacity,visibility,x' });
+          }
+          node.style.opacity = '1';
+          node.style.visibility = 'visible';
+          node.style.transform = 'none';
+          track.appendChild(node);
+        }
+
+        vp.innerHTML = '';
+        vp.appendChild(track);
+      }
+
+      function enableHeroLiveMarquee() {
+        if (!root.classList.contains('hero-marquee-live')) {
+          buildRepeatMarquee(intro, 'ltr');
+          buildRepeatMarquee(introSub, 'rtl');
+          buildRepeatMarquee(introTag, 'ltr');
+          root.classList.add('hero-marquee-live');
+        }
+        root.classList.add('hero-lando');
+        root.classList.remove('hero-scrolled');
+        [intro, introSub, introTag].forEach(function (el) {
+          el.style.removeProperty('font-size');
+        });
+        syncHeroLiveDupes();
+        polishAtEnd();
+      }
+
       /** 0→P1→P12→TOTAL : line1 (L→R), line2 (R→L), line3 (L→R); bidirectional */
       function applyFromMeter() {
         meter = Math.max(0, Math.min(MAX_TOTAL, meter));
@@ -2264,95 +3230,38 @@
         if (atEnd) {
           triggerHeroPhoto();
           polishAtEnd();
-          if (!unlocked) scheduleUnlockAfterPhoto();
+          if (!unlocked) {
+            if (mqMobileHero.matches) scheduleMobilePhotoReadyForScroll();
+            else scheduleUnlockAfterPhoto();
+          }
         } else {
           if (unlockPending) {
             clearUnlockSchedule();
             unlockPending = false;
           }
-          if (unlocked) {
+          /* Desktop hero uses page scroll — never re-lock (was blocking all sections) */
+          if (unlocked && !mqFullBleedHero.matches) {
             unlocked = false;
             lockScroll();
           }
         }
       }
 
-      if (mqReduce.matches) {
-        syncHeroIntroWidths();
-        meter = MAX_TOTAL;
-        revealSubRail();
-        revealTagRail();
-        applyPhase1Progress(1);
-        applyPhase2Progress(1);
-        applyPhase3Progress(1);
-        polishAtEnd();
-        triggerHeroPhoto();
-        finalizeUnlock();
-        return;
-      }
-
-      if (window.scrollY > 48) {
-        syncHeroIntroWidths();
-        meter = MAX_TOTAL;
-        revealSubRail();
-        revealTagRail();
-        applyPhase1Progress(1);
-        applyPhase2Progress(1);
-        applyPhase3Progress(1);
-        polishAtEnd();
-        triggerHeroPhoto();
-        finalizeUnlock();
-        return;
-      }
-
-      if (IS_MOBILE_HERO) {
-        lockScroll();
-        meter = 0;
-        syncHeroIntroWidths();
-        applyFromMeter();
-
-        const MOBILE_AUTO_INTRO_MS = 980;
-        let introStart = null;
-        function runMobileAutoIntro(ts) {
-          if (!introStart) introStart = ts;
-          const t = Math.min(1, (ts - introStart) / MOBILE_AUTO_INTRO_MS);
-          const eased = 1 - Math.pow(1 - t, 3);
-          meter = MAX_TOTAL * eased;
-          applyFromMeter();
-          if (t < 1) requestAnimationFrame(runMobileAutoIntro);
-        }
-        requestAnimationFrame(runMobileAutoIntro);
-
-        if (document.fonts && typeof document.fonts.ready !== 'undefined') {
-          document.fonts.ready.then(() => {
-            syncHeroIntroWidths();
-            if (!unlocked) applyFromMeter();
-          });
-        }
-
-        let resizeTimer = null;
-        window.addEventListener('resize', () => {
-          clearTimeout(resizeTimer);
-          resizeTimer = setTimeout(() => {
-            syncHeroIntroWidths();
-            applyFromMeter();
-          }, 120);
-        });
-        return;
-      }
-
-      lockScroll();
-      meter = 0;
-      syncHeroIntroWidths();
-      applyFromMeter();
-
-      /* Recalculate travel after webfonts (fixes “Rowan” edge before metrics settle) */
-      if (document.fonts && typeof document.fonts.ready !== 'undefined') {
-        document.fonts.ready.then(() => {
-          syncHeroIntroWidths();
-          if (!unlocked) applyFromMeter();
-        });
-      }
+      /* Desktop / tablet ≥768px: live marquee (phone ≤767px uses mobile hero) */
+      window.__heroMarquee = {
+        syncWidths: syncHeroIntroWidths,
+        applyFromMeter: applyFromMeter,
+        enableLive: enableHeroLiveMarquee,
+        resetLines: function () {
+          hideSubInitially();
+          hideTagInitially();
+          applyPhase1Progress(0);
+        },
+        polish: polishAtEnd,
+        getMaxTotal: function () {
+          return MAX_TOTAL;
+        },
+      };
 
       function normWheelDy(e) {
         let dy = e.deltaY;
@@ -2361,12 +3270,93 @@
         return dy;
       }
 
+      function onMobileHeroWheel(e) {
+        if (!mqMobileHero.matches) return;
+        if (e.ctrlKey || e.metaKey) return;
+        const dy = normWheelDy(e);
+
+        if (mobileFinaleReady && !unlocked) {
+          e.preventDefault();
+          ingestMobileFinaleDelta(dy * TOUCH_DELTA_MULTIPLIER);
+          return;
+        }
+
+        if (unlocked && window.scrollY <= 48 && dy < 0) {
+          e.preventDefault();
+          ingestMobileFinaleDelta(dy * TOUCH_DELTA_MULTIPLIER);
+        }
+      }
+
+      window.addEventListener('wheel', onMobileHeroWheel, { passive: false });
+
+      let mobileTouchY = null;
+      hero.addEventListener(
+        'touchstart',
+        (e) => {
+          if (!mqMobileHero.matches) return;
+          if (unlocked && window.scrollY > 48) return;
+          mobileTouchY = e.touches[0].clientY;
+        },
+        { passive: true },
+      );
+      hero.addEventListener(
+        'touchmove',
+        (e) => {
+          if (!mqMobileHero.matches) return;
+          if (mobileFinaleReady && !unlocked) {
+            if (mobileTouchY === null) return;
+            e.preventDefault();
+            const y = e.touches[0].clientY;
+            ingestMobileFinaleDelta(
+              (mobileTouchY - y) * TOUCH_DELTA_MULTIPLIER,
+            );
+            mobileTouchY = y;
+            return;
+          }
+          if (unlocked || mobileTouchY === null) return;
+          if (window.scrollY > 48) return;
+          e.preventDefault();
+          const y = e.touches[0].clientY;
+          ingestMobileFinaleDelta((mobileTouchY - y) * TOUCH_DELTA_MULTIPLIER);
+          mobileTouchY = y;
+        },
+        { passive: false },
+      );
+      hero.addEventListener('touchend', () => {
+        mobileTouchY = null;
+      }, { passive: true });
+
+      let heroBpTimer = null;
+      function scheduleHeroBreakpoint() {
+        clearTimeout(heroBpTimer);
+        heroBpTimer = setTimeout(applyHeroBreakpoint, 80);
+      }
+
+      mqMobileHero.addEventListener('change', scheduleHeroBreakpoint);
+      mqFullBleedHero.addEventListener('change', scheduleHeroBreakpoint);
+      window.__heroApplyBreakpoint = applyHeroBreakpoint;
+
+      applyHeroBreakpoint();
+
+      /* Recalculate travel after webfonts (fixes “Rowan” edge before metrics settle) */
+      if (document.fonts && typeof document.fonts.ready !== 'undefined') {
+        document.fonts.ready.then(() => {
+          syncHeroIntroWidths();
+          if (mqMobileHero.matches && !unlocked) {
+            showMobileIntroLinesStatic();
+          } else if (!unlocked && !mqFullBleedHero.matches) {
+            applyFromMeter();
+          }
+        });
+      }
+
       function ingestDelta(dy) {
         meter += dy;
         applyFromMeter();
       }
 
       function onWheel(e) {
+        if (mqMobileHero.matches || mqFullBleedHero.matches) return;
         if (e.ctrlKey || e.metaKey) return;
 
         const dy = normWheelDy(e);
@@ -2390,6 +3380,7 @@
       hero.addEventListener(
         'touchstart',
         (e) => {
+          if (mqMobileHero.matches || mqFullBleedHero.matches) return;
           if (unlocked) return;
           touchLastY = e.touches[0].clientY;
         },
@@ -2398,6 +3389,7 @@
       hero.addEventListener(
         'touchmove',
         (e) => {
+          if (mqMobileHero.matches || mqFullBleedHero.matches) return;
           if (unlocked) return;
           if (touchLastY === null) return;
           e.preventDefault();
@@ -2418,10 +3410,7 @@
       let resizeTimer = null;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-          syncHeroIntroWidths();
-          applyFromMeter();
-        }, 120);
+        resizeTimer = setTimeout(scheduleHeroBreakpoint, 120);
       });
     })();
 
@@ -2584,6 +3573,9 @@
       if (sessionStorage.getItem(PRELOADER_KEY) === '1') {
         pl.style.display = 'none';
         main.classList.add('visible');
+        setTimeout(function () {
+          if (window.refreshHeroDesktopScroll) window.refreshHeroDesktopScroll();
+        }, 200);
         return;
       }
 
@@ -2633,8 +3625,10 @@
           pl.classList.add('fade-out');
           main.classList.add('visible');
           sessionStorage.setItem(PRELOADER_KEY, '1');
+          if (window.refreshHeroDesktopScroll) window.refreshHeroDesktopScroll();
           setTimeout(() => {
             pl.style.display = 'none';
+            if (window.refreshHeroDesktopScroll) window.refreshHeroDesktopScroll();
           }, 650);
         }, 400);
       }
@@ -2681,19 +3675,517 @@
       });
     })();
 
+    /* ── DESKTOP HERO：sticky + 原生 scroll（無 pin，避免遮住下方 section） ── */
+    (function () {
+      const desktop = window.matchMedia('(min-width: 768px)');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const container = document.querySelector('.hero-sig-draw');
+      const hero = document.getElementById('hero');
+      const heroSticky = document.querySelector('.hero-sticky');
+      const heroPhoto = document.querySelector('.hero-photo-bg');
+      const heroPhotoStage = document.querySelector('.hero-photo-stage');
+      const heroPhotoSheen = document.querySelector('.hero-photo-sheen');
+      const heroPhotoFlash = document.querySelector('.hero-photo-flash');
+      const heroSigWrite = document.querySelector('.hero-sig-write');
+      if (!container || !hero) return;
+
+      function lockSignatureComplete() {
+        signatureLocked = true;
+        heroSigWrite.style.setProperty('--sig-reveal', '100%');
+        container.classList.add('is-complete');
+      }
+
+      function applySignatureWrite(sigP) {
+        if (!heroSigWrite || !desktop.matches) return;
+        var p = Math.max(0, Math.min(1, sigP));
+        var sigActive = document.documentElement.classList.contains(
+          'hero-sig-visible',
+        );
+
+        if (!sigActive) {
+          heroSigWrite.style.setProperty('--sig-reveal', '0%');
+          heroSigWrite.style.visibility = 'hidden';
+          if (!signatureLocked) container.classList.remove('is-complete');
+          return;
+        }
+
+        heroSigWrite.style.visibility = 'visible';
+
+        if (signatureLocked || p >= 0.98) {
+          lockSignatureComplete();
+          return;
+        }
+
+        var sigEase =
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              '--hero-sig-ease',
+            ),
+          ) || SIG_EASE;
+        var eased = 1 - Math.pow(1 - p, sigEase);
+        var reveal = (eased * 100).toFixed(2);
+        heroSigWrite.style.setProperty('--sig-reveal', reveal + '%');
+        container.classList.remove('is-complete');
+      }
+
+      function buildPhotoBrightnessFilter(brightMul) {
+        var mul = brightMul == null ? 1 : brightMul;
+        if (mul >= 0.999) return 'none';
+        return 'brightness(' + mul.toFixed(3) + ')';
+      }
+
+      function buildRevealFilter(eased) {
+        var burn = Math.pow(Math.max(0, 1 - eased), 0.78);
+        if (eased >= 0.98) return 'none';
+        var bright = 1 + burn * 1.35;
+        return 'brightness(' + bright.toFixed(3) + ')';
+      }
+
+      function applyPhotoStageScale(scale) {
+        if (!heroPhotoStage) return;
+        var s = scale == null ? 1 : scale;
+        heroPhotoStage.style.transform = 'scale(' + s.toFixed(3) + ')';
+        if (heroPhoto) heroPhoto.style.transform = '';
+      }
+
+      function setPhotoReveal(topPct, revealP, leadPct, eased) {
+        var burn = Math.pow(Math.max(0, 1 - (eased || 0)), 0.78);
+        if (heroPhotoStage) {
+          heroPhotoStage.style.clipPath =
+            'inset(' + topPct.toFixed(2) + '% 0 0 0)';
+        }
+        if (heroPhotoFlash) {
+          heroPhotoFlash.style.opacity =
+            revealP <= 0.02 ? '0' : Math.min(0.96, burn * 0.94).toFixed(3);
+        }
+        if (heroPhotoSheen) {
+          var sheenTop = Math.min(100, topPct + (leadPct || 0));
+          heroPhotoSheen.style.top = sheenTop.toFixed(2) + '%';
+          var glow =
+            revealP <= 0.02
+              ? 0
+              : (0.4 + burn * 0.6) *
+                Math.sin(Math.min(1, revealP) * Math.PI) *
+                0.98;
+          heroPhotoSheen.style.opacity = glow.toFixed(3);
+        }
+        if (heroPhoto && eased !== undefined) {
+          heroPhoto.style.filter = buildRevealFilter(eased);
+        }
+      }
+
+      const REVEAL_END = 0.4;
+      const SIG_RECEDE_AT = 0.62;
+      const SIG_EASE = 1.05;
+
+      function getHeroSigStart(revealEnd, rootStyle) {
+        var re = revealEnd == null ? REVEAL_END : revealEnd;
+        var recedeAt =
+          parseFloat(
+            (rootStyle || getComputedStyle(document.documentElement)).getPropertyValue(
+              '--hero-sig-recede-at',
+            ),
+          );
+        if (isNaN(recedeAt)) recedeAt = SIG_RECEDE_AT;
+        recedeAt = Math.max(0, Math.min(1, recedeAt));
+        return re + (1 - re) * recedeAt;
+      }
+
+      function accentColor() {
+        var v = getComputedStyle(document.documentElement)
+          .getPropertyValue('--accent')
+          .trim();
+        return v || '#B84545';
+      }
+
+      let signatureLocked = false;
+      let scrollRaf = 0;
+
+      function clearHeroPinArtifacts() {
+        document.querySelectorAll('.pin-spacer').forEach(function (spacer) {
+          if (!spacer.querySelector('#hero')) return;
+          var parent = spacer.parentNode;
+          if (parent) {
+            parent.insertBefore(hero, spacer);
+            parent.removeChild(spacer);
+          }
+        });
+        if (window.gsap) gsap.set(hero, { clearProps: 'transform,top,left,width' });
+      }
+
+      function unlockPageScroll() {
+        document.documentElement.classList.remove('hero-intro-lock');
+      }
+
+      function getHeroProgress() {
+        var stickyH = heroSticky ? heroSticky.offsetHeight : window.innerHeight;
+        var track = Math.max(1, hero.offsetHeight - stickyH);
+        var y = window.scrollY - hero.offsetTop;
+        return Math.max(0, Math.min(1, y / track));
+      }
+
+      function measureSignatureHeight() {
+        if (!container) return 0;
+        var sigWrite = container.querySelector('.hero-sig-write');
+        var sigImg =
+          container.querySelector('.hero-sig-final') ||
+          container.querySelector('.hero-sig-fallback');
+        if (!sigWrite) {
+          return container.getBoundingClientRect().height;
+        }
+        var prevVis = sigWrite.style.visibility;
+        var prevClip = sigWrite.style.clipPath;
+        var prevReveal = sigWrite.style.getPropertyValue('--sig-reveal');
+        sigWrite.style.visibility = 'visible';
+        sigWrite.style.clipPath = 'inset(0 0 0 0)';
+        sigWrite.style.setProperty('--sig-reveal', '100%');
+        var measureEl = sigImg;
+        var sigH = measureEl
+          ? measureEl.getBoundingClientRect().height
+          : container.getBoundingClientRect().height;
+        if (prevVis) sigWrite.style.visibility = prevVis;
+        else sigWrite.style.removeProperty('visibility');
+        if (prevClip) sigWrite.style.clipPath = prevClip;
+        else sigWrite.style.removeProperty('clip-path');
+        if (prevReveal) sigWrite.style.setProperty('--sig-reveal', prevReveal);
+        else sigWrite.style.removeProperty('--sig-reveal');
+        return sigH;
+      }
+
+      function syncHeroPhotoRecedeScale() {
+        if (!desktop.matches || !heroPhoto || !heroPhotoStage) return;
+        var stack = document.querySelector('.hero-intro-stack');
+        if (!stack) return;
+
+        var marqueeH = stack.getBoundingClientRect().height;
+        if (marqueeH < 8) return;
+
+        var marqueeRatio =
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              '--hero-photo-marquee-ratio',
+            ),
+          ) || 2;
+        var sigRatio =
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              '--hero-photo-sig-ratio',
+            ),
+          ) || 1.32;
+        var targetH = marqueeH * marqueeRatio;
+
+        var prevStageTransform = heroPhotoStage.style.transform;
+        applyPhotoStageScale(1);
+        heroPhoto.style.filter = 'none';
+        var photoH = heroPhoto.getBoundingClientRect().height;
+        heroPhotoStage.style.transform = prevStageTransform;
+        heroPhoto.style.filter = '';
+
+        if (photoH < 8) return;
+
+        var scaleFromMarquee = targetH / photoH;
+        var sigH = measureSignatureHeight();
+        var scaleFromSig =
+          sigH > 8 ? (sigH * sigRatio) / photoH : 0;
+        /* 終點以「比簽名大」為優先，跑馬燈比例為輔 */
+        var scaleEnd =
+          scaleFromSig > 0
+            ? Math.max(scaleFromSig, scaleFromMarquee)
+            : scaleFromMarquee;
+        scaleEnd = Math.max(0.48, Math.min(1.06, scaleEnd));
+        document.documentElement.style.setProperty(
+          '--hero-photo-scale-end',
+          scaleEnd.toFixed(4),
+        );
+      }
+
+      function refreshHeroScroll() {
+        applyScrollProgress(getHeroProgress());
+      }
+
+      function showStaticDesktopHero() {
+        var mq = window.__heroMarquee;
+        if (mq) {
+          mq.syncWidths();
+          if (mq.enableLive) mq.enableLive();
+          else mq.applyFromMeter(mq.getMaxTotal());
+          mq.polish();
+        }
+        signatureLocked = true;
+        applySignatureWrite(1);
+        if (heroPhotoStage) heroPhotoStage.style.clipPath = 'inset(0 0 0 0)';
+        if (heroPhotoSheen) heroPhotoSheen.style.opacity = '0';
+        if (heroPhotoFlash) heroPhotoFlash.style.opacity = '0';
+        if (heroPhoto) {
+          var staticDim =
+            parseFloat(
+              getComputedStyle(document.documentElement).getPropertyValue(
+                '--hero-photo-dim-amount',
+              ),
+            ) || 0.86;
+          heroPhoto.style.filter = buildPhotoBrightnessFilter(1 - staticDim);
+        }
+        var staticScale =
+          parseFloat(
+            getComputedStyle(document.documentElement).getPropertyValue(
+              '--hero-photo-scale-end',
+            ),
+          ) || 0.72;
+        applyPhotoStageScale(staticScale);
+        container.classList.add('is-complete');
+      }
+
+      function applyScrollProgress(progress) {
+        var p = Math.max(0, Math.min(1, progress));
+        var mq = window.__heroMarquee;
+
+        if (p > 0.06) {
+          document.documentElement.classList.add('hero-scrolled');
+        } else {
+          document.documentElement.classList.remove('hero-scrolled');
+        }
+
+        var rootStyle = getComputedStyle(document.documentElement);
+        var revealEnd =
+          parseFloat(rootStyle.getPropertyValue('--hero-reveal-end')) ||
+          REVEAL_END;
+        var sigStart = getHeroSigStart(revealEnd, rootStyle);
+
+        if (p >= sigStart) {
+          document.documentElement.classList.add('hero-sig-visible');
+        } else {
+          document.documentElement.classList.remove('hero-sig-visible');
+          signatureLocked = false;
+          container.classList.remove('is-complete');
+        }
+
+        if (heroPhoto) {
+          var scaleEnd =
+            parseFloat(rootStyle.getPropertyValue('--hero-photo-scale-end')) ||
+            0.72;
+          var dimAmount =
+            parseFloat(rootStyle.getPropertyValue('--hero-photo-dim-amount')) ||
+            0.5;
+          var maxInset =
+            parseFloat(rootStyle.getPropertyValue('--hero-photo-reveal-inset')) ||
+            100;
+
+          /* Phase 1：由下往上揭開＋過曝白光（維持大尺寸 scale 1） */
+          if (p <= revealEnd) {
+            var revealP = p / revealEnd;
+            var eased = 1 - Math.pow(1 - revealP, 1.65);
+            var topClip = maxInset * (1 - eased);
+            var leadPct = 6 * (1 - eased);
+            setPhotoReveal(topClip, revealP, leadPct, eased);
+            applyPhotoStageScale(1);
+          } else {
+            /* Phase 2：後退＋變暗（維持視窗正中央縮放） */
+            var recedeP = (p - revealEnd) / (1 - revealEnd);
+            var recedeEased = 1 - Math.pow(1 - recedeP, 1.25);
+            var scale = 1 - (1 - scaleEnd) * recedeEased;
+            var bright = 1 - dimAmount * recedeEased;
+            setPhotoReveal(0, 1, 0, 1);
+            if (heroPhotoSheen) {
+              heroPhotoSheen.style.opacity = '0';
+              heroPhotoSheen.style.top = '';
+            }
+            if (heroPhotoFlash) heroPhotoFlash.style.opacity = '0';
+            applyPhotoStageScale(scale);
+            if (heroPhoto) heroPhoto.style.filter = buildPhotoBrightnessFilter(bright);
+          }
+        }
+
+        /* Phase 3：後退進行時，簽名由左至右書寫 */
+        var sigP =
+          p <= sigStart ? 0 : (p - sigStart) / (1 - sigStart);
+        applySignatureWrite(sigP);
+
+        if (p >= 0.98 && mq) mq.polish();
+      }
+
+      function onHeroScroll() {
+        if (!desktop.matches) return;
+        if (scrollRaf) return;
+        scrollRaf = requestAnimationFrame(function () {
+          scrollRaf = 0;
+          applyScrollProgress(getHeroProgress());
+        });
+      }
+
+      function teardown() {
+        window.removeEventListener('scroll', onHeroScroll);
+        var mobileSigDone = document.documentElement.classList.contains(
+          'hero-mobile-sig-stage',
+        );
+
+        document.documentElement.classList.remove('hero-scrolled');
+
+        if (scrollRaf) {
+          cancelAnimationFrame(scrollRaf);
+          scrollRaf = 0;
+        }
+        if (window.ScrollTrigger) {
+          var existing = ScrollTrigger.getById('hero-desktop-scroll');
+          if (existing) existing.kill();
+        }
+        clearHeroPinArtifacts();
+
+        if (mobileSigDone && !desktop.matches) {
+          return;
+        }
+
+        document.documentElement.classList.remove('hero-sig-visible');
+        container.classList.remove('is-complete');
+        signatureLocked = false;
+        if (heroSigWrite) {
+          heroSigWrite.style.removeProperty('--sig-reveal');
+          heroSigWrite.style.clipPath = '';
+          heroSigWrite.style.visibility = '';
+        }
+        if (heroPhotoStage) {
+          heroPhotoStage.style.clipPath = '';
+          heroPhotoStage.style.transform = '';
+        }
+        if (heroPhotoSheen) {
+          heroPhotoSheen.style.opacity = '';
+          heroPhotoSheen.style.top = '';
+        }
+        if (heroPhotoFlash) heroPhotoFlash.style.opacity = '';
+        if (heroPhoto) {
+          heroPhoto.style.filter = '';
+          heroPhoto.style.transform = '';
+        }
+      }
+
+      async function setup() {
+        unlockPageScroll();
+        clearHeroPinArtifacts();
+        if (!desktop.matches) {
+          window.removeEventListener('scroll', onHeroScroll);
+          document.documentElement.classList.remove('hero-lando', 'hero-scrolled');
+          if (typeof window.__heroApplyBreakpoint === 'function') {
+            window.__heroApplyBreakpoint();
+          }
+          return;
+        }
+
+        teardown();
+
+        var wait = 0;
+        while (!window.__heroMarquee && wait < 80) {
+          await new Promise(function (r) {
+            setTimeout(r, 50);
+          });
+          wait += 1;
+        }
+
+        if (document.fonts && document.fonts.ready) {
+          try {
+            await document.fonts.ready;
+          } catch (e) { /* ignore */ }
+        }
+
+        var mq = window.__heroMarquee;
+        if (!mq) {
+          showStaticDesktopHero();
+          return;
+        }
+
+        mq.syncWidths();
+        if (mq.enableLive) mq.enableLive();
+        document.documentElement.classList.remove('hero-scrolled');
+        document.documentElement.classList.add('hero-lando');
+        if (window.syncHeroPhotoRecedeScale) {
+          window.syncHeroPhotoRecedeScale();
+        }
+
+        if (reduce.matches) {
+          showStaticDesktopHero();
+          return;
+        }
+
+        document.documentElement.classList.remove('hero-sig-visible');
+        applySignatureWrite(0);
+
+        if (heroPhoto) {
+          var maxInset =
+            parseFloat(
+              getComputedStyle(document.documentElement).getPropertyValue(
+                '--hero-photo-reveal-inset',
+              ),
+            ) || 100;
+          applyPhotoStageScale(1);
+          heroPhoto.style.filter = buildRevealFilter(0);
+          setPhotoReveal(maxInset, 0, 0, 0);
+        }
+
+        function bootPhotoScale() {
+          syncHeroPhotoRecedeScale();
+          if (!heroPhoto.complete) {
+            heroPhoto.addEventListener('load', syncHeroPhotoRecedeScale, {
+              once: true,
+            });
+          }
+          var sigImg =
+            container.querySelector('.hero-sig-final') ||
+            container.querySelector('.hero-sig-fallback');
+          if (sigImg && !sigImg.complete) {
+            sigImg.addEventListener('load', syncHeroPhotoRecedeScale, {
+              once: true,
+            });
+          }
+        }
+
+        bootPhotoScale();
+        window.addEventListener('scroll', onHeroScroll, { passive: true });
+        unlockPageScroll();
+        applyScrollProgress(0);
+        refreshHeroScroll();
+        setTimeout(function () {
+          syncHeroPhotoRecedeScale();
+          refreshHeroScroll();
+        }, 400);
+        setTimeout(function () {
+          syncHeroPhotoRecedeScale();
+          refreshHeroScroll();
+        }, 1200);
+      }
+
+      function boot() {
+        setup();
+      }
+
+      window.refreshHeroDesktopScroll = refreshHeroScroll;
+      window.syncHeroPhotoRecedeScale = syncHeroPhotoRecedeScale;
+      window.__teardownDesktopHero = teardown;
+      window.__bootDesktopHero = boot;
+      window.addEventListener('load', boot);
+      window.addEventListener('resize', function () {
+        syncHeroPhotoRecedeScale();
+        refreshHeroScroll();
+      }, { passive: true });
+      desktop.addEventListener('change', boot);
+      reduce.addEventListener('change', boot);
+    })();
+
     /* ── HERO：依「頁面捲動」的視差（滾輪／觸控板／手指捲動皆觸發 scroll；非游標位置） ── */
     (function () {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const desktop = window.matchMedia('(min-width: 768px)');
       const hero = document.getElementById('hero');
       const wave = document.getElementById('wave-bg');
       const introLine = document.querySelector('.hero-intro-line');
       const photoParallax = document.querySelector('.hero-photo-parallax');
-      if (!hero || !wave || !introLine || !photoParallax) return;
+      const heroPhotoBg = document.querySelector('.hero-photo-bg');
+      const heroCenter = document.querySelector('.hero-center');
+      if (!hero || !wave) return;
 
       function clearParallax() {
         wave.style.transform = '';
-        introLine.style.transform = '';
-        photoParallax.style.transform = '';
+        if (introLine) introLine.style.transform = '';
+        if (photoParallax) photoParallax.style.transform = '';
+        if (heroPhotoBg) heroPhotoBg.style.transform = '';
+        if (heroCenter) heroCenter.style.transform = '';
       }
 
       let ticking = false;
@@ -2712,9 +4204,33 @@
         const centerOff = rect.top + rect.height * 0.5 - vh * 0.5;
         const norm = Math.max(-1, Math.min(1, centerOff / (vh * 0.82)));
         const px = norm * 52;
+
+        if (desktop.matches) {
+          if (introLine) introLine.style.transform = '';
+          if (photoParallax) photoParallax.style.transform = '';
+          wave.style.transform =
+            'translate3d(0, ' + (px * 0.35).toFixed(2) + 'px, 0)';
+          if (heroCenter) heroCenter.style.transform = '';
+          return;
+        }
+
+        if (
+          document.documentElement.classList.contains('hero-mobile-sig-stage') ||
+          document.documentElement.classList.contains('hero-mobile-static-intro')
+        ) {
+          wave.style.transform =
+            'translate3d(0, ' + (px * 0.35).toFixed(2) + 'px, 0)';
+          if (introLine) introLine.style.transform = '';
+          if (photoParallax) photoParallax.style.transform = '';
+          return;
+        }
+
+        if (!introLine || !photoParallax) return;
         wave.style.transform = 'translate3d(0, ' + (px * 0.48).toFixed(2) + 'px, 0)';
         introLine.style.transform = 'translate3d(0, ' + (px * 0.19).toFixed(2) + 'px, 0)';
         photoParallax.style.transform = 'translate3d(0, ' + (-px * 0.34).toFixed(2) + 'px, 0)';
+        if (heroPhotoBg) heroPhotoBg.style.transform = '';
+        if (heroCenter) heroCenter.style.transform = '';
       }
 
       function req() {
@@ -2726,6 +4242,7 @@
       window.addEventListener('scroll', req, { passive: true });
       window.addEventListener('resize', req, { passive: true });
       reduce.addEventListener('change', req);
+      desktop.addEventListener('change', req);
       req();
     })();
   </script>
@@ -2741,11 +4258,19 @@
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     container.appendChild(svg);
 
-    const STROKE_COLOR = 'rgba(184,69,69,0.13)';
-    /** Vertical spacing between horizontal lines (larger = fewer lines). */
-    const ROW_GAP = 44;
-    /** Horizontal spacing between points along each line (larger = sparser polyline). */
-    const COL_GAP = 28;
+  const desktopMq = window.matchMedia('(min-width: 768px)');
+
+    function strokeColor() {
+      return 'rgba(88, 86, 82, 0.25)';
+    }
+
+    /** Vertical spacing between horizontal lines (larger = fewer lines; ~5 fewer vs 60). */
+    const ROW_GAP = 88;
+    /** Horizontal spacing between points (smaller = smoother arcs). */
+    const COL_GAP = 24;
+    const WAVE_TENSION = 0.42;
+    const WAVE_AMP_X = 6.5;
+    const WAVE_AMP_Y = 44;
 
     const noise = createNoise2D();
     let bounding = null;
@@ -2783,8 +4308,10 @@
         }
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('fill', 'none');
-        path.setAttribute('stroke', STROKE_COLOR);
+        path.setAttribute('stroke', strokeColor());
         path.setAttribute('stroke-width', '1');
+        path.setAttribute('stroke-linecap', 'round');
+        path.setAttribute('stroke-linejoin', 'round');
         svg.appendChild(path);
         paths.push(path);
         lines.push(points);
@@ -2802,26 +4329,66 @@
       lines.forEach(points => {
         points.forEach(p => {
           const move = noise(
-            (p.x + time * 0.008) * 0.003,
-            (p.y + time * 0.003) * 0.002
-          ) * 8;
-          /* Horizontal baselines: emphasize vertical undulation */
-          p.wave.x = Math.cos(move) * 6;
-          p.wave.y = Math.sin(move) * 12;
+            (p.x + time * 0.0075) * 0.003,
+            (p.y + time * 0.003) * 0.0019
+          );
+          /* 以垂直起伏為主；WAVE_AMP_Y 控制波浪幅度 */
+          const targetX = Math.cos(move) * WAVE_AMP_X;
+          const targetY = Math.sin(move) * WAVE_AMP_Y;
+          p.wave.x += (targetX - p.wave.x) * 0.12;
+          p.wave.y += (targetY - p.wave.y) * 0.12;
         });
       });
+    }
+
+    function smoothPathFromPoints(pts) {
+      if (pts.length < 2) return '';
+      if (pts.length === 2) {
+        return (
+          'M ' +
+          pts[0].x.toFixed(2) +
+          ' ' +
+          pts[0].y.toFixed(2) +
+          ' L ' +
+          pts[1].x.toFixed(2) +
+          ' ' +
+          pts[1].y.toFixed(2)
+        );
+      }
+      const t = WAVE_TENSION;
+      let d =
+        'M ' + pts[0].x.toFixed(2) + ' ' + pts[0].y.toFixed(2);
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[i === 0 ? i : i - 1];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[i + 2] || p2;
+        const cp1x = p1.x + ((p2.x - p0.x) * t) / 6;
+        const cp1y = p1.y + ((p2.y - p0.y) * t) / 6;
+        const cp2x = p2.x - ((p3.x - p1.x) * t) / 6;
+        const cp2y = p2.y - ((p3.y - p1.y) * t) / 6;
+        d +=
+          ' C ' +
+          cp1x.toFixed(2) +
+          ' ' +
+          cp1y.toFixed(2) +
+          ', ' +
+          cp2x.toFixed(2) +
+          ' ' +
+          cp2y.toFixed(2) +
+          ', ' +
+          p2.x.toFixed(2) +
+          ' ' +
+          p2.y.toFixed(2);
+      }
+      return d;
     }
 
     function drawLines() {
       lines.forEach((points, i) => {
         if (points.length < 2 || !paths[i]) return;
-        const first = moved(points[0]);
-        let d = `M ${first.x} ${first.y}`;
-        for (let j = 1; j < points.length; j++) {
-          const c = moved(points[j]);
-          d += ` L ${c.x} ${c.y}`;
-        }
-        paths[i].setAttribute('d', d);
+        const pts = points.map(moved);
+        paths[i].setAttribute('d', smoothPathFromPoints(pts));
       });
     }
 
@@ -2834,7 +4401,12 @@
     function onResize() {
       setSize();
       setLines();
+      paths.forEach(function (p) {
+        p.setAttribute('stroke', strokeColor());
+      });
     }
+
+    desktopMq.addEventListener('change', onResize);
 
     const heroEl = document.getElementById('hero');
     const observer = new IntersectionObserver(entries => {
