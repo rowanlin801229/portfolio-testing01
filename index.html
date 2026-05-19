@@ -619,8 +619,8 @@
     /* Shared Lando tokens (desktop + mobile/tablet hero) */
     html.hero-lando {
       --lando-canvas: #111110;
-      --lando-ink: rgba(158, 154, 148, 0.88);
-      --lando-ink-soft: rgba(158, 154, 148, 0.5);
+      --lando-ink: rgba(112, 108, 102, 0.9);
+      --lando-ink-soft: rgba(112, 108, 102, 0.45);
     }
 
     /* ── Lando Norris hero (desktop): dark canvas, light type, cover photo ── */
@@ -779,6 +779,7 @@
         max-height: 100%;
         object-fit: contain;
         object-position: center center;
+        will-change: transform;
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -3745,7 +3746,6 @@
         if (!heroPhotoStage) return;
         var s = scale == null ? 1 : scale;
         heroPhotoStage.style.transform = 'scale(' + s.toFixed(3) + ')';
-        if (heroPhoto) heroPhoto.style.transform = '';
       }
 
       function setPhotoReveal(topPct, revealP, leadPct, eased) {
@@ -4244,6 +4244,299 @@
       reduce.addEventListener('change', req);
       desktop.addEventListener('change', req);
       req();
+    })();
+
+    /* ── HERO 微視差：桌機滑鼠／手機觸控＋陀螺儀（Lando 式） ── */
+    (function heroPointerParallax() {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const desktop = window.matchMedia('(min-width: 768px)');
+      const mobile = window.matchMedia('(max-width: 767px)');
+      const finePointer = window.matchMedia('(pointer: fine)');
+      const root = document.documentElement;
+      const hero = document.getElementById('hero');
+      if (!hero) return;
+
+      const LIMITS = {
+        desktop: { x: 16, y: 12, r: 0.55 },
+        mobile: { x: 14, y: 10, r: 0.5 },
+      };
+      const SMOOTH = 0.075;
+      const ORIENT_RANGE = 22;
+
+      let tx = 0;
+      let ty = 0;
+      let tr = 0;
+      let cx = 0;
+      let cy = 0;
+      let cr = 0;
+      let raf = null;
+      let touchActive = false;
+      let orientListening = false;
+      let orientBaseBeta = null;
+      let orientBaseGamma = null;
+
+      function canRunDesktop() {
+        return (
+          desktop.matches &&
+          finePointer.matches &&
+          !reduce.matches &&
+          root.classList.contains('hero-lando')
+        );
+      }
+
+      function canRunMobile() {
+        return (
+          mobile.matches &&
+          !reduce.matches &&
+          (root.classList.contains('hero-mobile-static-intro') ||
+            root.classList.contains('hero-mobile-sig-stage'))
+        );
+      }
+
+      function resolveMode() {
+        if (canRunDesktop()) return 'desktop';
+        if (canRunMobile()) return 'mobile';
+        return 'off';
+      }
+
+      function getPhotoEl() {
+        const mode = resolveMode();
+        if (mode === 'desktop') return document.querySelector('.hero-photo-bg');
+        if (mode === 'mobile') return document.querySelector('#hero .hero-photo');
+        return null;
+      }
+
+      function canRun() {
+        return resolveMode() !== 'off';
+      }
+
+      function heroVisible() {
+        const rect = hero.getBoundingClientRect();
+        return rect.bottom > 0 && rect.top < window.innerHeight;
+      }
+
+      function getLimits() {
+        return resolveMode() === 'mobile' ? LIMITS.mobile : LIMITS.desktop;
+      }
+
+      function applyTransform(photo) {
+        if (!photo) return;
+        if (
+          Math.abs(cx) < 0.02 &&
+          Math.abs(cy) < 0.02 &&
+          Math.abs(cr) < 0.0002
+        ) {
+          photo.style.transform = '';
+          return;
+        }
+        photo.style.transform =
+          'translate3d(' +
+          cx.toFixed(2) +
+          'px,' +
+          cy.toFixed(2) +
+          'px,0) rotate(' +
+          cr.toFixed(3) +
+          'deg)';
+      }
+
+      function tick() {
+        const photo = getPhotoEl();
+        const lim = getLimits();
+        cx += (tx - cx) * SMOOTH;
+        cy += (ty - cy) * SMOOTH;
+        cr += (tr - cr) * SMOOTH;
+
+        if (canRun() && heroVisible() && photo) {
+          applyTransform(photo);
+        } else if (
+          photo &&
+          (Math.abs(cx) > 0.02 || Math.abs(cy) > 0.02 || Math.abs(cr) > 0.0002)
+        ) {
+          cx *= 0.86;
+          cy *= 0.86;
+          cr *= 0.86;
+          applyTransform(photo);
+        } else if (photo) {
+          photo.style.transform = '';
+          cx = cy = cr = 0;
+        }
+
+        const settled =
+          Math.abs(tx - cx) < 0.04 &&
+          Math.abs(ty - cy) < 0.04 &&
+          Math.abs(tr - cr) < 0.0005;
+        if (!settled) {
+          raf = requestAnimationFrame(tick);
+        } else {
+          raf = null;
+        }
+      }
+
+      function schedule() {
+        if (!raf) raf = requestAnimationFrame(tick);
+      }
+
+      function setTargetsFromNorm(nx, ny) {
+        const lim = getLimits();
+        tx = -nx * lim.x;
+        ty = -ny * lim.y;
+        tr = nx * lim.r;
+        schedule();
+      }
+
+      function setTargets(clientX, clientY) {
+        const rect = hero.getBoundingClientRect();
+        const w = rect.width || 1;
+        const h = rect.height || 1;
+        const nx = Math.max(
+          -1,
+          Math.min(1, ((clientX - rect.left) / w - 0.5) * 2),
+        );
+        const ny = Math.max(
+          -1,
+          Math.min(1, ((clientY - rect.top) / h - 0.5) * 2),
+        );
+        setTargetsFromNorm(nx, ny);
+      }
+
+      function stopOrientation() {
+        if (orientListening) {
+          window.removeEventListener('deviceorientation', onOrientation);
+          orientListening = false;
+        }
+        orientBaseBeta = null;
+        orientBaseGamma = null;
+      }
+
+      function resetTargets() {
+        tx = 0;
+        ty = 0;
+        tr = 0;
+        touchActive = false;
+        stopOrientation();
+        schedule();
+      }
+
+      function onOrientation(e) {
+        if (!canRunMobile() || touchActive) return;
+        if (e.beta == null || e.gamma == null) return;
+        if (orientBaseBeta == null) {
+          orientBaseBeta = e.beta;
+          orientBaseGamma = e.gamma;
+        }
+        const nx = Math.max(
+          -1,
+          Math.min(1, (e.gamma - orientBaseGamma) / ORIENT_RANGE),
+        );
+        const ny = Math.max(
+          -1,
+          Math.min(1, (e.beta - orientBaseBeta) / ORIENT_RANGE),
+        );
+        setTargetsFromNorm(nx, ny);
+      }
+
+      function requestOrientationAccess() {
+        if (orientListening || typeof DeviceOrientationEvent === 'undefined') {
+          return;
+        }
+
+        function attach() {
+          window.addEventListener('deviceorientation', onOrientation, {
+            passive: true,
+          });
+          orientListening = true;
+        }
+
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(function (state) {
+              if (state === 'granted') attach();
+            })
+            .catch(function () {});
+        } else {
+          attach();
+        }
+      }
+
+      document.addEventListener(
+        'mousemove',
+        function (e) {
+          if (!canRunDesktop() || !heroVisible()) return;
+          setTargets(e.clientX, e.clientY);
+        },
+        { passive: true },
+      );
+
+      document.addEventListener('mouseleave', function () {
+        if (canRunDesktop()) resetTargets();
+      });
+
+      hero.addEventListener(
+        'touchstart',
+        function (e) {
+          if (!canRunMobile() || !heroVisible()) return;
+          touchActive = true;
+          requestOrientationAccess();
+          if (e.touches[0]) {
+            setTargets(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        },
+        { passive: true },
+      );
+
+      hero.addEventListener(
+        'touchmove',
+        function (e) {
+          if (!canRunMobile() || !touchActive || !e.touches[0]) return;
+          setTargets(e.touches[0].clientX, e.touches[0].clientY);
+        },
+        { passive: true },
+      );
+
+      hero.addEventListener(
+        'touchend',
+        function () {
+          if (!canRunMobile()) return;
+          touchActive = false;
+          if (!orientListening) resetTargets();
+          else {
+            tx = 0;
+            ty = 0;
+            tr = 0;
+            schedule();
+          }
+        },
+        { passive: true },
+      );
+
+      hero.addEventListener(
+        'touchcancel',
+        function () {
+          if (!canRunMobile()) return;
+          touchActive = false;
+          if (!orientListening) resetTargets();
+        },
+        { passive: true },
+      );
+
+      [desktop, mobile, reduce, finePointer].forEach(function (mq) {
+        mq.addEventListener('change', function () {
+          if (!canRun()) resetTargets();
+          else if (canRunMobile() && typeof DeviceOrientationEvent.requestPermission !== 'function') {
+            requestOrientationAccess();
+          }
+        });
+      });
+
+      new MutationObserver(function () {
+        if (!canRun()) {
+          resetTargets();
+          return;
+        }
+        if (canRunMobile() && typeof DeviceOrientationEvent.requestPermission !== 'function') {
+          requestOrientationAccess();
+        }
+      }).observe(root, { attributes: true, attributeFilter: ['class'] });
     })();
   </script>
 
