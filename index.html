@@ -64,7 +64,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
-    /* Hero intro: wheel drives text only until complete */
+    /* Hero intro: wheel / mobile finale lock until complete */
     html.hero-intro-lock {
       overflow: hidden;
       overscroll-behavior: none;
@@ -218,20 +218,14 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
     .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 1.15rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
       color: #ffffff;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 0.75rem;
-      transition: color 0.3s ease;
+      transition: opacity 0.3s ease;
     }
     .nav-logo svg {
-      height: 26px;
+      height: 34px;
       width: auto;
       display: block;
     }
@@ -240,7 +234,7 @@
       transition: fill 0.3s ease;
     }
     .nav-logo:hover {
-      color: rgba(255, 255, 255, 0.72);
+      opacity: 0.72;
     }
     .nav-logo:hover .cls-1 {
       fill: rgba(255, 255, 255, 0.72);
@@ -299,437 +293,976 @@
     }
     .reveal.in { opacity: 1; transform: none; }
 
-    /* ── HERO (centered image + three-line marquee) ── */
-    #hero {
-      overflow-x: clip;
-      min-height: 100vh;
-      min-height: 100dvh;
-      height: 100vh;
-      height: 100dvh;
-      display: grid;
-      grid-template-columns: 1fr;
-      grid-template-rows: minmax(0, 1fr) auto;
-      row-gap: 0;
-      align-items: center;
-      justify-items: center;
-      padding: 100px 5vw 8vh;
-      position: relative;
+
+
+    /* ── HERO MOBILE (≤767px — rowanlin1229.com) ── */
+    html.hero-mode-mobile .hero-pin-wrap,
+    html.hero-mode-mobile #hero-pin-wrap {
+      display: block !important;
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      overflow: visible !important;
+      position: relative !important;
     }
 
-    /* Hide desktop hero layers on phone only */
+    html.hero-mode-mobile #hero {
+      height: auto !important;
+      max-height: none !important;
+      position: relative !important;
+      top: auto !important;
+      display: grid !important;
+    }
+
+    html.hero-resized-from-desktop #hero {
+      min-height: 0 !important;
+    }
+
+    html.hero-mode-mobile .hero-desktop-shell {
+      display: none !important;
+    }
+
+    html.hero-mode-mobile #wave-bg {
+      display: none !important;
+    }
+
     @media (max-width: 767px) {
-      .hero-bg,
-      .hero-center {
+      .hero-pin-wrap,
+      #hero-pin-wrap {
+        display: block !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+        position: relative !important;
+      }
+
+      .hero-desktop-shell {
+        display: none !important;
+      }
+
+      #wave-bg {
+        display: none !important;
+      }
+
+      .hero-mobile-shell {
+        display: contents;
+      }
+
+      .hero-mobile-shell .hero-bg,
+      .hero-mobile-shell .hero-center {
         display: none;
       }
-    }
 
-    /* ── WAVE BACKGROUND ── */
-    #wave-bg {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-    #wave-bg svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Scroll parallax layers (transform updated by JS; subtle depth vs portrait) */
-    .hero-photo-parallax {
+      .hero-photo-parallax {
       position: relative;
       z-index: 1;
       transform: translate3d(0, 0, 0);
       will-change: transform;
-    }
-    /* Pass-through on mobile so #hero grid layout is unchanged */
-    .hero-sticky {
+      }
+      /* Pass-through on mobile so #hero grid layout is unchanged */
+      .hero-sticky {
       display: contents;
-    }
-
-    /* Hero main column above wave; exclude desktop layers + .hero-scroll */
-    .hero-sticky > *:not(#wave-bg):not(.hero-scroll):not(.hero-bg):not(.hero-center):not(.hero-mobile-stage) {
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-stage {
-      grid-column: 1 / -1;
-      grid-row: 1;
-      align-self: center;
-      justify-self: center;
-      width: min(64vw, 640px);
-      max-width: 100%;
-      position: relative;
-      min-height: 0;
-    }
-
-    .hero-visual {
-      position: relative;
-      z-index: 0;
-      isolation: isolate;
-      width: 100%;
-    }
-
-    .hero-intro-line {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    .hero-marquee-strip {
-      width: 100vw;
-      max-width: 100vw;
-      margin-left: calc(50% - 50vw);
-      margin-right: calc(50% - 50vw);
-      flex-shrink: 0;
-    }
-
-    .hero-marquee-viewport {
-      overflow: hidden;
-      width: 100%;
-      min-height: 0;
-    }
-
-    /* ~70vw matches hero headline band (≈15% inset each side on wide screens) */
-    .hero-intro-stack {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: center;
-      gap: 0.8rem;
-      width: min(70vw, 1120px);
-      box-sizing: border-box;
-    }
-
-    .hero-intro-text {
-      margin: 0;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: clamp(4.2rem, 12vw, 8.25rem);
-      line-height: 1.08;
-      letter-spacing: -0.02em;
-      color: var(--fg);
-      white-space: nowrap;
-      opacity: 0;
-      display: inline-block;
-      text-align: center;
-      will-change: transform, opacity;
-    }
-
-    .hero-intro-text .hero-intro-accent {
-      color: var(--accent);
-    }
-
-    .hero-intro-sub {
-      margin: 0;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 400;
-      /* Fluid scale; desktop sync matches three lines — see syncHeroIntroWidths() */
-      font-size: clamp(1.85rem, 5.2vw, 3.15rem);
-      line-height: 1.4;
-      letter-spacing: -0.01em;
-      color: var(--fg);
-      white-space: nowrap;
-      visibility: visible;
-      display: inline-block;
-      text-align: center;
-      will-change: transform, opacity;
-    }
-
-    .hero-intro-sub .hero-intro-accent {
-      color: var(--accent);
-    }
-
-    .hero-intro-tag {
-      margin: 0;
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 400;
-      font-size: clamp(1.85rem, 5.2vw, 3.15rem);
-      line-height: 1.4;
-      letter-spacing: -0.01em;
-      color: var(--fg);
-      white-space: nowrap;
-      visibility: visible;
-      display: inline-block;
-      text-align: center;
-      will-change: transform, opacity;
-    }
-
-    .hero-intro-tag .hero-intro-accent {
-      color: var(--accent);
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hero-marquee-viewport {
-        display: flex;
-        justify-content: flex-start;
       }
 
-      html.hero-marquee-live .hero-live-track {
-        animation: none !important;
-        justify-content: center;
-        min-width: 100%;
+      /* Hero main column above wave; exclude desktop layers + .hero-scroll */
+      .hero-sticky > *:not(#wave-bg):not(.hero-scroll):not(.hero-bg):not(.hero-center):not(.hero-mobile-stage):not(.hero-desktop-shell) {
+      position: relative;
+      z-index: 1;
+      }
+
+      #hero {
+        overflow-x: clip;
+        overflow-y: visible;
+        min-height: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        display: grid !important;
+        flex-direction: unset !important;
+        padding: 112px 4vw 7vh !important;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        align-items: center;
+        justify-items: center;
+        row-gap: 0;
+        position: relative !important;
+        top: auto !important;
+        background: var(--bg) !important;
+      }
+
+      .hero-stage {
+        grid-column: 1;
+        grid-row: 1;
         width: 100%;
+        max-width: 100%;
+        align-self: center;
+      }
+
+      .hero-visual {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: clip;
+      }
+
+      .hero-photo-parallax {
+        order: -1;
+        width: min(78vw, 360px);
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-photo {
+        position: relative;
+        display: block;
+        width: 100%;
+        max-height: min(62vh, 580px);
+        object-fit: contain;
+        object-position: center;
+        opacity: 0;
+        transform: translateY(50px);
+        will-change: opacity, transform;
+      }
+
+      .hero-photo.hero-photo-in {
+        animation: hero-photo-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s forwards;
+      }
+
+      @keyframes hero-photo-fade-up {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero-intro-line {
+        position: relative;
+        inset: auto;
+        order: 0;
+        flex: 0 0 auto;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hero-intro-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
+        gap: 0.4rem;
+        overflow-x: clip;
+      }
+
+      .hero-marquee-strip {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .hero-marquee-viewport {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: clip;
       }
 
       .hero-intro-text,
       .hero-intro-sub,
       .hero-intro-tag {
-        transform: none !important;
+        margin: 0 auto;
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        white-space: nowrap;
+        display: inline-block;
+        width: auto;
+        max-width: 88vw;
+        text-align: center;
       }
 
-      #wave-bg,
-      .hero-intro-line,
-      .hero-photo-parallax,
-      .hero-photo-bg,
-      .hero-center,
-      .hero-sig-draw {
-        transform: none !important;
+      .hero-intro-text {
+        font-weight: 300;
+        line-height: 1.08;
+        letter-spacing: -0.02em;
       }
-    }
 
-    .hero-live-track {
-      display: flex;
-      align-items: center;
-      width: max-content;
-      min-width: 200%;
-      gap: 0;
-      will-change: transform;
-    }
+      .hero-intro-sub,
+      .hero-intro-tag {
+        font-weight: 400;
+        line-height: 1.4;
+        letter-spacing: -0.01em;
+      }
 
-    .hero-live-item {
-      flex-shrink: 0;
-      white-space: nowrap;
-      margin: 0;
-      padding-right: clamp(2rem, 4.5vw, 4.5rem);
-      opacity: 1 !important;
-      transform: none !important;
-      visibility: visible !important;
-      text-align: center;
-    }
+      .hero-intro-text .hero-intro-accent,
+      .hero-intro-sub .hero-intro-accent,
+      .hero-intro-tag .hero-intro-accent {
+        color: var(--accent);
+      }
 
-    /* Full-bleed marquee — Lando Norris–style scale & rhythm */
-    html.hero-marquee-live .hero-intro-line {
-      align-items: stretch;
-      justify-content: center;
-      width: 100%;
-      padding-top: clamp(80px, 10vh, 112px);
-    }
+      /* 等寬量測：inline-block 才能取得真實文字寬度 */
+      html.hero-mobile-static-intro .hero-intro-text,
+      html.hero-mobile-static-intro .hero-intro-sub,
+      html.hero-mobile-static-intro .hero-intro-tag {
+        display: inline-block;
+        width: auto;
+        max-width: 92vw;
+        margin-left: auto;
+        margin-right: auto;
+      }
 
-    html.hero-marquee-live .hero-intro-stack {
-      width: 100%;
-      max-width: none;
-      align-items: stretch;
-      justify-content: center;
-      gap: clamp(4px, 0.85vh, 10px);
-    }
+      .hero-intro-text {
+        font-size: clamp(2.35rem, 10.5vw, 4.2rem);
+      }
 
-    html.hero-marquee-live .hero-marquee-strip {
-      width: 100%;
-      max-width: none;
-      margin-left: 0;
-      margin-right: 0;
-    }
+      .hero-intro-sub {
+        font-size: clamp(1.2rem, 5.2vw, 1.85rem);
+      }
 
-    html.hero-marquee-live .hero-marquee-viewport {
-      width: 100%;
-      overflow: hidden;
-    }
+      .hero-intro-tag {
+        font-size: clamp(1.2rem, 5.2vw, 1.85rem);
+      }
 
-    html.hero-marquee-live #hero .hero-intro-text {
-      font-size: clamp(2.65rem, 5.8vw, 5.4rem);
-      line-height: 1.02;
-      letter-spacing: -0.03em;
-    }
+      /* 移動端三句跑馬燈：靜態顯示，無滑入動畫，深灰字 */
+      #hero .hero-intro-text,
+      #hero .hero-intro-sub,
+      #hero .hero-intro-tag,
+      #hero .hero-intro-text .hero-intro-accent,
+      #hero .hero-intro-sub .hero-intro-accent,
+      #hero .hero-intro-tag .hero-intro-accent {
+        color: var(--fg);
+      }
 
-    html.hero-marquee-live #hero .hero-intro-sub,
-    html.hero-marquee-live #hero .hero-intro-tag {
-      font-size: clamp(1.35rem, 2.85vw, 2.35rem);
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-    }
+      /* Mobile viewport: stable layout before JS breakpoint handler (resize flash fix) */
+      .hero-mobile-shell .hero-intro-text,
+      .hero-mobile-shell .hero-intro-sub,
+      .hero-mobile-shell .hero-intro-tag {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        translate: none !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        left: auto !important;
+        right: auto !important;
+      }
 
-    /* 跑馬燈三行：沿用 .hero-intro-* / .display 的 Cormorant 襯線，不改成黑體 */
-    html.hero-marquee-live .hero-live-item.hero-intro-text,
-    html.hero-marquee-live .hero-live-item.hero-intro-sub,
-    html.hero-marquee-live .hero-live-item.hero-intro-tag {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-style: italic;
-      text-transform: none;
-    }
+      html.hero-resized-from-desktop .hero-mobile-shell .hero-photo.hero-photo-in {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
 
-    html.hero-marquee-live .hero-live-item.hero-intro-text,
-    html.hero-marquee-live .hero-intro-text.display {
-      font-weight: 300;
-    }
+      html.hero-mobile-static-intro .hero-intro-text,
+      html.hero-mobile-static-intro .hero-intro-sub,
+      html.hero-mobile-static-intro .hero-intro-tag {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        translate: none !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        left: auto !important;
+        right: auto !important;
+      }
 
-    html.hero-marquee-live .hero-live-item.hero-intro-sub,
-    html.hero-marquee-live .hero-live-item.hero-intro-tag {
-      font-weight: 400;
-    }
-
-    html.hero-marquee-live .hero-live-item {
-      padding-right: clamp(2.5rem, 5vw, 5.5rem);
-    }
-
-    html.hero-marquee-live .hero-live-track--ltr {
-      animation-name: hero-mq-ltr;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
-
-    html.hero-marquee-live .hero-live-track--rtl {
-      animation-name: hero-mq-rtl;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
-
-    /* Three full-bleed rows, each phrase ×4 infinite repeat */
-    html.hero-marquee-live .hero-live-track--repeat.hero-live-track--ltr {
-      animation: hero-mq-repeat 20s linear infinite;
-    }
-
-    html.hero-marquee-live .hero-live-track--repeat.hero-live-track--rtl {
-      animation: hero-mq-repeat-rtl 22s linear infinite;
-    }
-
-    html.hero-marquee-live .hero-marquee-strip:nth-child(3) .hero-live-track--repeat {
-      animation-duration: 21s;
-    }
-
-    @keyframes hero-mq-repeat {
-      from { transform: translateX(0); }
-      to { transform: translateX(-16.6667%); }
-    }
-
-    @keyframes hero-mq-repeat-rtl {
-      from { transform: translateX(-16.6667%); }
-      to { transform: translateX(0); }
-    }
-
-    /* Shared Lando tokens (desktop + mobile/tablet hero) */
-    html.hero-lando {
-      --lando-canvas: #111110;
-      --lando-ink: rgba(112, 108, 102, 0.9);
-      --lando-ink-soft: rgba(112, 108, 102, 0.45);
-    }
-
-    /* ── Lando Norris hero (desktop): dark canvas, light type, cover photo ── */
-    @media (min-width: 768px) {
-      html.hero-lando {
-        /* 調人物大小／裁切：改這三個值即可 */
-        /* Phase 1: 0 → reveal-end 由下往上＋白光出場 */
-        --hero-reveal-end: 0.4;
-        /* Phase 2: reveal-end → 1 人物後退＋變暗 */
-        --hero-photo-scale-start: 1;
-        /* 由 JS 計算；終點高度取 max(跑馬燈×ratio, 簽名×sig-ratio) */
-        --hero-photo-marquee-ratio: 2;
-        --hero-photo-sig-ratio: 1.32;
-        --hero-photo-scale-end: 0.92;
-        --hero-photo-lift-end: 0px;
-        --hero-photo-dim-amount: 0.86;
-        /* Phase 3: 後退進度達此比例時開始簽名（愈小＝愈早開始、書寫愈慢） */
-        --hero-sig-recede-at: 0.62;
-        --hero-sig-ease: 1.05;
-        /* 每筆之間留白比例；單筆書寫 ease 指數（愈大收尾愈慢） */
-        /* 簽名紅：略降彩度，避免過於鮮豔 */
-        --hero-sig-color: #876060;
+      /* Mobile: 捲動驅動 — 簽名疊在照片上（胸口區） */
+      html.hero-mobile-sig-stage {
         --hero-sig-saturate: 0.52;
-        --hero-photo-reveal-inset: 100%;
-        --hero-photo-inset-top: clamp(100px, 12vh, 132px);
-        --hero-photo-inset-x: clamp(20px, 4vw, 48px);
-        --hero-photo-inset-bottom: clamp(36px, 6vh, 72px);
       }
 
-      @supports (background: color-mix(in srgb, red, blue)) {
-        html.hero-lando {
-          --hero-sig-color: color-mix(in srgb, var(--accent) 40%, #5c4a4a 60%);
+      html.hero-mobile-sig-stage #hero {
+        position: relative;
+      }
+
+      html.hero-mobile-sig-stage .hero-photo-parallax {
+        position: relative;
+        isolation: isolate;
+        z-index: 2;
+        overflow: hidden;
+      }
+
+      html.hero-mobile-sig-stage .hero-center {
+        display: flex !important;
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 63% 0 0;
+        box-sizing: border-box;
+        pointer-events: none;
+        opacity: 1;
+        visibility: visible;
+        width: 100%;
+        height: 100%;
+      }
+
+      html.hero-mobile-sig-stage .hero-sig-draw {
+        width: min(160%, 340px);
+        max-height: 78%;
+        margin: 0 auto;
+        transform: translateY(24%);
+      }
+
+      html.hero-mobile-sig-stage .hero-sig-write {
+        position: relative;
+        display: block;
+        width: 100%;
+        --sig-reveal: 0%;
+        -webkit-clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+        clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+        visibility: hidden;
+      }
+
+      html.hero-mobile-sig-stage.hero-sig-visible .hero-sig-write {
+        visibility: visible;
+      }
+
+      html.hero-mobile-sig-stage .hero-sig-write .hero-sig-fallback,
+      html.hero-mobile-sig-stage .hero-sig-write .hero-sig-color,
+      html.hero-mobile-sig-stage .hero-sig-write .hero-sig-ink {
+        display: none;
+      }
+
+      html.hero-mobile-sig-stage .hero-sig-final {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        filter: saturate(var(--hero-sig-saturate, 0.52));
+      }
+
+      .hero-scroll {
+        display: none;
+      }
+    }
+
+
+    /* ── HERO DESKTOP EDITORIAL (≥768px only) ── */
+    @media (min-width: 768px) {
+      .hero-mobile-shell {
+        display: none !important;
+      }
+      .hero-pin-wrap {
+        position: relative;
+      }
+
+      #hero {
+        --hero-canvas: #111110;
+        --hero-ink: rgba(112, 108, 102, 0.92);
+        --hero-ink-soft: rgba(112, 108, 102, 0.45);
+        height: 100dvh;
+        min-height: 100dvh;
+        max-height: 100dvh;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        padding-top: 68px;
+        position: relative;
+        background: var(--hero-canvas);
+        overflow: hidden;
+      }
+
+      /* ── WAVE BACKGROUND ── */
+      #wave-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      #wave-bg svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .hero-desktop-shell {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .hero-editorial {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 24px 96px;
+        gap: 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-clip {
+        overflow: hidden;
+        display: block;
+      }
+
+      .hero-role-side.hero-clip:has(.hero-in) {
+        overflow: visible;
+      }
+
+      html.hero-role-scroll .hero-role-side.hero-clip {
+        overflow: visible;
+      }
+
+      .hero-name-row {
+        line-height: 1;
+        margin-bottom: 16px;
+        text-align: center;
+        overflow: visible;
+        position: relative;
+        z-index: 2;
+        width: 100%;
+      }
+
+      .hero-name-row .hero-clip {
+        padding: 0.28em 0 0.16em;
+        text-align: center;
+      }
+
+        .hero-name {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-weight: 300;
+        font-size: 8.25vw;
+        letter-spacing: -0.01em;
+        text-transform: none;
+        color: var(--hero-ink);
+        line-height: 1;
+        margin: 0 auto;
+        white-space: nowrap;
+        display: block;
+        text-align: center;
+        transform: translateY(110%);
+        transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+      .hero-name-char {
+        display: inline-block;
+        vertical-align: baseline;
+        transform: translate3d(0, 0, 0);
+        transform-origin: 50% 100%;
+        transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        will-change: transform;
+      }
+
+      html.hero-name-hover .hero-name-char {
+        transition: transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .hero-name-row {
+        cursor: default;
         }
       }
 
-      html.hero-lando #hero .hero-sticky {
-        background: var(--lando-canvas);
-      }
+      @media (min-width: 768px) {
+        .hero-pin-wrap {
+        --hero-scroll-track: 78vh;
+        height: calc(100dvh + var(--hero-scroll-track));
+        }
 
-      /* 第一幕起 nav 維持全站預設黑底（#111110），不改成透明 */
-      html.hero-marquee-live:not(.hero-scrolled) nav,
-      html.hero-lando:not(.hero-scrolled) nav,
-      html.hero-marquee-live.hero-scrolled nav,
-      html.hero-lando.hero-scrolled nav {
-        background: #111110;
-        border-bottom-color: rgba(255, 255, 255, 0.08);
-        transition: background 0.45s ease, border-color 0.45s ease;
-      }
+        #hero {
+        position: sticky;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding-top: 68px;
+        padding-bottom: 0;
+        }
 
-      html.hero-lando .hero-live-item,
-      html.hero-lando .hero-intro-text,
-      html.hero-lando .hero-intro-sub,
-      html.hero-lando .hero-intro-tag,
-      html.hero-lando .hero-intro-text .hero-intro-accent,
-      html.hero-lando .hero-intro-sub .hero-intro-accent,
-      html.hero-lando .hero-intro-tag .hero-intro-accent {
-        color: var(--lando-ink);
-      }
+        .hero-desktop-shell {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        }
 
-      html.hero-lando #hero .hero-intro-text {
-        font-size: clamp(2.85rem, 7.2vw, 6.75rem);
-        line-height: 0.92;
-      }
+        .hero-editorial.hero-stage-grid {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 72px;
+        width: 100%;
+        max-width: min(1200px, 100%);
+        padding: 32px 48px 0;
+        box-sizing: border-box;
+        margin: 0 auto;
+        }
 
-      html.hero-lando #hero .hero-intro-sub,
-      html.hero-lando #hero .hero-intro-tag {
-        font-size: clamp(1.65rem, 4.2vw, 3.5rem);
-        line-height: 0.95;
-      }
+        html.hero-entrance-settle .hero-desktop-shell .hero-stage-grid,
+        html.hero-intro-done .hero-desktop-shell .hero-stage-grid {
+        justify-content: flex-start;
+        padding-top: clamp(8px, 1.5vh, 24px);
+        gap: 72px;
+        }
 
-      html.hero-lando .hero-intro-stack {
-        gap: 0.35rem;
-      }
+        html.hero-entrance-settle .hero-desktop-shell,
+        html.hero-intro-done .hero-desktop-shell {
+        justify-content: flex-start;
+        padding-top: clamp(12px, 2.5vh, 36px);
+        }
 
-      html.hero-lando .hero-live-item {
-        padding-right: clamp(3rem, 6vw, 6rem);
-      }
-
-      html.hero-lando .hero-sticky > .hero-bg {
+        .hero-block--name {
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: var(--hero-photo-inset-top) var(--hero-photo-inset-x)
-          var(--hero-photo-inset-bottom);
-        box-sizing: border-box;
+        width: 100%;
+        flex-shrink: 0;
+        overflow: visible;
+        }
+
+        .hero-block--role {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        flex-shrink: 0;
+        overflow: visible;
+        }
+
+        .hero-name-row {
+        padding: 0;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+        margin-bottom: 0;
+        }
+
+        html.hero-entrance-settle .hero-desktop-shell .hero-name-row {
+        will-change: transform;
+        }
+
+        html.hero-intro-done .hero-desktop-shell .hero-name-row {
+        will-change: auto;
+        }
+
+        .hero-name-row .hero-clip {
+        padding: 0.32em 0 0.2em;
+        text-align: center;
+        display: inline-block;
+        max-width: 100%;
+        }
+
+        .hero-role-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        column-gap: 32px;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        overflow: visible;
+        }
+
+        .hero-role-side {
+        min-width: 0;
+        overflow: visible;
+        display: flex;
+        align-items: center;
+        position: relative;
+        z-index: 4;
+        }
+
+        .hero-role-side.hero-clip {
+        overflow: hidden;
+        padding: 0;
+        }
+
+        html.hero-entrance-reveal .hero-desktop-shell .hero-role-side.hero-clip:has(.hero-in),
+        html.hero-intro-done .hero-desktop-shell .hero-role-side.hero-clip {
+        overflow: visible;
+        }
+
+        .hero-role-side--left {
+        justify-self: end;
+        justify-content: flex-end;
+        text-align: right;
+        padding-right: 8px;
+        }
+
+        .hero-role-side--right {
+        justify-self: start;
+        justify-content: flex-start;
+        text-align: left;
+        padding-left: 8px;
+        }
+
+        .hero-card-stack {
+        grid-column: 2;
+        justify-self: center;
+        flex: none;
+        z-index: 1;
+        position: relative;
+        width: clamp(520px, 58vw, 820px);
+        }
+
+        .hero-role-left,
+        .hero-role-right {
+        font-size: clamp(2rem, 5vw, 3.75rem);
+        line-height: 1;
+        }
+
+        .hero-name,
+        .hero-role-left,
+        .hero-role-right {
+        transition: none;
+        }
+
+        .hero-name.hero-in,
+        .hero-role-left.hero-in,
+        .hero-role-right.hero-in {
+        transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .hero-card {
+        opacity: 1;
+        transform: none;
+        transition: none;
+        }
+
+        /* ── Desktop entrance: 3 blocks — name / role+photo / scroll ── */
+        html.hero-entrance-active:not(.hero-entrance-settle):not(.hero-entrance-reveal)
+          .hero-desktop-shell {
+          justify-content: center;
+          padding-top: 0;
+        }
+
+        html.hero-entrance-active:not(.hero-entrance-settle):not(.hero-entrance-reveal)
+          .hero-desktop-shell .hero-stage-grid {
+          justify-content: center;
+          gap: 0;
+        }
+
+        html.hero-entrance-active:not(.hero-entrance-settle):not(.hero-entrance-reveal)
+          .hero-desktop-shell .hero-block--name {
+          align-items: center;
+        }
+
+        html.hero-entrance-active:not(.hero-entrance-settle):not(.hero-entrance-reveal)
+          .hero-desktop-shell .hero-block--role {
+          visibility: hidden;
+          height: 0;
+          overflow: hidden;
+          margin: 0;
+          padding: 0;
+          pointer-events: none;
+        }
+
+        html.hero-entrance-settle:not(.hero-entrance-reveal) .hero-desktop-shell .hero-stage-grid {
+          justify-content: flex-start;
+          padding-top: clamp(8px, 1.5vh, 24px);
+          gap: 72px;
+        }
+
+        html.hero-entrance-settle:not(.hero-entrance-reveal) .hero-desktop-shell .hero-block--name {
+          align-items: center;
+        }
+
+        html.hero-entrance-settle:not(.hero-entrance-reveal) .hero-desktop-shell .hero-block--role {
+          visibility: visible;
+          height: auto;
+          min-height: clamp(200px, 28vw, 376px);
+          overflow: visible;
+          pointer-events: none;
+        }
+
+        html.hero-entrance-active .hero-desktop-shell .hero-name-row .hero-clip {
+          overflow: hidden;
+        }
+
+        html.hero-entrance-active .hero-desktop-shell .hero-name:not(.hero-in) {
+          transform: translateY(110%);
+          transition: none;
+        }
+
+        html.hero-entrance-active .hero-desktop-shell .hero-name.hero-in {
+          transform: translateY(0);
+          transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        html:not(.hero-intro-done):not(.hero-entrance-active)
+          .hero-desktop-shell .hero-block--role {
+          visibility: hidden;
+          height: 0;
+          overflow: hidden;
+          margin: 0;
+          padding: 0;
+          pointer-events: none;
+        }
+
+        html:not(.hero-intro-done):not(.hero-entrance-active) .hero-desktop-shell .hero-name-row {
+          opacity: 0;
+        }
+
+        html.hero-entrance-active .hero-desktop-shell .hero-name-row {
+          opacity: 1;
+        }
+
+        html.hero-entrance-reveal .hero-desktop-shell .hero-block--role,
+        html.hero-intro-done .hero-desktop-shell .hero-block--role {
+          visibility: visible;
+          height: auto;
+          overflow: visible;
+          pointer-events: auto;
+        }
+
+        html.hero-entrance-reveal .hero-desktop-shell .hero-role-row {
+          visibility: visible;
+          opacity: 1;
+          max-height: none;
+          overflow: visible;
+          pointer-events: auto;
+        }
+
+        html.hero-entrance-active:not(.hero-entrance-reveal) .hero-desktop-shell .hero-role-left,
+        html.hero-entrance-active:not(.hero-entrance-reveal) .hero-desktop-shell .hero-role-right,
+        html.hero-entrance-active:not(.hero-entrance-reveal) .hero-desktop-shell .hero-card-stack {
+          visibility: hidden;
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        html.hero-entrance-reveal .hero-desktop-shell .hero-role-left,
+        html.hero-entrance-reveal .hero-desktop-shell .hero-role-right,
+        html.hero-entrance-reveal .hero-desktop-shell .hero-card-stack {
+          visibility: visible;
+          opacity: 1;
+        }
+
+        html.hero-intro-done .hero-desktop-shell .hero-name,
+        html.hero-intro-done .hero-desktop-shell .hero-role-left,
+        html.hero-intro-done .hero-desktop-shell .hero-role-right {
+          transform: translateY(0);
+        }
+
+        html.hero-intro-done .hero-desktop-shell .hero-name-row {
+          opacity: 1;
+        }
+
+        html.hero-scroll-scrub .hero-desktop-shell .hero-name,
+        html.hero-scroll-scrub .hero-desktop-shell .hero-role-left,
+        html.hero-scroll-scrub .hero-desktop-shell .hero-role-right,
+        html.hero-scroll-scrub .hero-desktop-shell .hero-name-row {
+          transition: none !important;
+        }
+
+        html.hero-entrance-scroll-lock {
+        overflow: hidden;
+        height: 100%;
+        }
+
+        html.hero-entrance-scroll-lock body {
+        overflow: hidden;
+        height: 100%;
+        }
+
+        .hero-scroll {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        flex-shrink: 0;
+        min-height: 72px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        width: 100%;
+        padding-bottom: 32px;
+        transform: translateY(16px);
+        }
+
+        #main.visible .hero-scroll {
+        transform: translateY(0);
+        }
       }
 
-      html.hero-lando .hero-photo-stage {
+      .hero-name.hero-in {
+        transform: translateY(0);
+      }
+
+      .hero-role-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        column-gap: 32px;
+        width: 100%;
+        max-width: min(1200px, 100%);
+        margin: 0 auto;
+        overflow: visible;
+      }
+
+      .hero-role-side {
+        min-width: 0;
+        position: relative;
+        z-index: 4;
+        overflow: visible;
+        display: flex;
+        align-items: center;
+      }
+
+      .hero-role-side--left {
+        justify-self: end;
+        display: flex;
+        justify-content: flex-end;
+        text-align: right;
+        padding-right: 8px;
+      }
+
+      .hero-role-side--right {
+        justify-self: start;
+        display: flex;
+        justify-content: flex-start;
+        text-align: left;
+        padding-left: 8px;
+      }
+
+      .hero-role-left,
+      .hero-role-right {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-weight: 300;
+        font-size: clamp(1.75rem, 4.4vw, 3.25rem);
+        letter-spacing: -0.02em;
+        text-transform: none;
+        color: var(--hero-ink);
+        line-height: 1;
+        display: block;
+        white-space: nowrap;
         position: relative;
         z-index: 1;
+        transform: translateY(110%);
+        transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+        will-change: transform;
+      }
+
+      .hero-role-left.hero-in,
+      .hero-role-right.hero-in {
+        transform: translateY(0);
+      }
+
+      .hero-role-side--left,
+      .hero-role-side--right {
+        will-change: transform;
+      }
+
+      html.hero-role-scroll .hero-role-left,
+      html.hero-role-scroll .hero-role-right {
+        transition: none;
+      }
+
+      html.hero-role-scroll .hero-role-side--left,
+      html.hero-role-scroll .hero-role-side--right {
+        transition: none;
+      }
+
+      .hero-card-stack {
+        grid-column: 2;
+        justify-self: center;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        max-width: 100%;
-        max-height: 100%;
-        clip-path: inset(var(--hero-photo-reveal-inset) 0 0 0);
+        flex-direction: column;
+        align-items: stretch;
+        width: clamp(520px, 58vw, 820px);
+        flex: none;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-card {
+        width: 100%;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        overflow: hidden;
+        opacity: 1;
+        transform: none;
+      }
+
+      .hero-card-photo-wrap {
+        width: 100%;
+        aspect-ratio: 21 / 9;
+        overflow: hidden;
+        position: relative;
+        background: transparent;
         transform-origin: center center;
-        will-change: clip-path, transform;
+        will-change: transform;
+      }
+
+      .hero-photo-stage {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-origin: center center;
+        clip-path: inset(100% 0 0 0);
+        -webkit-clip-path: inset(100% 0 0 0);
         isolation: isolate;
       }
 
-      html.hero-lando .hero-photo-sheen {
-        display: block;
+      @keyframes hero-photo-reveal-in {
+        from {
+          clip-path: inset(100% 0 0 0);
+          -webkit-clip-path: inset(100% 0 0 0);
+          transform: scale(1.04);
+        }
+        to {
+          clip-path: inset(0 0 0 0);
+          -webkit-clip-path: inset(0 0 0 0);
+          transform: scale(1);
+        }
+      }
+
+      html.hero-entrance-reveal .hero-desktop-shell .hero-photo-stage.hero-photo-animating {
+        animation: hero-photo-reveal-in 1.05s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        will-change: transform, clip-path;
+      }
+
+      html.hero-intro-done .hero-desktop-shell .hero-photo-stage {
+        will-change: auto;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html.hero-entrance-reveal .hero-desktop-shell .hero-photo-stage.hero-photo-animating {
+          animation: none;
+          clip-path: inset(0 0 0 0);
+          -webkit-clip-path: inset(0 0 0 0);
+          transform: scale(1);
+        }
+      }
+
+      .hero-photo-flash {
+        display: none;
+      }
+
+      .hero-photo-sheen {
         position: absolute;
         left: -18%;
         width: 136%;
-        height: clamp(40px, 8vh, 96px);
+        height: clamp(28px, 5vh, 64px);
         top: 0;
         transform: translateY(-50%);
         pointer-events: none;
@@ -737,176 +1270,185 @@
         opacity: 0;
         border-radius: 999px;
         background: linear-gradient(
-          180deg,
-          transparent 0%,
-          rgba(220, 232, 255, 0.45) 15%,
-          rgba(255, 255, 255, 1) 50%,
-          rgba(220, 232, 255, 0.45) 85%,
-          transparent 100%
+        180deg,
+        transparent 0%,
+        rgba(220, 232, 255, 0.2) 15%,
+        rgba(255, 255, 255, 0.55) 50%,
+        rgba(220, 232, 255, 0.2) 85%,
+        transparent 100%
         );
-        box-shadow:
-          0 0 32px rgba(255, 255, 255, 0.95),
-          0 0 80px rgba(230, 240, 255, 0.75),
-          0 0 120px rgba(255, 255, 255, 0.45);
-        filter: blur(12px);
-        mix-blend-mode: screen;
+        filter: blur(10px);
+        mix-blend-mode: soft-light;
         will-change: top, opacity;
       }
 
-      html.hero-lando .hero-photo-flash {
+      .hero-card-photo {
+        width: 100%;
+        height: 100%;
         display: block;
-        position: absolute;
-        inset: -8% -12%;
-        z-index: 3;
-        pointer-events: none;
-        opacity: 0;
-        background: linear-gradient(
-          180deg,
-          rgba(245, 248, 255, 0.72) 0%,
-          rgba(255, 255, 255, 0.94) 38%,
-          #ffffff 52%,
-          rgba(255, 255, 255, 0.98) 100%
-        );
-        mix-blend-mode: screen;
-        will-change: opacity;
+        object-fit: cover;
+        object-position: center center;
+        transform-origin: center center;
+        will-change: transform, filter;
       }
 
-      html.hero-lando .hero-photo-bg {
+      @media (min-width: 768px) {
+        .hero-card-stack {
+        width: clamp(520px, 58vw, 820px);
+        }
+
+        .hero-card-photo {
+        object-position: center center;
+        }
+      }
+
+      .hero-card-photo-wrap .hero-sig-draw {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        pointer-events: none;
+      }
+
+      .hero-card-photo-wrap .hero-sig-write {
+        width: 78%;
+        max-width: none;
         position: relative;
         z-index: 1;
-        inset: auto;
-        width: auto;
-        height: auto;
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        object-position: center center;
-        will-change: transform;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        html.hero-lando .hero-photo-stage {
-          clip-path: inset(0 0 0 0);
-        }
-
-        html.hero-lando .hero-photo-sheen,
-        html.hero-lando .hero-photo-flash {
-          display: none;
-        }
-      }
-
-      html.hero-lando .hero-center {
-        opacity: 0;
+        --sig-reveal: 0%;
+        -webkit-clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+        clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
         visibility: hidden;
-        pointer-events: none;
+        will-change: clip-path;
       }
 
-      html.hero-lando.hero-sig-visible .hero-center {
-        opacity: 1;
+      @media (min-width: 768px) {
+        .hero-card-photo-wrap .hero-sig-write {
+        width: 84%;
+        max-width: none;
+        }
+      }
+
+      html.hero-sig-visible .hero-sig-write {
         visibility: visible;
       }
 
-      html.hero-lando .hero-scroll .scroll-ind,
-      html.hero-lando .hero-scroll span {
-        color: var(--lando-ink);
-        letter-spacing: 0.22em;
+      .hero-sig-write .hero-sig-fallback,
+      .hero-sig-write .hero-sig-color,
+      .hero-sig-write .hero-sig-ink {
+        display: none;
       }
 
-    }
+      .hero-sig-final {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        object-position: center center;
+        mix-blend-mode: screen;
+        filter: saturate(0.48) brightness(1.04);
+        opacity: 1;
+      }
 
-    html.hero-marquee-live .hero-live-track {
-      width: max-content;
-      min-width: 200%;
-    }
-
-    html.hero-marquee-live .hero-intro-text,
-    html.hero-marquee-live .hero-intro-sub,
-    html.hero-marquee-live .hero-intro-tag {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    @keyframes hero-mq-ltr {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
-    }
-
-    @keyframes hero-mq-rtl {
-      from { transform: translateX(-50%); }
-      to { transform: translateX(0); }
-    }
-
-    .hero-photo {
-      position: relative;
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: min(70vh, 720px);
-      object-fit: contain;
-      object-position: center;
-      opacity: 0;
-      transform: translateY(50px);
-      will-change: opacity, transform;
-    }
-
-    /* Keep durations in sync with HERO_PHOTO_*_MS in hero intro script */
-    .hero-photo.hero-photo-in {
-      animation: hero-photo-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s forwards;
-    }
-
-    .hero-visual:hover .hero-photo {
-      transform: translateY(-2px);
-    }
-
-    .hero-scroll {
-      position: absolute;
-      left: 50%;
-      bottom: 0.35rem;
-      opacity: 0;
-      transform: translate(-50%, 16px);
-      transition:
+      .hero-scroll {
+        position: absolute;
+        left: 50%;
+        bottom: 24px;
+        opacity: 0;
+        transform: translate(-50%, 16px);
+        transition:
         opacity 0.7s ease 0.75s,
         transform 0.7s ease 0.75s;
-      pointer-events: none;
-      z-index: 3;
-    }
-    html.hero-intro-done .hero-scroll {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    .scroll-ind {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.6rem;
-      font-size: 0.75rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--fg);
-      font-weight: 500;
-    }
-    .scroll-bar {
-      width: 1px;
-      height: 55px;
-      background: linear-gradient(to bottom, var(--accent), transparent);
-      animation: scrl 2.2s ease-in-out infinite;
-    }
-    @keyframes scrl {
-      0%,
-      100% { transform: scaleY(0); transform-origin: top; opacity: 0; }
-      50% { transform: scaleY(1); opacity: 1; }
-    }
-
-    @keyframes hero-photo-fade-up {
-      from {
-        opacity: 0;
-        transform: translateY(50px);
+        pointer-events: none;
+        z-index: 10;
       }
-      to {
+
+      #main.visible .hero-scroll {
         opacity: 1;
-        transform: translateY(0);
+        transform: translate(-50%, 0);
       }
+
+      @media (min-width: 768px) {
+        .hero-scroll {
+        padding-bottom: 32px;
+        }
+      }
+
+      .scroll-ind {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 0.7rem;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--hero-ink-soft);
+      }
+
+      .scroll-ind span {
+        color: var(--hero-ink-soft);
+      }
+
+      .scroll-bar {
+        width: 1px;
+        height: 56px;
+        background: linear-gradient(to bottom, var(--accent), transparent);
+        animation: scrl 2.2s ease-in-out infinite;
+      }
+
+      @keyframes scrl {
+        0%,
+        100% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+        50% { transform: scaleY(1); opacity: 1; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html.hero-sig-visible .hero-sig-write {
+        clip-path: inset(0 0 0 0);
+        -webkit-clip-path: inset(0 0 0 0);
+        }
+
+        .hero-name-char {
+        transform: none !important;
+        transition: none !important;
+        }
+
+        .hero-photo-stage {
+        clip-path: inset(0 0 0 0);
+        -webkit-clip-path: inset(0 0 0 0);
+        }
+
+        .hero-photo-flash,
+        .hero-photo-sheen {
+        display: none;
+        }
+
+        .scroll-bar {
+        animation: none;
+        transform: scaleY(1);
+        opacity: 1;
+        }
+
+        #wave-bg,
+        .hero-card-photo {
+        transform: none !important;
+        }
+
+      @media (min-width: 768px) {
+        .hero-photo-stage {
+          transform: none !important;
+        }
+
+        .hero-card-photo {
+          filter: none !important;
+        }
+        }
+      }
+
     }
 
     .hero-desc {
@@ -1355,12 +1897,8 @@
         padding: 1rem 4vw;
         gap: 1rem;
       }
-      .nav-logo {
-        font-size: 1rem;
-        gap: 0.55rem;
-      }
       .nav-logo svg {
-        height: 22px;
+        height: 28px;
       }
       .nav-links {
         gap: 1.2rem;
@@ -1376,11 +1914,6 @@
         scroll-margin-top: 72px;
       }
 
-      #hero .hero-desc {
-        max-width: 62ch;
-        font-size: 0.84rem;
-        line-height: 1.75;
-      }
 
       #work,
       #impact,
@@ -1432,7 +1965,7 @@
     }
 
     /* ── RWD: MOBILE ── */
-    @media (pointer: coarse) {
+    @media (max-width: 767px) {
       body {
         cursor: auto;
       }
@@ -1445,24 +1978,46 @@
       nav {
         position: fixed;
         inset: 0 0 auto;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        width: 100%;
+        max-width: 100vw;
         height: 72px;
         align-items: center;
-        justify-content: space-between;
         padding: 0.8rem 4vw;
+        overflow: hidden;
+        box-sizing: border-box;
       }
       .nav-logo {
-        font-size: 0.92rem;
+        grid-column: 1 / -1;
+        grid-row: 1;
+        justify-self: center;
+        position: relative;
+        z-index: 1;
       }
       .nav-logo svg {
-        height: 20px;
+        height: 28px;
+      }
+      .nav-toggle {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+        position: relative;
+        width: 40px;
+        height: 40px;
+        margin: 0;
+        z-index: 3;
       }
       .nav-toggle-btn {
         display: inline-flex;
-        position: absolute;
-        top: 50%;
-        right: 4vw;
-        transform: translateY(-50%);
-        z-index: 320;
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+        position: relative;
+        top: auto;
+        right: auto;
+        transform: none;
+        z-index: 2;
       }
       .nav-links {
         display: flex;
@@ -1535,191 +2090,6 @@
         font-size: 0.76rem;
         letter-spacing: 0.16em;
         margin-bottom: 2rem;
-      }
-
-      #hero {
-        min-height: 100vh;
-        min-height: 100dvh;
-        height: auto;
-        padding: 112px 4vw 7vh;
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-        align-items: center;
-        justify-items: center;
-        row-gap: 0;
-        background: var(--bg);
-      }
-
-      .hero-stage {
-        grid-column: 1;
-        grid-row: 1;
-        width: 100%;
-        max-width: 100%;
-        align-self: center;
-      }
-
-      .hero-visual {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2rem;
-      }
-
-      .hero-photo-parallax {
-        order: -1;
-        width: min(78vw, 360px);
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .hero-photo {
-        width: 100%;
-        max-height: min(62vh, 580px);
-      }
-
-      .hero-intro-line {
-        position: relative;
-        inset: auto;
-        order: 0;
-        flex: 0 0 auto;
-        width: 100%;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .hero-intro-stack {
-        align-items: center;
-        width: 100%;
-        max-width: 100%;
-        gap: 0.4rem;
-      }
-
-      .hero-marquee-strip {
-        width: 100%;
-        max-width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-      }
-
-      .hero-marquee-viewport {
-        display: flex;
-        justify-content: center;
-      }
-
-      .hero-intro-text,
-      .hero-intro-sub,
-      .hero-intro-tag {
-        display: block;
-        width: 100%;
-        text-align: center;
-      }
-
-      /* 等寬量測：inline-block 才能取得真實文字寬度 */
-      html.hero-mobile-static-intro .hero-intro-text,
-      html.hero-mobile-static-intro .hero-intro-sub,
-      html.hero-mobile-static-intro .hero-intro-tag {
-        display: inline-block;
-        width: auto;
-        max-width: 92vw;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .hero-intro-text {
-        font-size: clamp(3.2rem, 13.5vw, 5.45rem);
-      }
-
-      .hero-intro-sub {
-        font-size: clamp(1.38rem, 5.85vw, 2.2rem);
-      }
-
-      .hero-intro-tag {
-        font-size: clamp(1.38rem, 5.85vw, 2.2rem);
-      }
-
-      /* 移動端三句跑馬燈：靜態顯示，無滑入動畫，深灰字 */
-      #hero .hero-intro-text,
-      #hero .hero-intro-sub,
-      #hero .hero-intro-tag,
-      #hero .hero-intro-text .hero-intro-accent,
-      #hero .hero-intro-sub .hero-intro-accent,
-      #hero .hero-intro-tag .hero-intro-accent {
-        color: var(--fg);
-      }
-
-      html.hero-mobile-static-intro .hero-intro-text,
-      html.hero-mobile-static-intro .hero-intro-sub,
-      html.hero-mobile-static-intro .hero-intro-tag {
-        opacity: 1 !important;
-        visibility: visible !important;
-        transform: none !important;
-      }
-
-      /* Mobile: 捲動驅動 — 簽名疊在照片上（胸口區） */
-      html.hero-mobile-sig-stage {
-        --hero-sig-saturate: 0.52;
-      }
-
-      html.hero-mobile-sig-stage #hero {
-        position: relative;
-      }
-
-      html.hero-mobile-sig-stage .hero-photo-parallax {
-        position: relative;
-        isolation: isolate;
-        z-index: 2;
-      }
-
-      html.hero-mobile-sig-stage .hero-center {
-        display: flex !important;
-        position: absolute;
-        inset: 0;
-        z-index: 4;
-        align-items: center;
-        justify-content: flex-start;
-        padding: 63% 0 0;
-        box-sizing: border-box;
-        pointer-events: none;
-        opacity: 1;
-        visibility: visible;
-        width: 100%;
-        height: 100%;
-      }
-
-      html.hero-mobile-sig-stage .hero-sig-draw {
-        width: min(172%, 860px);
-        max-width: 100vw;
-        max-height: 78%;
-        margin: 0 auto;
-        transform: translateY(24%);
-      }
-
-      html.hero-mobile-sig-stage .hero-sig-write {
-        position: relative;
-        display: block;
-        width: 100%;
-        --sig-reveal: 0%;
-        -webkit-clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
-        clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
-        visibility: hidden;
-      }
-
-      html.hero-mobile-sig-stage.hero-sig-visible .hero-sig-write {
-        visibility: visible;
-      }
-
-      html.hero-mobile-sig-stage .hero-sig-write .hero-sig-fallback,
-      html.hero-mobile-sig-stage .hero-sig-write .hero-sig-color,
-      html.hero-mobile-sig-stage .hero-sig-write .hero-sig-ink {
-        display: none;
-      }
-
-      html.hero-mobile-sig-stage .hero-sig-final {
-        display: block;
-        width: 100%;
-        height: auto;
-        object-fit: contain;
-        filter: saturate(var(--hero-sig-saturate, 0.52));
       }
 
       .hero-desc {
@@ -1874,262 +2244,6 @@
       }
     }
 
-    /*
-      Hero intro type: desktop / tablet (≥768px) — beat legacy #hero rules in max-width: 767px only.
-    */
-    @media (min-width: 768px) {
-      #hero .hero-intro-text {
-        font-size: clamp(4.65rem, 12.3vw, 9.35rem);
-      }
-      #hero .hero-intro-sub,
-      #hero .hero-intro-tag {
-        font-size: clamp(2.2rem, 5.75vw, 4.05rem);
-      }
-
-      html.hero-marquee-live #hero .hero-intro-text {
-        font-size: clamp(2.8rem, 6vw, 5.6rem);
-      }
-      html.hero-marquee-live #hero .hero-intro-sub,
-      html.hero-marquee-live #hero .hero-intro-tag {
-        font-size: clamp(1.4rem, 2.9vw, 2.45rem);
-      }
-    }
-
-    /* Desktop hero — full-bleed photo + signature stacked on top (≥768px; phone uses mobile hero) */
-    @media (min-width: 768px) {
-
-      html.hero-lando .hero-sticky > #wave-bg {
-        display: block;
-        z-index: 1;
-        opacity: 1;
-      }
-
-      .hero-bg,
-      .hero-center,
-      .hero-mobile-stage {
-        display: block;
-      }
-
-      .hero-sticky {
-        display: block;
-        position: sticky;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100svh;
-        min-height: 100svh;
-        overflow: hidden;
-        z-index: 2;
-      }
-
-      .hero-sticky > .hero-mobile-stage {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-      }
-
-      .hero-mobile-stage .hero-stage {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        max-width: none;
-        grid-column: unset;
-        grid-row: unset;
-        align-self: stretch;
-        justify-self: stretch;
-      }
-
-      .hero-mobile-stage .hero-visual {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        max-width: none;
-      }
-
-      .hero-mobile-stage .hero-photo-parallax {
-        display: none;
-      }
-
-      .hero-mobile-stage .hero-intro-line {
-        align-items: flex-start;
-        justify-content: flex-start;
-        padding-top: clamp(96px, 14vh, 152px);
-      }
-
-      .hero-mobile-stage .hero-intro-stack {
-        width: min(92vw, 1120px);
-        margin: 0 auto;
-        gap: 0.65rem;
-      }
-
-      html.hero-marquee-live .hero-mobile-stage .hero-visual,
-      html.hero-marquee-live .hero-mobile-stage .hero-intro-line {
-        width: 100%;
-        max-width: none;
-      }
-
-      html.hero-marquee-live .hero-sticky {
-        overflow-x: hidden;
-        overflow-y: hidden;
-      }
-
-      #hero {
-        position: relative;
-        width: 100%;
-        min-height: 280vh;
-        height: auto;
-        overflow: visible;
-        display: block;
-        padding: 0 !important;
-      }
-
-      /* Photo layer above marquee (Lando: centered in safe area below nav) */
-      .hero-sticky > .hero-bg {
-        position: absolute;
-        inset: 0;
-        z-index: 3;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: var(--hero-photo-inset-top) var(--hero-photo-inset-x)
-          var(--hero-photo-inset-bottom);
-        box-sizing: border-box;
-        pointer-events: none;
-        isolation: isolate;
-      }
-
-      .hero-sticky > .hero-center {
-        position: absolute;
-        inset: 0;
-        z-index: 4;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        padding: var(--hero-photo-inset-top) var(--hero-photo-inset-x)
-          var(--hero-photo-inset-bottom);
-        box-sizing: border-box;
-        pointer-events: none;
-        will-change: transform;
-        opacity: 0;
-        visibility: hidden;
-      }
-
-      html.hero-sig-visible .hero-sticky > .hero-center {
-        opacity: 1;
-        visibility: visible;
-        transition: none;
-      }
-
-      .hero-photo-stage {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        max-width: 100%;
-        max-height: 100%;
-      }
-
-      .hero-photo-sheen,
-      .hero-photo-flash {
-        display: none;
-      }
-
-      .hero-photo-bg {
-        position: relative;
-        z-index: 1;
-        width: auto;
-        height: auto;
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        object-position: center center;
-        transform-origin: center center;
-        display: block;
-      }
-
-      html.hero-marquee-live .hero-mobile-stage .hero-intro-line {
-        z-index: 0;
-        align-items: center;
-        justify-content: center;
-        padding-top: 0;
-        height: 100%;
-      }
-
-      .hero-sig-draw {
-        width: 100%;
-        max-width: min(92vw, 720px);
-        margin: 0 auto;
-        opacity: 1;
-        pointer-events: none;
-        mix-blend-mode: normal;
-      }
-
-      .hero-sig-write {
-        position: relative;
-        display: block;
-        width: 100%;
-        --sig-reveal: 0%;
-        -webkit-clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
-        clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
-        visibility: hidden;
-        will-change: clip-path;
-      }
-
-      html.hero-sig-visible .hero-sig-write {
-        visibility: visible;
-      }
-
-      .hero-sig-write .hero-sig-fallback,
-      .hero-sig-write .hero-sig-color,
-      .hero-sig-write .hero-sig-ink {
-        display: none;
-      }
-
-      .hero-sig-final {
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        object-fit: contain;
-        object-position: center center;
-        filter: saturate(var(--hero-sig-saturate, 0.52));
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        html.hero-lando .hero-sig-write {
-          clip-path: inset(0 0 0 0);
-          -webkit-clip-path: inset(0 0 0 0);
-        }
-      }
-
-      .hero-sticky > .hero-scroll {
-        z-index: 5;
-        bottom: clamp(12px, 2vh, 24px);
-      }
-
-      /* Lando overrides (after generic desktop hero rules) */
-      html.hero-lando.hero-marquee-live #hero .hero-intro-text {
-        font-size: clamp(2.85rem, 7.2vw, 6.75rem);
-        line-height: 0.92;
-      }
-
-      html.hero-lando.hero-marquee-live #hero .hero-intro-sub,
-      html.hero-lando.hero-marquee-live #hero .hero-intro-tag {
-        font-size: clamp(1.65rem, 4.2vw, 3.5rem);
-        line-height: 0.95;
-      }
-
-    }
 
   </style>
 </head>
@@ -2158,7 +2272,7 @@
   <!-- ── MAIN ── -->
   <main id="main">
     <nav>
-      <a class="nav-logo" href="#hero" aria-label="Back to top">
+      <a class="nav-logo" href="#hero" aria-label="Rowan Lin — Back to top">
         <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.63 35.01" role="img">
           <g>
             <g>
@@ -2168,7 +2282,6 @@
             <path class="cls-1" d="M34.44,35.01l-6-3.71v-8.23h3.08c1.61,0,2.92,1.31,2.92,2.92v9.01Z"/>
           </g>
         </svg>
-        <span>Yu-Hsien (Rowan) Lin</span>
       </a>
       <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation menu">
       <label for="nav-toggle" class="nav-toggle-btn" aria-label="Open menu">
@@ -2186,10 +2299,12 @@
     </nav>
 
     <!-- HERO -->
+    <div class="hero-pin-wrap" id="hero-pin-wrap">
     <section id="hero" aria-label="Introduction">
-      <div class="hero-sticky">
       <div id="wave-bg" aria-hidden="true"></div>
 
+      <div class="hero-mobile-shell">
+      <div class="hero-sticky">
       <div class="hero-bg">
         <div class="hero-photo-stage">
           <img
@@ -2267,14 +2382,79 @@
         </div>
       </div>
 
+      </div>
+
+      </div>
+
+      <div class="hero-desktop-shell">
+      <div class="hero-editorial hero-stage-grid">
+        <!-- Block 1: Name -->
+        <div class="hero-block hero-block--name">
+          <div class="hero-name-row">
+            <div class="hero-clip">
+              <h1 class="hero-name">Yu-Hsien(Rowan) Lin</h1>
+            </div>
+          </div>
+        </div>
+
+        <!-- Block 2: Role + Photo -->
+        <div class="hero-block hero-block--role">
+        <div class="hero-role-row">
+          <div class="hero-clip hero-role-side hero-role-side--left">
+            <span class="hero-role-left">A Cross-screen</span>
+          </div>
+
+          <div class="hero-card-stack">
+            <div class="hero-card">
+              <div class="hero-card-photo-wrap">
+                <div class="hero-photo-stage">
+                  <img src="images/hero-rowan-wide.png"
+                       alt="Portrait of Yu-Hsien Lin"
+                       class="hero-card-photo"
+                       width="1915"
+                       height="821"
+                       loading="eager"
+                       decoding="async">
+                  <div class="hero-photo-flash" aria-hidden="true"></div>
+                  <div class="hero-photo-sheen" aria-hidden="true"></div>
+                </div>
+
+                <div class="hero-sig-draw" role="img" aria-label="林昱嫻">
+                  <div class="hero-sig-write">
+                    <img class="hero-sig-fallback"
+                         src="images/signtrue-rowan.png"
+                         alt="林昱嫻"
+                         decoding="async">
+                    <img class="hero-sig-final"
+                         src="images/signtrue-rowan.png"
+                         alt=""
+                         decoding="async"
+                         aria-hidden="true">
+                    <div class="hero-sig-color" aria-hidden="true"></div>
+                    <div class="hero-sig-ink" aria-hidden="true"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-clip hero-role-side hero-role-side--right">
+            <span class="hero-role-right">designer</span>
+          </div>
+        </div>
+        </div>
+
+      </div>
+      </div>
+
       <div class="hero-scroll" aria-hidden="true">
         <div class="scroll-ind">
-          <div class="scroll-bar" aria-hidden="true"></div>
+          <div class="scroll-bar"></div>
           <span>Scroll</span>
         </div>
       </div>
-      </div>
     </section>
+    </div>
 
     <!-- WORK -->
     <section id="work">
@@ -2338,7 +2518,6 @@
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a7f85fc8-9e9d-48cc-8b65-d1ea109acdd0/banner.png')"></div></li>
       </ul>
     </section>
-    </div>
 
     <!-- floating work preview -->
     <div id="wk-preview">
@@ -2592,12 +2771,12 @@
     (function () {
       const root = document.documentElement;
       const hero = document.getElementById('hero');
-      const intro = document.querySelector('.hero-intro-text');
-      const introSub = document.querySelector('.hero-intro-sub');
-      const introTag = document.querySelector('.hero-intro-tag');
-      const visual = document.querySelector('#hero .hero-visual');
-      const photo = document.querySelector('.hero-photo');
-      const heroSigWrite = document.querySelector('.hero-sig-write');
+      const intro = document.querySelector('.hero-mobile-shell .hero-intro-text');
+      const introSub = document.querySelector('.hero-mobile-shell .hero-intro-sub');
+      const introTag = document.querySelector('.hero-mobile-shell .hero-intro-tag');
+      const visual = document.querySelector('.hero-mobile-shell .hero-visual');
+      const photo = document.querySelector('.hero-mobile-shell .hero-photo');
+      const heroSigWrite = document.querySelector('.hero-mobile-shell .hero-sig-write');
       if (!hero || !intro || !visual || !introSub || !introTag) return;
 
       let photoIntroPlayed = false;
@@ -2611,6 +2790,125 @@
       const mqFullBleedHero = window.matchMedia('(min-width: 768px)');
       const mqMobileHero = window.matchMedia('(max-width: 767px)');
 
+      var mobileIntroStackHtml = (function () {
+        var stack = document.querySelector('.hero-mobile-shell .hero-intro-stack');
+        return stack ? stack.innerHTML : '';
+      })();
+
+      function getMobileIntroLines() {
+        return {
+          intro: document.querySelector('.hero-mobile-shell .hero-intro-text'),
+          introSub: document.querySelector('.hero-mobile-shell .hero-intro-sub'),
+          introTag: document.querySelector('.hero-mobile-shell .hero-intro-tag'),
+        };
+      }
+
+      function rebuildMobileIntroStack() {
+        var stack = document.querySelector('.hero-mobile-shell .hero-intro-stack');
+        if (!stack || !mobileIntroStackHtml) return;
+        stack.innerHTML = mobileIntroStackHtml;
+      }
+
+      function resetMobileShellInlineStyles() {
+        var shell = document.querySelector('.hero-mobile-shell');
+        if (!shell) return;
+        shell.querySelectorAll(
+          '.hero-intro-text, .hero-intro-sub, .hero-intro-tag, .hero-visual, .hero-stage, .hero-photo-parallax, .hero-photo, .hero-intro-line, .hero-intro-stack, .hero-marquee-strip, .hero-marquee-viewport',
+        ).forEach(function (el) {
+          el.removeAttribute('style');
+        });
+      }
+
+      function forceCollapseHeroPin() {
+        if (!mqMobileHero.matches) return;
+
+        root.classList.add('hero-mode-mobile');
+        root.classList.remove('hero-mode-desktop');
+
+        var pin = document.getElementById('hero-pin-wrap');
+        var heroEl = document.getElementById('hero');
+        if (pin) {
+          pin.style.setProperty('display', 'block', 'important');
+          pin.style.setProperty('height', 'auto', 'important');
+          pin.style.setProperty('min-height', '0', 'important');
+          pin.style.setProperty('max-height', 'none', 'important');
+          pin.style.setProperty('position', 'relative', 'important');
+          pin.style.removeProperty('--hero-scroll-track');
+        }
+        if (heroEl) {
+          heroEl.style.setProperty('height', 'auto', 'important');
+          heroEl.style.setProperty('max-height', 'none', 'important');
+          heroEl.style.setProperty('position', 'relative', 'important');
+          heroEl.style.setProperty('top', 'auto', 'important');
+          heroEl.style.setProperty('display', 'grid', 'important');
+          heroEl.style.setProperty('overflow-y', 'visible', 'important');
+        }
+
+        root.classList.remove('hero-intro-lock');
+        root.style.overflow = '';
+        document.body.style.overflow = '';
+
+        var wave = document.getElementById('wave-bg');
+        if (wave) {
+          wave.style.transform = '';
+          wave.style.display = 'none';
+        }
+
+        window.scrollTo(0, 0);
+      }
+
+      function resetHeroPinForDesktop() {
+        root.classList.remove('hero-mode-mobile');
+        root.classList.add('hero-mode-desktop');
+        var pin = document.getElementById('hero-pin-wrap');
+        var heroEl = document.getElementById('hero');
+        if (pin) pin.removeAttribute('style');
+        if (heroEl) heroEl.removeAttribute('style');
+        var wave = document.getElementById('wave-bg');
+        if (wave) wave.style.removeProperty('display');
+      }
+
+      function resetHeroPinAndRootForMobile() {
+        forceCollapseHeroPin();
+      }
+
+      function unlockPageScroll() {
+        root.classList.remove('hero-intro-lock');
+        root.style.overflow = '';
+        document.body.style.overflow = '';
+      }
+
+      function fitLineToMaxWidth(el, maxW) {
+        el.style.removeProperty('font-size');
+        void el.offsetWidth;
+
+        const startFs = parseFloat(getComputedStyle(el).fontSize) || 16;
+        if (el.scrollWidth <= maxW) return;
+
+        let lo = 6;
+        let hi = startFs;
+        for (let i = 0; i < 36; i += 1) {
+          const mid = (lo + hi) / 2;
+          el.style.fontSize = mid + 'px';
+          void el.offsetWidth;
+          if (el.scrollWidth > maxW) hi = mid;
+          else lo = mid;
+        }
+        el.style.fontSize = lo + 'px';
+      }
+
+      /** Mobile: shrink each line independently — never upscale to match widest line */
+      function syncHeroIntroWidthsMobile() {
+        if (!mqMobileHero.matches) return;
+        var lines = getMobileIntroLines();
+        if (!lines.intro || !lines.introSub || !lines.introTag) return;
+        var maxW = Math.max(180, window.innerWidth * 0.88);
+        [lines.intro, lines.introSub, lines.introTag].forEach(function (el) {
+          el.style.removeProperty('font-size');
+          fitLineToMaxWidth(el, maxW);
+        });
+      }
+
       /** Desktop/tablet (≥768px): match all three hero lines to the same rendered pixel width. */
       function syncHeroThreeLinesEqualWidth() {
         const lines = [intro, introSub, introTag];
@@ -2620,7 +2918,10 @@
         const w1 = intro.scrollWidth;
         const w2 = introSub.scrollWidth;
         const w3 = introTag.scrollWidth;
-        const target = Math.max(w1, w2, w3, 24);
+        let target = Math.max(w1, w2, w3, 24);
+        if (mqMobileHero.matches) {
+          target = Math.min(target, window.innerWidth * 0.92);
+        }
         if (!target || target < 8) return;
 
         lines.forEach((el) => fitLineToScrollWidth(el, target));
@@ -2640,18 +2941,17 @@
       }
 
       function syncHeroIntroWidths() {
+        if (mqDesktopHero.matches) return;
         if (root.classList.contains('hero-marquee-live')) {
           syncHeroLiveDupes();
           return;
         }
-        if (!mqDesktopHero.matches) {
-          [intro, introSub, introTag].forEach(function (el) {
-            el.style.removeProperty('font-size');
-          });
-          syncHeroThreeLinesEqualWidth();
-          return;
-        }
-        syncHeroThreeLinesEqualWidth();
+        if (!mqMobileHero.matches) return;
+        var lines = getMobileIntroLines();
+        [lines.intro, lines.introSub, lines.introTag].forEach(function (el) {
+          if (el) el.style.removeProperty('font-size');
+        });
+        syncHeroIntroWidthsMobile();
       }
 
       function fitLineToScrollWidth(el, target) {
@@ -2813,8 +3113,8 @@
       /** 愈大＝需捲動愈多才能完成簽名（愈慢） */
       const MOBILE_FINALE_MAX = 580;
       const MOBILE_SIG_EASE = 3.65;
-      const photoParallax = document.querySelector('#hero .hero-photo-parallax');
-      const heroCenterEl = document.querySelector('.hero-center');
+      const photoParallax = document.querySelector('.hero-mobile-shell .hero-photo-parallax');
+      const heroCenterEl = document.querySelector('.hero-mobile-shell .hero-center');
 
       let mobileFinaleReady = false;
       let mobileFinaleScheduled = false;
@@ -2880,28 +3180,45 @@
         applyMobileFinaleProgress(0);
       }
 
-      /** 移動端：三句文字直接置中顯示，不做 L→R 滑入 */
+      /** 移動端：三句文字直接置中顯示，不用跑馬燈位移 */
       function showMobileIntroLinesStatic() {
-        syncHeroIntroWidths();
-        revealSubRail();
-        revealTagRail();
-        applyPhase1Progress(1);
-        applyPhase2Progress(1);
-        applyPhase3Progress(1);
+        var lines = getMobileIntroLines();
+        if (!lines.intro || !lines.introSub || !lines.introTag) return;
+
+        syncHeroIntroWidthsMobile();
         polishAtEnd();
-        [intro, introSub, introTag].forEach(function (el) {
+
+        [lines.intro, lines.introSub, lines.introTag].forEach(function (el) {
           if (window.gsap) {
-            gsap.set(el, { x: 0, opacity: 1, visibility: 'visible' });
-          } else {
-            el.style.transform = 'translate3d(0,0,0)';
-            el.style.opacity = '1';
-            el.style.visibility = 'visible';
+            gsap.set(el, {
+              x: 0,
+              y: 0,
+              opacity: 1,
+              visibility: 'visible',
+              clearProps: 'transform,x,y,left,top,margin',
+            });
           }
+          el.style.transform = 'none';
+          el.style.opacity = '1';
+          el.style.visibility = 'visible';
+          el.style.marginLeft = 'auto';
+          el.style.marginRight = 'auto';
         });
+
+        if (window.gsap) {
+          gsap.set(lines.introSub, { visibility: 'visible' });
+          gsap.set(lines.introTag, { visibility: 'visible' });
+        } else {
+          lines.introSub.style.visibility = 'visible';
+          lines.introTag.style.visibility = 'visible';
+        }
+
         meter = MAX_TOTAL;
       }
 
       function initMobileHero() {
+        if (!mqMobileHero.matches) return;
+        forceClearIntroMotion();
         lockScroll();
         root.classList.add('hero-mobile-static-intro');
         showMobileIntroLinesStatic();
@@ -2911,7 +3228,6 @@
 
       /** 桌面跑馬燈會搬走 DOM；縮回手機寬度前須還原三句到 viewport */
       function restoreIntroFromLiveMarquee() {
-        if (!root.classList.contains('hero-marquee-live')) return;
         document.querySelectorAll('#hero .hero-marquee-viewport').forEach(function (vp) {
           var track = vp.querySelector('.hero-live-track');
           if (!track) return;
@@ -2932,26 +3248,295 @@
           vp.appendChild(item);
         });
         root.classList.remove('hero-marquee-live');
-        [intro, introSub, introTag].forEach(function (el) {
+        forceClearIntroMotion();
+      }
+
+      function forceClearIntroMotion() {
+        var lines = getMobileIntroLines();
+        [lines.intro, lines.introSub, lines.introTag].forEach(function (el) {
+          if (!el) return;
           el.style.removeProperty('font-size');
+          if (window.gsap) {
+            gsap.set(el, { clearProps: 'transform,opacity,visibility,x,y,left,top' });
+          } else {
+            el.style.transform = '';
+            el.style.opacity = '';
+            el.style.visibility = '';
+          }
         });
       }
 
-      function resetMobileHeroState() {
+      function resetViewportForMobileEntry() {
+        window.scrollTo(0, 0);
+      }
+
+      function resetViewportForDesktopEntry() {
+        window.scrollTo(0, 0);
+      }
+
+      function clearHeroRootClassesForMode(mode) {
+        var shared = [
+          'hero-lando',
+          'hero-scrolled',
+          'hero-sig-visible',
+          'hero-role-scroll',
+          'hero-name-hover',
+          'hero-marquee-live',
+        ];
+        var desktopOnly = [
+          'hero-scroll-scrub',
+          'hero-scroll-live',
+          'hero-intro-done',
+          'hero-entrance-active',
+          'hero-entrance-settle',
+          'hero-entrance-reveal',
+        ];
+        var mobileOnly = [
+          'hero-mobile-static-intro',
+          'hero-mobile-sig-stage',
+          'hero-intro-lock',
+        ];
+
+        shared.forEach(function (cls) {
+          root.classList.remove(cls);
+        });
+        if (mode === 'mobile') {
+          desktopOnly.forEach(function (cls) {
+            root.classList.remove(cls);
+          });
+        }
+        if (mode === 'desktop') {
+          mobileOnly.forEach(function (cls) {
+            root.classList.remove(cls);
+          });
+        }
+      }
+
+      function afterHeroLayout(cb) {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(cb);
+        });
+      }
+
+      var activeHeroMode = null;
+      var heroModeTransition = false;
+
+      function getTargetHeroMode() {
+        if (mqFullBleedHero.matches) return 'desktop';
+        if (mqMobileHero.matches) return 'mobile';
+        return null;
+      }
+
+      function waitForPinReady(mode, cb, maxAttempts) {
+        maxAttempts = maxAttempts || 48;
+
+        function poll(attempt) {
+          attempt = attempt || 0;
+          var pin = document.getElementById('hero-pin-wrap');
+          if (!pin) {
+            afterHeroLayout(cb);
+            return;
+          }
+
+          void pin.offsetHeight;
+          var pinH = pin.offsetHeight;
+          var vh = window.innerHeight || document.documentElement.clientHeight || 640;
+          var ready = false;
+
+          if (mode === 'desktop') {
+            if (!mqFullBleedHero.matches) return;
+            ready = pinH >= vh * 1.32 || attempt >= maxAttempts;
+          } else {
+            if (!mqMobileHero.matches) return;
+            var desktopShell = document.querySelector('.hero-desktop-shell');
+            var desktopHidden =
+              !desktopShell || getComputedStyle(desktopShell).display === 'none';
+            var escapedDesktopPin = pinH < vh * 1.72;
+            ready = (desktopHidden && escapedDesktopPin) || attempt >= maxAttempts;
+          }
+
+          if (ready) {
+            afterHeroLayout(cb);
+            return;
+          }
+
+          requestAnimationFrame(function () {
+            poll(attempt + 1);
+          });
+        }
+
+        poll(0);
+      }
+
+      function refreshHeroLayout(mode) {
+        if (mode === 'mobile') {
+          if (!mqMobileHero.matches) return;
+          forceCollapseHeroPin();
+          forceClearIntroMotion();
+          syncHeroIntroWidthsMobile();
+          if (root.classList.contains('hero-mobile-static-intro')) {
+            showMobileIntroLinesStatic();
+          }
+          return;
+        }
+        if (mode === 'desktop' && typeof window.__refreshDesktopHeroLayout === 'function') {
+          window.__refreshDesktopHeroLayout();
+        }
+      }
+
+      function enterDesktopHero(done, fromMode) {
+        if (typeof window.__teardownDesktopHero === 'function') {
+          window.__teardownDesktopHero();
+        }
+        resetMobileHeroState();
+        restoreIntroFromLiveMarquee();
+        clearHeroRootClassesForMode('desktop');
+        root.classList.remove('hero-resized-from-desktop');
+        resetHeroPinForDesktop();
+
+        waitForPinReady('desktop', function () {
+          if (getTargetHeroMode() !== 'desktop') {
+            activeHeroMode = null;
+            if (done) done();
+            scheduleHeroBreakpoint();
+            return;
+          }
+          resetViewportForDesktopEntry();
+          if (typeof window.__prepareDesktopHero === 'function') {
+            window.__prepareDesktopHero();
+          }
+          if (typeof window.__bootDesktopHero === 'function') {
+            window.__bootDesktopHero({ instant: mqReduce.matches || fromMode === 'mobile' });
+          }
+          if (done) done();
+        });
+      }
+
+      function enterMobileHero(done, fromMode) {
+        if (typeof window.__teardownDesktopHero === 'function') {
+          window.__teardownDesktopHero();
+        }
+        unlockPageScroll();
+        forceCollapseHeroPin();
+
+        var resumeInstant = fromMode === 'desktop';
+
+        if (resumeInstant) {
+          root.classList.add('hero-resized-from-desktop');
+          snapMobileHeroImmediately();
+          resetMobileHeroState({ preserveLayout: true });
+          clearHeroRootClassesForMode('mobile');
+          finishMobileHeroFromResize();
+          requestAnimationFrame(function () {
+            forceCollapseHeroPin();
+            syncHeroIntroWidthsMobile();
+            showMobileIntroLinesStatic();
+            if (done) done();
+          });
+          return;
+        }
+
+        resetMobileHeroState();
+        rebuildMobileIntroStack();
+        restoreIntroFromLiveMarquee();
+        resetMobileShellInlineStyles();
+        clearHeroRootClassesForMode('mobile');
+        resetViewportForMobileEntry();
+
+        waitForPinReady('mobile', function () {
+          if (getTargetHeroMode() !== 'mobile') {
+            activeHeroMode = null;
+            if (done) done();
+            scheduleHeroBreakpoint();
+            return;
+          }
+
+          forceCollapseHeroPin();
+
+          if (mqReduce.matches) {
+            finishMobileHeroInstant();
+          } else {
+            initMobileHero();
+          }
+          if (done) done();
+        }, 48);
+      }
+
+      function snapMobileHeroImmediately() {
+        if (!mqMobileHero.matches) return;
+
+        root.classList.add('hero-mode-mobile');
+        root.classList.remove('hero-mode-desktop');
+
+        root.classList.remove(
+          'hero-scroll-scrub',
+          'hero-scroll-live',
+          'hero-intro-done',
+          'hero-entrance-active',
+          'hero-entrance-settle',
+          'hero-entrance-reveal',
+          'hero-intro-lock',
+          'hero-sig-visible',
+          'hero-role-scroll',
+          'hero-marquee-live',
+          'hero-lando',
+          'hero-scrolled',
+        );
+        root.classList.add('hero-mobile-static-intro');
+        root.style.overflow = '';
+        document.body.style.overflow = '';
+
+        forceCollapseHeroPin();
+
+        var lines = getMobileIntroLines();
+        [lines.intro, lines.introSub, lines.introTag].forEach(function (el) {
+          if (!el) return;
+          el.style.removeProperty('font-size');
+          if (window.gsap) {
+            gsap.set(el, {
+              x: 0,
+              y: 0,
+              opacity: 1,
+              visibility: 'visible',
+              clearProps: 'transform,x,y,left,top,margin',
+            });
+          }
+          el.style.transform = 'none';
+          el.style.opacity = '1';
+          el.style.visibility = 'visible';
+        });
+
+        if (photo) {
+          photo.classList.add('hero-photo-in');
+          photo.style.opacity = '1';
+          photo.style.transform = 'none';
+          photoIntroPlayed = true;
+        }
+      }
+
+      function resetMobileHeroState(opts) {
+        opts = opts || {};
+        var preserveLayout = !!opts.preserveLayout;
+
         mobileFinaleReady = false;
         mobileFinaleScheduled = false;
         mobileFinaleMeter = 0;
-        photoIntroPlayed = false;
-        unlocked = false;
+        meter = 0;
+        if (!preserveLayout) {
+          photoIntroPlayed = false;
+        }
+        unlocked = preserveLayout;
         unlockPending = false;
         clearUnlockSchedule();
         root.classList.remove(
-          'hero-mobile-static-intro',
           'hero-mobile-sig-stage',
           'hero-sig-visible',
           'hero-intro-lock',
         );
-        if (photo) {
+        if (!preserveLayout) {
+          root.classList.remove('hero-mobile-static-intro');
+        }
+        if (photo && !preserveLayout) {
           photo.classList.remove('hero-photo-in', 'hero-photo-dim');
           photo.style.cssText = '';
         }
@@ -2970,6 +3555,7 @@
       }
 
       function finishMobileHeroInstant() {
+        if (!mqMobileHero.matches) return;
         root.classList.add('hero-mobile-static-intro');
         showMobileIntroLinesStatic();
         triggerHeroPhoto();
@@ -2979,72 +3565,52 @@
         finalizeUnlock();
       }
 
+      /** Desktop → mobile resize: restore static layout + signature on photo */
+      function finishMobileHeroFromResize() {
+        if (!mqMobileHero.matches) return;
+        unlockPageScroll();
+        root.classList.add('hero-mobile-static-intro');
+        showMobileIntroLinesStatic();
+        triggerHeroPhoto();
+        if (photo) {
+          photo.classList.add('hero-photo-in');
+          photo.style.opacity = '1';
+          photo.style.transform = 'none';
+        }
+        enableMobileFinaleScroll();
+        applyMobileFinaleProgress(1);
+        mobileFinaleScheduled = true;
+        unlocked = true;
+        forceCollapseHeroPin();
+      }
+
       function applyHeroBreakpoint() {
-        if (
-          !mqFullBleedHero.matches &&
-          typeof window.__teardownDesktopHero === 'function'
-        ) {
-          window.__teardownDesktopHero();
-        }
-        root.classList.remove('hero-lando', 'hero-scrolled');
+        clearUnlockSchedule();
 
-        function finishDesktopHeroInstant() {
-          resetMobileHeroState();
-          restoreIntroFromLiveMarquee();
-          enableHeroLiveMarquee();
-          finalizeUnlock();
-          if (typeof window.__bootDesktopHero === 'function') {
-            window.__bootDesktopHero();
-          }
-        }
+        var targetMode = getTargetHeroMode();
+        if (!targetMode) return;
 
-        if (mqReduce.matches) {
-          if (mqMobileHero.matches) {
-            resetMobileHeroState();
-            restoreIntroFromLiveMarquee();
-            finishMobileHeroInstant();
-          } else if (mqFullBleedHero.matches) {
-            finishDesktopHeroInstant();
-          }
+        if (targetMode === activeHeroMode && !heroModeTransition) {
+          refreshHeroLayout(targetMode);
           return;
         }
 
-        if (window.scrollY > 48) {
-          if (mqMobileHero.matches) {
-            resetMobileHeroState();
-            restoreIntroFromLiveMarquee();
-            finishMobileHeroInstant();
-          } else if (mqFullBleedHero.matches) {
-            finishDesktopHeroInstant();
-          }
+        if (heroModeTransition) return;
+
+        var fromMode = activeHeroMode;
+        heroModeTransition = true;
+        activeHeroMode = targetMode;
+
+        function finishTransition() {
+          heroModeTransition = false;
+        }
+
+        if (targetMode === 'desktop') {
+          enterDesktopHero(finishTransition, fromMode);
           return;
         }
 
-        if (mqFullBleedHero.matches) {
-          resetMobileHeroState();
-          restoreIntroFromLiveMarquee();
-          enableHeroLiveMarquee();
-          finalizeUnlock();
-          if (typeof window.__bootDesktopHero === 'function') {
-            window.__bootDesktopHero();
-          }
-          return;
-        }
-
-        if (mqMobileHero.matches) {
-          resetMobileHeroState();
-          restoreIntroFromLiveMarquee();
-          initMobileHero();
-          return;
-        }
-
-        resetMobileHeroState();
-        restoreIntroFromLiveMarquee();
-        enableHeroLiveMarquee();
-        finalizeUnlock();
-        if (typeof window.__bootDesktopHero === 'function') {
-          window.__bootDesktopHero();
-        }
+        enterMobileHero(finishTransition, fromMode);
       }
 
       /** 人像入場完成後，等待使用者下滑觸發變暗＋簽名 */
@@ -3093,8 +3659,13 @@
       let unlockPending = false;
       let photoUnlockTimer = null;
       let photoAnimHandler = null;
+      let lockScrollTimer = null;
 
       function clearUnlockSchedule() {
+        if (lockScrollTimer) {
+          clearTimeout(lockScrollTimer);
+          lockScrollTimer = null;
+        }
         if (photoUnlockTimer) {
           clearTimeout(photoUnlockTimer);
           photoUnlockTimer = null;
@@ -3143,25 +3714,37 @@
 
       function unlockScroll() {
         root.classList.remove('hero-intro-lock');
-        root.classList.add('hero-intro-done');
+        if (!mqFullBleedHero.matches) {
+          root.classList.add('hero-intro-done');
+        }
       }
 
       function lockScroll() {
         root.classList.add('hero-intro-lock');
-        root.classList.remove('hero-intro-done');
-        setTimeout(finalizeUnlock, 2500);
+        if (!mqFullBleedHero.matches) {
+          root.classList.remove('hero-intro-done');
+          if (lockScrollTimer) clearTimeout(lockScrollTimer);
+          lockScrollTimer = setTimeout(function () {
+            lockScrollTimer = null;
+            if (!mqMobileHero.matches) return;
+            finalizeUnlock();
+          }, 2500);
+        }
       }
 
       function polishAtEnd() {
-        if (window.gsap)
-          gsap.set([intro, introSub, introTag], {
+        var lines = getMobileIntroLines();
+        var els = [lines.intro, lines.introSub, lines.introTag].filter(Boolean);
+        if (!els.length) return;
+        if (window.gsap) {
+          gsap.set(els, {
             visibility: 'visible',
             clearProps: 'willChange',
           });
-        else {
-          intro.style.willChange = 'auto';
-          introSub.style.willChange = 'auto';
-          introTag.style.willChange = 'auto';
+        } else {
+          els.forEach(function (el) {
+            el.style.willChange = 'auto';
+          });
         }
       }
 
@@ -3336,23 +3919,39 @@
       let heroBpTimer = null;
       function scheduleHeroBreakpoint() {
         clearTimeout(heroBpTimer);
-        heroBpTimer = setTimeout(applyHeroBreakpoint, 80);
+        heroBpTimer = setTimeout(applyHeroBreakpoint, 120);
       }
 
-      mqMobileHero.addEventListener('change', scheduleHeroBreakpoint);
-      mqFullBleedHero.addEventListener('change', scheduleHeroBreakpoint);
+      function onHeroMediaChange() {
+        var target = getTargetHeroMode();
+        if (target && target !== activeHeroMode && !heroModeTransition) {
+          if (target === 'mobile') {
+            root.classList.add('hero-resized-from-desktop');
+            forceCollapseHeroPin();
+          } else {
+            root.classList.remove('hero-resized-from-desktop');
+          }
+          applyHeroBreakpoint();
+          return;
+        }
+        scheduleHeroBreakpoint();
+      }
+
+      mqMobileHero.addEventListener('change', onHeroMediaChange);
+      mqFullBleedHero.addEventListener('change', onHeroMediaChange);
       window.__heroApplyBreakpoint = applyHeroBreakpoint;
+      window.__snapMobileHero = snapMobileHeroImmediately;
+      window.__forceCollapseHeroPin = forceCollapseHeroPin;
 
-      applyHeroBreakpoint();
-
-      /* Recalculate travel after webfonts (fixes “Rowan” edge before metrics settle) */
+      /* Recalculate after webfonts — mobile only */
       if (document.fonts && typeof document.fonts.ready !== 'undefined') {
-        document.fonts.ready.then(() => {
-          syncHeroIntroWidths();
-          if (mqMobileHero.matches && !unlocked) {
+        document.fonts.ready.then(function () {
+          if (
+            mqMobileHero.matches &&
+            activeHeroMode === 'mobile' &&
+            root.classList.contains('hero-mobile-static-intro')
+          ) {
             showMobileIntroLinesStatic();
-          } else if (!unlocked && !mqFullBleedHero.matches) {
-            applyFromMeter();
           }
         });
       }
@@ -3417,9 +4016,929 @@
       let resizeTimer = null;
       window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
+        var target = getTargetHeroMode();
+        if (target && target !== activeHeroMode && !heroModeTransition) {
+          if (target === 'mobile') {
+            root.classList.add('hero-resized-from-desktop');
+            forceCollapseHeroPin();
+          } else {
+            root.classList.remove('hero-resized-from-desktop');
+          }
+          applyHeroBreakpoint();
+          return;
+        }
         resizeTimer = setTimeout(scheduleHeroBreakpoint, 120);
       });
     })();
+
+
+    /* ── HERO EDITORIAL: name fit + entrance + signature scroll ── */
+    (function () {
+      var desktop = window.matchMedia('(min-width: 768px)');
+
+      function splitHeroName() {
+        var name = document.querySelector('.hero-desktop-shell .hero-name');
+        if (!name || name.dataset.split === '1') return;
+        var text = name.textContent.trim();
+        name.textContent = '';
+        name.setAttribute('aria-label', text);
+        name.dataset.split = '1';
+        for (var i = 0; i < text.length; i++) {
+          var ch = text.charAt(i);
+          var span = document.createElement('span');
+          span.className = 'hero-name-char';
+          span.textContent = ch === ' ' ? '\u00a0' : ch;
+          span.setAttribute('aria-hidden', 'true');
+          name.appendChild(span);
+        }
+      }
+
+      function initHeroNameHover() {
+        var row = document.querySelector('.hero-desktop-shell .hero-name-row');
+        var name = document.querySelector('.hero-desktop-shell .hero-name');
+        var root = document.documentElement;
+        if (!row || !name) return;
+
+        var fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (!fine.matches || reduce.matches) return;
+
+        var chars = name.querySelectorAll('.hero-name-char');
+        if (!chars.length) return;
+
+        var radius = 108;
+        var lift = 14;
+
+        function resetChars() {
+          chars.forEach(function (char) {
+            char.style.transform = '';
+          });
+          root.classList.remove('hero-name-hover');
+        }
+
+        function updateChars(clientX) {
+          chars.forEach(function (char) {
+            var rect = char.getBoundingClientRect();
+            var cx = rect.left + rect.width * 0.5;
+            var dist = Math.abs(clientX - cx);
+            var power = Math.max(0, 1 - dist / radius);
+            var ty = -lift * power * power;
+            char.style.transform =
+              ty > 0.05 ? 'translate3d(0,' + ty.toFixed(2) + 'px,0)' : '';
+          });
+        }
+
+        row.addEventListener('mouseenter', function () {
+          root.classList.add('hero-name-hover');
+        });
+
+        row.addEventListener('mouseleave', resetChars);
+
+        row.addEventListener('mousemove', function (e) {
+          updateChars(e.clientX);
+        });
+      }
+
+      function fitHeroName() {
+        var el = document.querySelector('.hero-desktop-shell .hero-name');
+        if (!el) return;
+        if (!desktop.matches) {
+          el.style.removeProperty('font-size');
+          return;
+        }
+        var container = el.closest('.hero-name-row');
+        if (!container) return;
+        var target = container.clientWidth * 0.98;
+        var lo = 8.25;
+        var hi = 14;
+        el.style.fontSize = lo + 'vw';
+        if (el.scrollWidth >= target - 4) {
+          return;
+        }
+        for (var i = 0; i < 10; i += 1) {
+          var mid = (lo + hi) * 0.5;
+          el.style.fontSize = mid + 'vw';
+          if (el.scrollWidth < target - 4) lo = mid;
+          else hi = mid;
+        }
+        el.style.fontSize = lo + 'vw';
+      }
+
+      function bootDesktopNameFx() {
+        splitHeroName();
+        fitHeroName();
+        initHeroNameHover();
+      }
+
+      if (desktop.matches) {
+        bootDesktopNameFx();
+      }
+
+      window.addEventListener('resize', function () {
+        if (desktop.matches) fitHeroName();
+      });
+      desktop.addEventListener('change', function () {
+        if (desktop.matches) {
+          bootDesktopNameFx();
+        } else {
+          fitHeroName();
+        }
+      });
+
+      var root = document.documentElement;
+      var heroPin = document.getElementById('hero-pin-wrap');
+      var hero = document.getElementById('hero');
+      var sigWrite = document.querySelector('.hero-desktop-shell .hero-sig-write');
+      var photoStage = document.querySelector('.hero-desktop-shell .hero-photo-stage');
+      var photo = document.querySelector('.hero-desktop-shell .hero-card-photo');
+      var photoFlash = document.querySelector('.hero-desktop-shell .hero-photo-flash');
+      var photoSheen = document.querySelector('.hero-desktop-shell .hero-photo-sheen');
+      var roleLeft = document.querySelector('.hero-desktop-shell .hero-role-left');
+      var roleRight = document.querySelector('.hero-desktop-shell .hero-role-right');
+      var roleLeftSide = document.querySelector('.hero-desktop-shell .hero-role-side--left');
+      var roleRightSide = document.querySelector('.hero-desktop-shell .hero-role-side--right');
+      var roleCard = document.querySelector('.hero-desktop-shell .hero-card-stack');
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      var NAME_CURTAIN_END = 0.12;
+      var NAME_SETTLE_END = 0.32;
+      var PHOTO_REVEAL_END = 0.45;
+      var SIG_PHASE_START = 0.68;
+      var PHOTO_SCALE_START = 1;
+      var PHOTO_SCALE_END = 0.62;
+      var PHOTO_SIG_SCALE_END = 0.46;
+      var PHOTO_DIM = 0.92;
+      var SIG_EASE = 1.05;
+      var roleShiftMax = 96;
+      var roleSigShiftExtra = 48;
+      var heroUnlocked = false;
+      var nameSettleDelta = 0;
+      var heroUserHasScrolled = false;
+      var heroAutoplayActive = false;
+      var heroAutoplayRaf = null;
+      var heroIdleTimer = null;
+      var lastHeroScrollY = window.scrollY;
+      var IDLE_AUTOPLAY_MS = 2500;
+      var AUTOPLAY_TARGET = PHOTO_REVEAL_END;
+      var AUTOPLAY_DURATION = 5500;
+
+      function clamp01(v) {
+        return Math.max(0, Math.min(1, v));
+      }
+
+      function easeOutPow(p, power) {
+        var t = clamp01(p);
+        return 1 - Math.pow(1 - t, power);
+      }
+
+      function measureNameSettleDelta() {
+        var nameRow = document.querySelector('.hero-desktop-shell .hero-name-row');
+        if (!nameRow || !desktop.matches) return;
+
+        var hadIntro = root.classList.contains('hero-intro-done');
+        var hadSettle = root.classList.contains('hero-entrance-settle');
+        var hadReveal = root.classList.contains('hero-entrance-reveal');
+        var hadActive = root.classList.contains('hero-entrance-active');
+        var viewportCenterY = window.innerHeight * 0.5;
+
+        root.classList.add('hero-entrance-active', 'hero-entrance-settle');
+        root.classList.remove('hero-entrance-reveal', 'hero-intro-done');
+        fitHeroName();
+        var afterRect = nameRow.getBoundingClientRect();
+        var yAfter = afterRect.top + afterRect.height * 0.5;
+
+        nameSettleDelta = viewportCenterY - yAfter;
+
+        root.classList.toggle('hero-intro-done', hadIntro);
+        root.classList.toggle('hero-entrance-settle', hadSettle);
+        root.classList.toggle('hero-entrance-reveal', hadReveal);
+        root.classList.toggle('hero-entrance-active', hadActive || !hadIntro);
+      }
+
+      function setEntranceLayoutPhase(p) {
+        root.classList.remove(
+          'hero-entrance-active',
+          'hero-entrance-settle',
+          'hero-entrance-reveal',
+          'hero-intro-done'
+        );
+
+        if (p >= PHOTO_REVEAL_END) {
+          root.classList.add('hero-intro-done');
+          return;
+        }
+
+        root.classList.add('hero-entrance-active');
+        if (p >= NAME_CURTAIN_END) root.classList.add('hero-entrance-settle');
+        if (p >= NAME_SETTLE_END) root.classList.add('hero-entrance-reveal');
+      }
+
+      function applyDesktopHeroScroll(progress) {
+        var p = clamp01(progress);
+        var nameRow = document.querySelector('.hero-desktop-shell .hero-name-row');
+        var nameEl = document.querySelector('.hero-desktop-shell .hero-name');
+        var leftEl = document.querySelector('.hero-desktop-shell .hero-role-left');
+        var rightEl = document.querySelector('.hero-desktop-shell .hero-role-right');
+
+        setEntranceLayoutPhase(p);
+
+        if (nameRow) {
+          nameRow.style.transition = 'none';
+          nameRow.style.opacity = p > 0.001 ? '1' : '1';
+        }
+
+        /* Phase 1 — 名字 curtain（viewport 正中央） */
+        if (nameEl) {
+          nameEl.style.transition = 'none';
+          var curtainP = clamp01(p / NAME_CURTAIN_END);
+          var curtainEase = easeOutPow(curtainP, 1.65);
+          nameEl.style.transform =
+            'translate3d(0,' + (110 * (1 - curtainEase)).toFixed(2) + '%,0)';
+        }
+
+        /* 名字行：Phase 1 固定在畫面中央 → Phase 2 移到 Block 1 */
+        if (nameRow) {
+          if (p < NAME_SETTLE_END) {
+            var settleP =
+              p <= NAME_CURTAIN_END
+                ? 0
+                : clamp01((p - NAME_CURTAIN_END) / (NAME_SETTLE_END - NAME_CURTAIN_END));
+            var settleEase = easeOutPow(settleP, 1.15);
+            var rowY = nameSettleDelta * (1 - settleEase);
+            nameRow.style.transform =
+              'translate3d(0,' + rowY.toFixed(1) + 'px,0)';
+          } else {
+            nameRow.style.transform = 'translate3d(0,0,0)';
+          }
+        }
+
+        /* Phase 3 — 第二行 + 照片 scroll 揭開 */
+        if (p < NAME_SETTLE_END) {
+          setPhotoReveal(100, 0, 0, 0);
+          if (photoStage) photoStage.style.transform = 'scale(1.04)';
+          if (leftEl) {
+            leftEl.style.transition = 'none';
+            leftEl.style.transform = 'translate3d(0,110%,0)';
+          }
+          if (rightEl) {
+            rightEl.style.transition = 'none';
+            rightEl.style.transform = 'translate3d(0,110%,0)';
+          }
+          applyRoleConverge(0, 0);
+          applySig(0);
+          return;
+        }
+
+        var revealP = clamp01((p - NAME_SETTLE_END) / (PHOTO_REVEAL_END - NAME_SETTLE_END));
+        var revealEase = easeOutPow(revealP, 1.65);
+        var topClip = 100 * (1 - revealEase);
+        var leadPct = 6 * (1 - revealEase);
+        setPhotoReveal(topClip, revealP, leadPct, revealEase);
+        if (photoStage) {
+          photoStage.style.transform =
+            'scale(' + (1 + 0.04 * (1 - revealEase)).toFixed(3) + ')';
+        }
+
+        if (leftEl) {
+          leftEl.style.transition = 'none';
+          leftEl.style.transform =
+            'translate3d(0,' + (110 * (1 - revealEase)).toFixed(2) + '%,0)';
+        }
+        if (rightEl) {
+          rightEl.style.transition = 'none';
+          rightEl.style.transform =
+            'translate3d(0,' + (110 * (1 - revealEase)).toFixed(2) + '%,0)';
+        }
+
+        if (p < PHOTO_REVEAL_END) {
+          applyRoleConverge(0, 0);
+          applySig(0);
+          if (revealP >= 0.98) root.classList.add('hero-scroll-live');
+          return;
+        }
+
+        clearRevealEffects();
+        if (photoStage) photoStage.style.transform = 'scale(1)';
+
+        /* Phase 4 — 照片後退 + role 靠近 */
+        if (p < SIG_PHASE_START) {
+          var recedeP = clamp01(
+            (p - PHOTO_REVEAL_END) / (SIG_PHASE_START - PHOTO_REVEAL_END)
+          );
+          applyPhotoRecede(recedeP, PHOTO_SCALE_START, PHOTO_SCALE_END);
+          applyRoleConverge(recedeP, 0);
+          applySig(0);
+          root.classList.add('hero-scroll-live');
+          return;
+        }
+
+        /* Phase 5 — 簽名 */
+        var sigP = clamp01((p - SIG_PHASE_START) / (1 - SIG_PHASE_START));
+        applyPhotoRecede(sigP, PHOTO_SCALE_END, PHOTO_SIG_SCALE_END);
+        applyRoleConverge(1, sigP);
+        applySig(sigP);
+        root.classList.add('hero-scroll-live');
+      }
+
+      function bootDesktopHeroScroll(opts) {
+        if (!desktop.matches) return;
+
+        var instant = !!(opts && opts.instant);
+
+        function runBoot(attempt) {
+          attempt = attempt || 0;
+          if (!desktop.matches) return;
+
+          var pin = document.getElementById('hero-pin-wrap');
+          var vh = window.innerHeight || document.documentElement.clientHeight || 640;
+          if (pin && pin.offsetHeight < vh * 1.2 && attempt < 48) {
+            requestAnimationFrame(function () {
+              runBoot(attempt + 1);
+            });
+            return;
+          }
+
+          root.classList.add('hero-scroll-scrub');
+          root.classList.remove('hero-intro-done');
+          stopHeroAutoplay();
+          clearHeroIdleTimer();
+          heroUserHasScrolled = false;
+          heroUnlocked = instant;
+          lastHeroScrollY = window.scrollY;
+          resetNameRowInlineStyles();
+          resetEditorialStyles();
+          clearRevealEffects();
+          fitHeroName();
+          measureNameSettleDelta();
+          measureRoleShift();
+
+          window.scrollTo(0, 0);
+
+          var p = instant ? 1 : 0;
+          applyDesktopHeroScroll(p);
+
+          if (!instant) {
+            scheduleHeroIdleAutoplay();
+          }
+          onScroll();
+        }
+
+        requestAnimationFrame(function () {
+          requestAnimationFrame(runBoot);
+        });
+      }
+
+      function clearHeroIdleTimer() {
+        if (heroIdleTimer) {
+          clearTimeout(heroIdleTimer);
+          heroIdleTimer = null;
+        }
+      }
+
+      function stopHeroAutoplay() {
+        heroAutoplayActive = false;
+        if (heroAutoplayRaf) {
+          cancelAnimationFrame(heroAutoplayRaf);
+          heroAutoplayRaf = null;
+        }
+      }
+
+      function setHeroScrollProgress(p) {
+        var track = heroPin || hero;
+        if (!track) return;
+        var y = Math.round(track.offsetTop + getScrollRange() * clamp01(p));
+        if (Math.abs(window.scrollY - y) > 1) {
+          window.scrollTo(0, y);
+        }
+      }
+
+      function markHeroUserScroll() {
+        if (heroAutoplayActive) return;
+        if (Math.abs(window.scrollY - lastHeroScrollY) > 1) {
+          heroUserHasScrolled = true;
+          stopHeroAutoplay();
+          clearHeroIdleTimer();
+        }
+        lastHeroScrollY = window.scrollY;
+      }
+
+      function scheduleHeroIdleAutoplay() {
+        clearHeroIdleTimer();
+        if (
+          heroUserHasScrolled ||
+          heroAutoplayActive ||
+          reduce.matches ||
+          !desktop.matches
+        ) {
+          return;
+        }
+        if (scrollProgress() > 0.02) return;
+
+        heroIdleTimer = setTimeout(startHeroAutoplay, IDLE_AUTOPLAY_MS);
+      }
+
+      function startHeroAutoplay() {
+        heroIdleTimer = null;
+        if (
+          heroUserHasScrolled ||
+          heroAutoplayActive ||
+          reduce.matches ||
+          !desktop.matches
+        ) {
+          return;
+        }
+        if (scrollProgress() > 0.02) return;
+
+        heroAutoplayActive = true;
+        var from = scrollProgress();
+        var start = performance.now();
+
+        function frame(now) {
+          if (!heroAutoplayActive || heroUserHasScrolled) {
+            stopHeroAutoplay();
+            return;
+          }
+
+          var t = clamp01((now - start) / AUTOPLAY_DURATION);
+          var eased = easeOutPow(t, 1.08);
+          var p = from + (AUTOPLAY_TARGET - from) * eased;
+
+          setHeroScrollProgress(p);
+          applyDesktopHeroScroll(p);
+
+          if (t < 1) {
+            heroAutoplayRaf = requestAnimationFrame(frame);
+            return;
+          }
+
+          stopHeroAutoplay();
+          setHeroScrollProgress(AUTOPLAY_TARGET);
+          applyDesktopHeroScroll(AUTOPLAY_TARGET);
+        }
+
+        heroAutoplayRaf = requestAnimationFrame(frame);
+      }
+
+      function teardownDesktopHeroScroll() {
+        stopHeroAutoplay();
+        clearHeroIdleTimer();
+        heroUnlocked = false;
+        heroUserHasScrolled = false;
+
+        root.classList.remove(
+          'hero-scroll-scrub',
+          'hero-scroll-live',
+          'hero-intro-done',
+          'hero-sig-visible',
+          'hero-role-scroll',
+          'hero-entrance-active',
+          'hero-entrance-settle',
+          'hero-entrance-reveal',
+          'hero-name-hover',
+        );
+
+        resetNameRowInlineStyles();
+        resetEditorialStyles();
+        clearRevealEffects();
+
+        if (photoStage) {
+          photoStage.style.transform = '';
+          photoStage.style.clipPath = '';
+          photoStage.style.webkitClipPath = '';
+        }
+        if (photo) {
+          photo.style.filter = '';
+          photo.style.transform = '';
+        }
+        if (roleLeft) {
+          roleLeft.style.transform = '';
+          roleLeft.style.transition = '';
+        }
+        if (roleRight) {
+          roleRight.style.transform = '';
+          roleRight.style.transition = '';
+        }
+        if (roleLeftSide) roleLeftSide.style.transform = '';
+        if (roleRightSide) roleRightSide.style.transform = '';
+        if (sigWrite) {
+          sigWrite.style.visibility = '';
+          sigWrite.style.removeProperty('--sig-reveal');
+        }
+      }
+
+      window.bootDesktopHeroScroll = bootDesktopHeroScroll;
+      window.__bootDesktopHero = bootDesktopHeroScroll;
+      window.__teardownDesktopHero = teardownDesktopHeroScroll;
+      window.__prepareDesktopHero = bootDesktopNameFx;
+      window.__refreshDesktopHeroLayout = function () {
+        if (!desktop.matches) return;
+        fitHeroName();
+        measureNameSettleDelta();
+        measureRoleShift();
+        applyDesktopHeroScroll(scrollProgress());
+        onScroll();
+      };
+
+      function resetEditorialStyles() {
+        var editorial = document.querySelector('.hero-desktop-shell .hero-editorial');
+        if (editorial) {
+          editorial.style.transition = '';
+          editorial.style.transform = '';
+        }
+      }
+
+      function resetNameRowInlineStyles() {
+        var nameRow = document.querySelector('.hero-desktop-shell .hero-name-row');
+        if (!nameRow) return;
+        nameRow.style.visibility = '';
+        nameRow.style.position = '';
+        nameRow.style.left = '';
+        nameRow.style.top = '';
+        nameRow.style.transform = '';
+        nameRow.style.transition = '';
+        nameRow.style.opacity = '';
+      }
+
+      function setPhotoReveal(topPct, revealP, leadPct, eased) {
+        if (!photoStage) return;
+        photoStage.style.clipPath =
+          'inset(' + topPct.toFixed(2) + '% 0 0 0)';
+        photoStage.style.webkitClipPath =
+          'inset(' + topPct.toFixed(2) + '% 0 0 0)';
+        if (photoSheen) {
+          var sheenTop = Math.min(100, topPct + (leadPct || 0));
+          photoSheen.style.top = sheenTop.toFixed(2) + '%';
+          var glow =
+            revealP <= 0.02
+              ? 0
+              : Math.sin(Math.min(1, revealP) * Math.PI) * 0.42;
+          photoSheen.style.opacity = glow.toFixed(3);
+        }
+        if (photo) {
+          photo.style.filter = 'none';
+        }
+      }
+
+      function clearRevealEffects() {
+        setPhotoReveal(0, 1, 0, 1);
+        if (photoSheen) {
+          photoSheen.style.opacity = '0';
+          photoSheen.style.top = '';
+        }
+        if (photoFlash) photoFlash.style.opacity = '0';
+        if (photo) photo.style.filter = 'none';
+      }
+
+      function getScrollRange() {
+        var track = heroPin || hero;
+        if (!track) return 480;
+        if (desktop.matches) {
+          return Math.max(track.offsetHeight - window.innerHeight, 1);
+        }
+        return Math.max((hero ? hero.offsetHeight : track.offsetHeight) * 0.55, 280);
+      }
+
+      function maxHeroScrollY() {
+        var track = heroPin || hero;
+        if (!track) return 0;
+        return track.offsetTop + getScrollRange();
+      }
+
+      function measureRoleShift() {
+        if (!roleLeft || !roleRight || !roleCard) return;
+        var gapL = roleCard.getBoundingClientRect().left - roleLeft.getBoundingClientRect().right;
+        var gapR = roleRight.getBoundingClientRect().left - roleCard.getBoundingClientRect().right;
+        roleShiftMax = Math.max(80, Math.min(gapL, gapR) + 88);
+        roleSigShiftExtra = Math.max(40, Math.min(gapL, gapR) * 0.42);
+      }
+
+      function scrollProgress() {
+        var track = heroPin || hero;
+        if (!track) return 0;
+        var range = getScrollRange();
+        var y = desktop.matches ? window.scrollY - track.offsetTop : window.scrollY;
+        return Math.max(0, Math.min(1, y / range));
+      }
+
+      function applySig(p) {
+        if (!sigWrite) return;
+        var t = Math.max(0, Math.min(1, p));
+        if (t > 0.001) {
+          root.classList.add('hero-sig-visible');
+          sigWrite.style.visibility = 'visible';
+          var eased = 1 - Math.pow(1 - t, SIG_EASE);
+          sigWrite.style.setProperty('--sig-reveal', (eased * 100).toFixed(2) + '%');
+        } else {
+          root.classList.remove('hero-sig-visible');
+          sigWrite.style.visibility = 'hidden';
+          sigWrite.style.setProperty('--sig-reveal', '0%');
+        }
+        if (t >= 0.99) sigWrite.style.setProperty('--sig-reveal', '100%');
+      }
+
+      function applyRoleConverge(phase2Progress, sigProgress) {
+        if (!roleLeftSide || !roleRightSide) return;
+        var p2 = Math.max(0, Math.min(1, phase2Progress || 0));
+        var pSig = Math.max(0, Math.min(1, sigProgress || 0));
+        if (p2 <= 0.001 && pSig <= 0.001) {
+          roleLeftSide.style.transform = '';
+          roleRightSide.style.transform = '';
+          root.classList.remove('hero-role-scroll');
+          return;
+        }
+        var eased2 = 1 - Math.pow(1 - p2, 0.45);
+        var easedSig = 1 - Math.pow(1 - pSig, 0.52);
+        var x = eased2 * roleShiftMax + easedSig * roleSigShiftExtra;
+        roleLeftSide.style.transform = 'translateX(' + x.toFixed(1) + 'px)';
+        roleRightSide.style.transform = 'translateX(' + (-x).toFixed(1) + 'px)';
+        root.classList.add('hero-role-scroll');
+      }
+
+      function applyPhotoRecede(progress, scaleFrom, scaleTo) {
+        if (!photoStage) return;
+        var p = Math.max(0, Math.min(1, progress));
+        var eased = 1 - Math.pow(1 - p, 1.2);
+        var from = scaleFrom != null ? scaleFrom : PHOTO_SCALE_START;
+        var to = scaleTo != null ? scaleTo : PHOTO_SCALE_END;
+        var scale = from - (from - to) * eased;
+        photoStage.style.transform = 'scale(' + scale.toFixed(3) + ')';
+        if (photo) {
+          if (scaleFrom === PHOTO_SCALE_START) {
+            var bright = 1 - PHOTO_DIM * eased;
+            photo.style.filter = 'brightness(' + bright.toFixed(3) + ')';
+          } else {
+            photo.style.filter = 'brightness(' + (1 - PHOTO_DIM).toFixed(3) + ')';
+          }
+        }
+      }
+
+      function onScrollTick() {
+        if (!hero || !desktop.matches) return;
+
+        markHeroUserScroll();
+
+        if (reduce.matches) {
+          stopHeroAutoplay();
+          clearHeroIdleTimer();
+          clearRevealEffects();
+          if (photoStage) photoStage.style.transform = '';
+          applyDesktopHeroScroll(1);
+          heroUnlocked = true;
+          root.classList.add('hero-intro-done');
+          root.classList.add('hero-scroll-live');
+          return;
+        }
+
+        var progress = scrollProgress();
+        var maxY = maxHeroScrollY();
+
+        if (!heroUnlocked) {
+          if (progress >= 0.992) {
+            heroUnlocked = true;
+          } else if (window.scrollY > maxY + 1) {
+            window.scrollTo(0, maxY);
+            progress = 1;
+          }
+        }
+
+        applyDesktopHeroScroll(progress);
+
+        if (
+          !heroUserHasScrolled &&
+          !heroAutoplayActive &&
+          progress <= 0.02
+        ) {
+          scheduleHeroIdleAutoplay();
+        }
+      }
+
+      var scrollTickRaf = null;
+
+      function onScroll() {
+        if (scrollTickRaf) return;
+        scrollTickRaf = requestAnimationFrame(function () {
+          scrollTickRaf = null;
+          onScrollTick();
+        });
+      }
+
+      function onScrollResize() {
+        if (!desktop.matches) return;
+        fitHeroName();
+        measureNameSettleDelta();
+        measureRoleShift();
+        onScroll();
+      }
+
+      if (hero && sigWrite) {
+        heroUnlocked = false;
+
+        window.refreshHeroDesktopScroll = onScroll;
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScrollResize, { passive: true });
+        desktop.addEventListener('change', function () {
+          if (!desktop.matches) {
+            teardownDesktopHeroScroll();
+            if (typeof window.__forceCollapseHeroPin === 'function') {
+              window.__forceCollapseHeroPin();
+            }
+          } else {
+            document.documentElement.classList.remove('hero-mode-mobile');
+            document.documentElement.classList.add('hero-mode-desktop');
+          }
+        });
+        window.addEventListener(
+          'wheel',
+          function () {
+            if (!desktop.matches || reduce.matches) return;
+            heroUserHasScrolled = true;
+            stopHeroAutoplay();
+            clearHeroIdleTimer();
+          },
+          { passive: true }
+        );
+
+        if (typeof window.__heroApplyBreakpoint === 'function') {
+          window.__heroApplyBreakpoint();
+        } else if (desktop.matches) {
+          bootDesktopHeroScroll();
+        }
+
+        onScroll();
+      }
+    })();
+
+    /* ── HERO：scroll parallax for wave ── */
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var hero = document.getElementById('hero');
+      var wave = document.getElementById('wave-bg');
+      if (!hero || !wave) return;
+
+      var ticking = false;
+
+      function tick() {
+        ticking = false;
+        if (reduce.matches) {
+          wave.style.transform = '';
+          return;
+        }
+        var rect = hero.getBoundingClientRect();
+        var vh = window.innerHeight || 1;
+        if (rect.bottom < -80 || rect.top > vh + 80) {
+          wave.style.transform = '';
+          return;
+        }
+        var centerOff = rect.top + rect.height * 0.5 - vh * 0.5;
+        var norm = Math.max(-1, Math.min(1, centerOff / (vh * 0.82)));
+        var px = norm * 52;
+        wave.style.transform = 'translate3d(0, ' + (px * 0.35).toFixed(2) + 'px, 0)';
+      }
+
+      function req() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(tick);
+      }
+
+      window.addEventListener('scroll', req, { passive: true });
+      window.addEventListener('resize', req);
+      req();
+    })();
+
+    /* ── HERO 微視差：桌機滑鼠（Lando 式，以整屏 hero 為基準） ── */
+    (function heroPointerParallax() {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var desktop = window.matchMedia('(min-width: 768px)');
+      var finePointer = window.matchMedia('(pointer: fine)');
+      var hero = document.getElementById('hero');
+      if (!hero) return;
+
+      var LIMITS = { x: 7, y: 5, r: 0.2 };
+      var SMOOTH = 0.055;
+
+      var tx = 0;
+      var ty = 0;
+      var tr = 0;
+      var cx = 0;
+      var cy = 0;
+      var cr = 0;
+      var raf = null;
+
+      function getPhotoEl() {
+        return document.querySelector('.hero-desktop-shell .hero-card-photo');
+      }
+
+      function canRun() {
+        return desktop.matches && finePointer.matches && !reduce.matches;
+      }
+
+      function heroVisible() {
+        var rect = hero.getBoundingClientRect();
+        return rect.bottom > 0 && rect.top < window.innerHeight;
+      }
+
+      function applyTransform(photo) {
+        if (!photo) return;
+        if (
+          Math.abs(cx) < 0.02 &&
+          Math.abs(cy) < 0.02 &&
+          Math.abs(cr) < 0.0002
+        ) {
+          photo.style.transform = '';
+          return;
+        }
+        photo.style.transform =
+          'translate3d(' +
+          cx.toFixed(2) +
+          'px,' +
+          cy.toFixed(2) +
+          'px,0) rotate(' +
+          cr.toFixed(3) +
+          'deg)';
+      }
+
+      function tick() {
+        var photo = getPhotoEl();
+        cx += (tx - cx) * SMOOTH;
+        cy += (ty - cy) * SMOOTH;
+        cr += (tr - cr) * SMOOTH;
+
+        if (canRun() && heroVisible() && photo) {
+          applyTransform(photo);
+        } else if (
+          photo &&
+          (Math.abs(cx) > 0.02 || Math.abs(cy) > 0.02 || Math.abs(cr) > 0.0002)
+        ) {
+          cx *= 0.86;
+          cy *= 0.86;
+          cr *= 0.86;
+          applyTransform(photo);
+        } else if (photo) {
+          photo.style.transform = '';
+          cx = cy = cr = 0;
+        }
+
+        var settled =
+          Math.abs(tx - cx) < 0.04 &&
+          Math.abs(ty - cy) < 0.04 &&
+          Math.abs(tr - cr) < 0.0005;
+        if (!settled) {
+          raf = requestAnimationFrame(tick);
+        } else {
+          raf = null;
+        }
+      }
+
+      function schedule() {
+        if (!raf) raf = requestAnimationFrame(tick);
+      }
+
+      function setTargets(clientX, clientY) {
+        var rect = hero.getBoundingClientRect();
+        var w = rect.width || 1;
+        var h = rect.height || 1;
+        var nx = Math.max(
+          -1,
+          Math.min(1, ((clientX - rect.left) / w - 0.5) * 2)
+        );
+        var ny = Math.max(
+          -1,
+          Math.min(1, ((clientY - rect.top) / h - 0.5) * 2)
+        );
+        tx = -nx * LIMITS.x;
+        ty = -ny * LIMITS.y;
+        tr = nx * LIMITS.r;
+        schedule();
+      }
+
+      function resetTargets() {
+        tx = 0;
+        ty = 0;
+        tr = 0;
+        schedule();
+      }
+
+      document.addEventListener(
+        'mousemove',
+        function (e) {
+          if (!canRun() || !heroVisible()) return;
+          setTargets(e.clientX, e.clientY);
+        },
+        { passive: true }
+      );
+
+      document.addEventListener('mouseleave', function () {
+        if (canRun()) resetTargets();
+      });
+
+      [desktop, finePointer, reduce].forEach(function (mq) {
+        mq.addEventListener('change', function () {
+          if (!canRun()) resetTargets();
+        });
+      });
+    })();
+
 
     /* ── EXPERIENCE ACCORDION ENTRANCE ── */
     (function () {
@@ -3581,8 +5100,13 @@
         pl.style.display = 'none';
         main.classList.add('visible');
         setTimeout(function () {
+          if (typeof window.__heroApplyBreakpoint === 'function') {
+            window.__heroApplyBreakpoint();
+          } else if (window.matchMedia('(min-width: 768px)').matches && window.bootDesktopHeroScroll) {
+            window.bootDesktopHeroScroll();
+          }
           if (window.refreshHeroDesktopScroll) window.refreshHeroDesktopScroll();
-        }, 200);
+        }, 120);
         return;
       }
 
@@ -3632,6 +5156,11 @@
           pl.classList.add('fade-out');
           main.classList.add('visible');
           sessionStorage.setItem(PRELOADER_KEY, '1');
+          if (typeof window.__heroApplyBreakpoint === 'function') {
+            window.__heroApplyBreakpoint();
+          } else if (window.matchMedia('(min-width: 768px)').matches && window.bootDesktopHeroScroll) {
+            window.bootDesktopHeroScroll();
+          }
           if (window.refreshHeroDesktopScroll) window.refreshHeroDesktopScroll();
           setTimeout(() => {
             pl.style.display = 'none';
@@ -3682,868 +5211,8 @@
       });
     })();
 
-    /* ── DESKTOP HERO：sticky + 原生 scroll（無 pin，避免遮住下方 section） ── */
-    (function () {
-      const desktop = window.matchMedia('(min-width: 768px)');
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const container = document.querySelector('.hero-sig-draw');
-      const hero = document.getElementById('hero');
-      const heroSticky = document.querySelector('.hero-sticky');
-      const heroPhoto = document.querySelector('.hero-photo-bg');
-      const heroPhotoStage = document.querySelector('.hero-photo-stage');
-      const heroPhotoSheen = document.querySelector('.hero-photo-sheen');
-      const heroPhotoFlash = document.querySelector('.hero-photo-flash');
-      const heroSigWrite = document.querySelector('.hero-sig-write');
-      if (!container || !hero) return;
 
-      function lockSignatureComplete() {
-        signatureLocked = true;
-        heroSigWrite.style.setProperty('--sig-reveal', '100%');
-        container.classList.add('is-complete');
-      }
 
-      function applySignatureWrite(sigP) {
-        if (!heroSigWrite || !desktop.matches) return;
-        var p = Math.max(0, Math.min(1, sigP));
-        var sigActive = document.documentElement.classList.contains(
-          'hero-sig-visible',
-        );
-
-        if (!sigActive) {
-          heroSigWrite.style.setProperty('--sig-reveal', '0%');
-          heroSigWrite.style.visibility = 'hidden';
-          if (!signatureLocked) container.classList.remove('is-complete');
-          return;
-        }
-
-        heroSigWrite.style.visibility = 'visible';
-
-        if (signatureLocked || p >= 0.98) {
-          lockSignatureComplete();
-          return;
-        }
-
-        var sigEase =
-          parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue(
-              '--hero-sig-ease',
-            ),
-          ) || SIG_EASE;
-        var eased = 1 - Math.pow(1 - p, sigEase);
-        var reveal = (eased * 100).toFixed(2);
-        heroSigWrite.style.setProperty('--sig-reveal', reveal + '%');
-        container.classList.remove('is-complete');
-      }
-
-      function buildPhotoBrightnessFilter(brightMul) {
-        var mul = brightMul == null ? 1 : brightMul;
-        if (mul >= 0.999) return 'none';
-        return 'brightness(' + mul.toFixed(3) + ')';
-      }
-
-      function buildRevealFilter(eased) {
-        var burn = Math.pow(Math.max(0, 1 - eased), 0.78);
-        if (eased >= 0.98) return 'none';
-        var bright = 1 + burn * 1.35;
-        return 'brightness(' + bright.toFixed(3) + ')';
-      }
-
-      function applyPhotoStageScale(scale) {
-        if (!heroPhotoStage) return;
-        var s = scale == null ? 1 : scale;
-        heroPhotoStage.style.transform = 'scale(' + s.toFixed(3) + ')';
-      }
-
-      function setPhotoReveal(topPct, revealP, leadPct, eased) {
-        var burn = Math.pow(Math.max(0, 1 - (eased || 0)), 0.78);
-        if (heroPhotoStage) {
-          heroPhotoStage.style.clipPath =
-            'inset(' + topPct.toFixed(2) + '% 0 0 0)';
-        }
-        if (heroPhotoFlash) {
-          heroPhotoFlash.style.opacity =
-            revealP <= 0.02 ? '0' : Math.min(0.96, burn * 0.94).toFixed(3);
-        }
-        if (heroPhotoSheen) {
-          var sheenTop = Math.min(100, topPct + (leadPct || 0));
-          heroPhotoSheen.style.top = sheenTop.toFixed(2) + '%';
-          var glow =
-            revealP <= 0.02
-              ? 0
-              : (0.4 + burn * 0.6) *
-                Math.sin(Math.min(1, revealP) * Math.PI) *
-                0.98;
-          heroPhotoSheen.style.opacity = glow.toFixed(3);
-        }
-        if (heroPhoto && eased !== undefined) {
-          heroPhoto.style.filter = buildRevealFilter(eased);
-        }
-      }
-
-      const REVEAL_END = 0.4;
-      const SIG_RECEDE_AT = 0.62;
-      const SIG_EASE = 1.05;
-
-      function getHeroSigStart(revealEnd, rootStyle) {
-        var re = revealEnd == null ? REVEAL_END : revealEnd;
-        var recedeAt =
-          parseFloat(
-            (rootStyle || getComputedStyle(document.documentElement)).getPropertyValue(
-              '--hero-sig-recede-at',
-            ),
-          );
-        if (isNaN(recedeAt)) recedeAt = SIG_RECEDE_AT;
-        recedeAt = Math.max(0, Math.min(1, recedeAt));
-        return re + (1 - re) * recedeAt;
-      }
-
-      function accentColor() {
-        var v = getComputedStyle(document.documentElement)
-          .getPropertyValue('--accent')
-          .trim();
-        return v || '#B84545';
-      }
-
-      let signatureLocked = false;
-      let scrollRaf = 0;
-
-      function clearHeroPinArtifacts() {
-        document.querySelectorAll('.pin-spacer').forEach(function (spacer) {
-          if (!spacer.querySelector('#hero')) return;
-          var parent = spacer.parentNode;
-          if (parent) {
-            parent.insertBefore(hero, spacer);
-            parent.removeChild(spacer);
-          }
-        });
-        if (window.gsap) gsap.set(hero, { clearProps: 'transform,top,left,width' });
-      }
-
-      function unlockPageScroll() {
-        document.documentElement.classList.remove('hero-intro-lock');
-      }
-
-      function getHeroProgress() {
-        var stickyH = heroSticky ? heroSticky.offsetHeight : window.innerHeight;
-        var track = Math.max(1, hero.offsetHeight - stickyH);
-        var y = window.scrollY - hero.offsetTop;
-        return Math.max(0, Math.min(1, y / track));
-      }
-
-      function measureSignatureHeight() {
-        if (!container) return 0;
-        var sigWrite = container.querySelector('.hero-sig-write');
-        var sigImg =
-          container.querySelector('.hero-sig-final') ||
-          container.querySelector('.hero-sig-fallback');
-        if (!sigWrite) {
-          return container.getBoundingClientRect().height;
-        }
-        var prevVis = sigWrite.style.visibility;
-        var prevClip = sigWrite.style.clipPath;
-        var prevReveal = sigWrite.style.getPropertyValue('--sig-reveal');
-        sigWrite.style.visibility = 'visible';
-        sigWrite.style.clipPath = 'inset(0 0 0 0)';
-        sigWrite.style.setProperty('--sig-reveal', '100%');
-        var measureEl = sigImg;
-        var sigH = measureEl
-          ? measureEl.getBoundingClientRect().height
-          : container.getBoundingClientRect().height;
-        if (prevVis) sigWrite.style.visibility = prevVis;
-        else sigWrite.style.removeProperty('visibility');
-        if (prevClip) sigWrite.style.clipPath = prevClip;
-        else sigWrite.style.removeProperty('clip-path');
-        if (prevReveal) sigWrite.style.setProperty('--sig-reveal', prevReveal);
-        else sigWrite.style.removeProperty('--sig-reveal');
-        return sigH;
-      }
-
-      function syncHeroPhotoRecedeScale() {
-        if (!desktop.matches || !heroPhoto || !heroPhotoStage) return;
-        var stack = document.querySelector('.hero-intro-stack');
-        if (!stack) return;
-
-        var marqueeH = stack.getBoundingClientRect().height;
-        if (marqueeH < 8) return;
-
-        var marqueeRatio =
-          parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue(
-              '--hero-photo-marquee-ratio',
-            ),
-          ) || 2;
-        var sigRatio =
-          parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue(
-              '--hero-photo-sig-ratio',
-            ),
-          ) || 1.32;
-        var targetH = marqueeH * marqueeRatio;
-
-        var prevStageTransform = heroPhotoStage.style.transform;
-        applyPhotoStageScale(1);
-        heroPhoto.style.filter = 'none';
-        var photoH = heroPhoto.getBoundingClientRect().height;
-        heroPhotoStage.style.transform = prevStageTransform;
-        heroPhoto.style.filter = '';
-
-        if (photoH < 8) return;
-
-        var scaleFromMarquee = targetH / photoH;
-        var sigH = measureSignatureHeight();
-        var scaleFromSig =
-          sigH > 8 ? (sigH * sigRatio) / photoH : 0;
-        /* 終點以「比簽名大」為優先，跑馬燈比例為輔 */
-        var scaleEnd =
-          scaleFromSig > 0
-            ? Math.max(scaleFromSig, scaleFromMarquee)
-            : scaleFromMarquee;
-        scaleEnd = Math.max(0.48, Math.min(1.06, scaleEnd));
-        document.documentElement.style.setProperty(
-          '--hero-photo-scale-end',
-          scaleEnd.toFixed(4),
-        );
-      }
-
-      function refreshHeroScroll() {
-        applyScrollProgress(getHeroProgress());
-      }
-
-      function showStaticDesktopHero() {
-        var mq = window.__heroMarquee;
-        if (mq) {
-          mq.syncWidths();
-          if (mq.enableLive) mq.enableLive();
-          else mq.applyFromMeter(mq.getMaxTotal());
-          mq.polish();
-        }
-        signatureLocked = true;
-        applySignatureWrite(1);
-        if (heroPhotoStage) heroPhotoStage.style.clipPath = 'inset(0 0 0 0)';
-        if (heroPhotoSheen) heroPhotoSheen.style.opacity = '0';
-        if (heroPhotoFlash) heroPhotoFlash.style.opacity = '0';
-        if (heroPhoto) {
-          var staticDim =
-            parseFloat(
-              getComputedStyle(document.documentElement).getPropertyValue(
-                '--hero-photo-dim-amount',
-              ),
-            ) || 0.86;
-          heroPhoto.style.filter = buildPhotoBrightnessFilter(1 - staticDim);
-        }
-        var staticScale =
-          parseFloat(
-            getComputedStyle(document.documentElement).getPropertyValue(
-              '--hero-photo-scale-end',
-            ),
-          ) || 0.72;
-        applyPhotoStageScale(staticScale);
-        container.classList.add('is-complete');
-      }
-
-      function applyScrollProgress(progress) {
-        var p = Math.max(0, Math.min(1, progress));
-        var mq = window.__heroMarquee;
-
-        if (p > 0.06) {
-          document.documentElement.classList.add('hero-scrolled');
-        } else {
-          document.documentElement.classList.remove('hero-scrolled');
-        }
-
-        var rootStyle = getComputedStyle(document.documentElement);
-        var revealEnd =
-          parseFloat(rootStyle.getPropertyValue('--hero-reveal-end')) ||
-          REVEAL_END;
-        var sigStart = getHeroSigStart(revealEnd, rootStyle);
-
-        if (p >= sigStart) {
-          document.documentElement.classList.add('hero-sig-visible');
-        } else {
-          document.documentElement.classList.remove('hero-sig-visible');
-          signatureLocked = false;
-          container.classList.remove('is-complete');
-        }
-
-        if (heroPhoto) {
-          var scaleEnd =
-            parseFloat(rootStyle.getPropertyValue('--hero-photo-scale-end')) ||
-            0.72;
-          var dimAmount =
-            parseFloat(rootStyle.getPropertyValue('--hero-photo-dim-amount')) ||
-            0.5;
-          var maxInset =
-            parseFloat(rootStyle.getPropertyValue('--hero-photo-reveal-inset')) ||
-            100;
-
-          /* Phase 1：由下往上揭開＋過曝白光（維持大尺寸 scale 1） */
-          if (p <= revealEnd) {
-            var revealP = p / revealEnd;
-            var eased = 1 - Math.pow(1 - revealP, 1.65);
-            var topClip = maxInset * (1 - eased);
-            var leadPct = 6 * (1 - eased);
-            setPhotoReveal(topClip, revealP, leadPct, eased);
-            applyPhotoStageScale(1);
-          } else {
-            /* Phase 2：後退＋變暗（維持視窗正中央縮放） */
-            var recedeP = (p - revealEnd) / (1 - revealEnd);
-            var recedeEased = 1 - Math.pow(1 - recedeP, 1.25);
-            var scale = 1 - (1 - scaleEnd) * recedeEased;
-            var bright = 1 - dimAmount * recedeEased;
-            setPhotoReveal(0, 1, 0, 1);
-            if (heroPhotoSheen) {
-              heroPhotoSheen.style.opacity = '0';
-              heroPhotoSheen.style.top = '';
-            }
-            if (heroPhotoFlash) heroPhotoFlash.style.opacity = '0';
-            applyPhotoStageScale(scale);
-            if (heroPhoto) heroPhoto.style.filter = buildPhotoBrightnessFilter(bright);
-          }
-        }
-
-        /* Phase 3：後退進行時，簽名由左至右書寫 */
-        var sigP =
-          p <= sigStart ? 0 : (p - sigStart) / (1 - sigStart);
-        applySignatureWrite(sigP);
-
-        if (p >= 0.98 && mq) mq.polish();
-      }
-
-      function onHeroScroll() {
-        if (!desktop.matches) return;
-        if (scrollRaf) return;
-        scrollRaf = requestAnimationFrame(function () {
-          scrollRaf = 0;
-          applyScrollProgress(getHeroProgress());
-        });
-      }
-
-      function teardown() {
-        window.removeEventListener('scroll', onHeroScroll);
-        var mobileSigDone = document.documentElement.classList.contains(
-          'hero-mobile-sig-stage',
-        );
-
-        document.documentElement.classList.remove('hero-scrolled');
-
-        if (scrollRaf) {
-          cancelAnimationFrame(scrollRaf);
-          scrollRaf = 0;
-        }
-        if (window.ScrollTrigger) {
-          var existing = ScrollTrigger.getById('hero-desktop-scroll');
-          if (existing) existing.kill();
-        }
-        clearHeroPinArtifacts();
-
-        if (mobileSigDone && !desktop.matches) {
-          return;
-        }
-
-        document.documentElement.classList.remove('hero-sig-visible');
-        container.classList.remove('is-complete');
-        signatureLocked = false;
-        if (heroSigWrite) {
-          heroSigWrite.style.removeProperty('--sig-reveal');
-          heroSigWrite.style.clipPath = '';
-          heroSigWrite.style.visibility = '';
-        }
-        if (heroPhotoStage) {
-          heroPhotoStage.style.clipPath = '';
-          heroPhotoStage.style.transform = '';
-        }
-        if (heroPhotoSheen) {
-          heroPhotoSheen.style.opacity = '';
-          heroPhotoSheen.style.top = '';
-        }
-        if (heroPhotoFlash) heroPhotoFlash.style.opacity = '';
-        if (heroPhoto) {
-          heroPhoto.style.filter = '';
-          heroPhoto.style.transform = '';
-        }
-      }
-
-      async function setup() {
-        unlockPageScroll();
-        clearHeroPinArtifacts();
-        if (!desktop.matches) {
-          window.removeEventListener('scroll', onHeroScroll);
-          document.documentElement.classList.remove('hero-lando', 'hero-scrolled');
-          if (typeof window.__heroApplyBreakpoint === 'function') {
-            window.__heroApplyBreakpoint();
-          }
-          return;
-        }
-
-        teardown();
-
-        var wait = 0;
-        while (!window.__heroMarquee && wait < 80) {
-          await new Promise(function (r) {
-            setTimeout(r, 50);
-          });
-          wait += 1;
-        }
-
-        if (document.fonts && document.fonts.ready) {
-          try {
-            await document.fonts.ready;
-          } catch (e) { /* ignore */ }
-        }
-
-        var mq = window.__heroMarquee;
-        if (!mq) {
-          showStaticDesktopHero();
-          return;
-        }
-
-        mq.syncWidths();
-        if (mq.enableLive) mq.enableLive();
-        document.documentElement.classList.remove('hero-scrolled');
-        document.documentElement.classList.add('hero-lando');
-        if (window.syncHeroPhotoRecedeScale) {
-          window.syncHeroPhotoRecedeScale();
-        }
-
-        if (reduce.matches) {
-          showStaticDesktopHero();
-          return;
-        }
-
-        document.documentElement.classList.remove('hero-sig-visible');
-        applySignatureWrite(0);
-
-        if (heroPhoto) {
-          var maxInset =
-            parseFloat(
-              getComputedStyle(document.documentElement).getPropertyValue(
-                '--hero-photo-reveal-inset',
-              ),
-            ) || 100;
-          applyPhotoStageScale(1);
-          heroPhoto.style.filter = buildRevealFilter(0);
-          setPhotoReveal(maxInset, 0, 0, 0);
-        }
-
-        function bootPhotoScale() {
-          syncHeroPhotoRecedeScale();
-          if (!heroPhoto.complete) {
-            heroPhoto.addEventListener('load', syncHeroPhotoRecedeScale, {
-              once: true,
-            });
-          }
-          var sigImg =
-            container.querySelector('.hero-sig-final') ||
-            container.querySelector('.hero-sig-fallback');
-          if (sigImg && !sigImg.complete) {
-            sigImg.addEventListener('load', syncHeroPhotoRecedeScale, {
-              once: true,
-            });
-          }
-        }
-
-        bootPhotoScale();
-        window.addEventListener('scroll', onHeroScroll, { passive: true });
-        unlockPageScroll();
-        applyScrollProgress(0);
-        refreshHeroScroll();
-        setTimeout(function () {
-          syncHeroPhotoRecedeScale();
-          refreshHeroScroll();
-        }, 400);
-        setTimeout(function () {
-          syncHeroPhotoRecedeScale();
-          refreshHeroScroll();
-        }, 1200);
-      }
-
-      function boot() {
-        setup();
-      }
-
-      window.refreshHeroDesktopScroll = refreshHeroScroll;
-      window.syncHeroPhotoRecedeScale = syncHeroPhotoRecedeScale;
-      window.__teardownDesktopHero = teardown;
-      window.__bootDesktopHero = boot;
-      window.addEventListener('load', boot);
-      window.addEventListener('resize', function () {
-        syncHeroPhotoRecedeScale();
-        refreshHeroScroll();
-      }, { passive: true });
-      desktop.addEventListener('change', boot);
-      reduce.addEventListener('change', boot);
-    })();
-
-    /* ── HERO：依「頁面捲動」的視差（滾輪／觸控板／手指捲動皆觸發 scroll；非游標位置） ── */
-    (function () {
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const desktop = window.matchMedia('(min-width: 768px)');
-      const hero = document.getElementById('hero');
-      const wave = document.getElementById('wave-bg');
-      const introLine = document.querySelector('.hero-intro-line');
-      const photoParallax = document.querySelector('.hero-photo-parallax');
-      const heroPhotoBg = document.querySelector('.hero-photo-bg');
-      const heroCenter = document.querySelector('.hero-center');
-      if (!hero || !wave) return;
-
-      function clearParallax() {
-        wave.style.transform = '';
-        if (introLine) introLine.style.transform = '';
-        if (photoParallax) photoParallax.style.transform = '';
-        if (heroPhotoBg) heroPhotoBg.style.transform = '';
-        if (heroCenter) heroCenter.style.transform = '';
-      }
-
-      let ticking = false;
-      function tick() {
-        ticking = false;
-        if (reduce.matches) {
-          clearParallax();
-          return;
-        }
-        const rect = hero.getBoundingClientRect();
-        const vh = window.innerHeight || 1;
-        if (rect.bottom < -80 || rect.top > vh + 80) {
-          clearParallax();
-          return;
-        }
-        const centerOff = rect.top + rect.height * 0.5 - vh * 0.5;
-        const norm = Math.max(-1, Math.min(1, centerOff / (vh * 0.82)));
-        const px = norm * 52;
-
-        if (desktop.matches) {
-          if (introLine) introLine.style.transform = '';
-          if (photoParallax) photoParallax.style.transform = '';
-          wave.style.transform =
-            'translate3d(0, ' + (px * 0.35).toFixed(2) + 'px, 0)';
-          if (heroCenter) heroCenter.style.transform = '';
-          return;
-        }
-
-        if (
-          document.documentElement.classList.contains('hero-mobile-sig-stage') ||
-          document.documentElement.classList.contains('hero-mobile-static-intro')
-        ) {
-          wave.style.transform =
-            'translate3d(0, ' + (px * 0.35).toFixed(2) + 'px, 0)';
-          if (introLine) introLine.style.transform = '';
-          if (photoParallax) photoParallax.style.transform = '';
-          return;
-        }
-
-        if (!introLine || !photoParallax) return;
-        wave.style.transform = 'translate3d(0, ' + (px * 0.48).toFixed(2) + 'px, 0)';
-        introLine.style.transform = 'translate3d(0, ' + (px * 0.19).toFixed(2) + 'px, 0)';
-        photoParallax.style.transform = 'translate3d(0, ' + (-px * 0.34).toFixed(2) + 'px, 0)';
-        if (heroPhotoBg) heroPhotoBg.style.transform = '';
-        if (heroCenter) heroCenter.style.transform = '';
-      }
-
-      function req() {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(tick);
-      }
-
-      window.addEventListener('scroll', req, { passive: true });
-      window.addEventListener('resize', req, { passive: true });
-      reduce.addEventListener('change', req);
-      desktop.addEventListener('change', req);
-      req();
-    })();
-
-    /* ── HERO 微視差：桌機滑鼠／手機觸控＋陀螺儀（Lando 式） ── */
-    (function heroPointerParallax() {
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const desktop = window.matchMedia('(min-width: 768px)');
-      const mobile = window.matchMedia('(max-width: 767px)');
-      const finePointer = window.matchMedia('(pointer: fine)');
-      const root = document.documentElement;
-      const hero = document.getElementById('hero');
-      if (!hero) return;
-
-      const LIMITS = {
-        desktop: { x: 16, y: 12, r: 0.55 },
-        mobile: { x: 14, y: 10, r: 0.5 },
-      };
-      const SMOOTH = 0.075;
-      const ORIENT_RANGE = 22;
-
-      let tx = 0;
-      let ty = 0;
-      let tr = 0;
-      let cx = 0;
-      let cy = 0;
-      let cr = 0;
-      let raf = null;
-      let touchActive = false;
-      let orientListening = false;
-      let orientBaseBeta = null;
-      let orientBaseGamma = null;
-
-      function canRunDesktop() {
-        return (
-          desktop.matches &&
-          finePointer.matches &&
-          !reduce.matches &&
-          root.classList.contains('hero-lando')
-        );
-      }
-
-      function canRunMobile() {
-        return (
-          mobile.matches &&
-          !reduce.matches &&
-          (root.classList.contains('hero-mobile-static-intro') ||
-            root.classList.contains('hero-mobile-sig-stage'))
-        );
-      }
-
-      function resolveMode() {
-        if (canRunDesktop()) return 'desktop';
-        if (canRunMobile()) return 'mobile';
-        return 'off';
-      }
-
-      function getPhotoEl() {
-        const mode = resolveMode();
-        if (mode === 'desktop') return document.querySelector('.hero-photo-bg');
-        if (mode === 'mobile') return document.querySelector('#hero .hero-photo');
-        return null;
-      }
-
-      function canRun() {
-        return resolveMode() !== 'off';
-      }
-
-      function heroVisible() {
-        const rect = hero.getBoundingClientRect();
-        return rect.bottom > 0 && rect.top < window.innerHeight;
-      }
-
-      function getLimits() {
-        return resolveMode() === 'mobile' ? LIMITS.mobile : LIMITS.desktop;
-      }
-
-      function applyTransform(photo) {
-        if (!photo) return;
-        if (
-          Math.abs(cx) < 0.02 &&
-          Math.abs(cy) < 0.02 &&
-          Math.abs(cr) < 0.0002
-        ) {
-          photo.style.transform = '';
-          return;
-        }
-        photo.style.transform =
-          'translate3d(' +
-          cx.toFixed(2) +
-          'px,' +
-          cy.toFixed(2) +
-          'px,0) rotate(' +
-          cr.toFixed(3) +
-          'deg)';
-      }
-
-      function tick() {
-        const photo = getPhotoEl();
-        const lim = getLimits();
-        cx += (tx - cx) * SMOOTH;
-        cy += (ty - cy) * SMOOTH;
-        cr += (tr - cr) * SMOOTH;
-
-        if (canRun() && heroVisible() && photo) {
-          applyTransform(photo);
-        } else if (
-          photo &&
-          (Math.abs(cx) > 0.02 || Math.abs(cy) > 0.02 || Math.abs(cr) > 0.0002)
-        ) {
-          cx *= 0.86;
-          cy *= 0.86;
-          cr *= 0.86;
-          applyTransform(photo);
-        } else if (photo) {
-          photo.style.transform = '';
-          cx = cy = cr = 0;
-        }
-
-        const settled =
-          Math.abs(tx - cx) < 0.04 &&
-          Math.abs(ty - cy) < 0.04 &&
-          Math.abs(tr - cr) < 0.0005;
-        if (!settled) {
-          raf = requestAnimationFrame(tick);
-        } else {
-          raf = null;
-        }
-      }
-
-      function schedule() {
-        if (!raf) raf = requestAnimationFrame(tick);
-      }
-
-      function setTargetsFromNorm(nx, ny) {
-        const lim = getLimits();
-        tx = -nx * lim.x;
-        ty = -ny * lim.y;
-        tr = nx * lim.r;
-        schedule();
-      }
-
-      function setTargets(clientX, clientY) {
-        const rect = hero.getBoundingClientRect();
-        const w = rect.width || 1;
-        const h = rect.height || 1;
-        const nx = Math.max(
-          -1,
-          Math.min(1, ((clientX - rect.left) / w - 0.5) * 2),
-        );
-        const ny = Math.max(
-          -1,
-          Math.min(1, ((clientY - rect.top) / h - 0.5) * 2),
-        );
-        setTargetsFromNorm(nx, ny);
-      }
-
-      function stopOrientation() {
-        if (orientListening) {
-          window.removeEventListener('deviceorientation', onOrientation);
-          orientListening = false;
-        }
-        orientBaseBeta = null;
-        orientBaseGamma = null;
-      }
-
-      function resetTargets() {
-        tx = 0;
-        ty = 0;
-        tr = 0;
-        touchActive = false;
-        stopOrientation();
-        schedule();
-      }
-
-      function onOrientation(e) {
-        if (!canRunMobile() || touchActive) return;
-        if (e.beta == null || e.gamma == null) return;
-        if (orientBaseBeta == null) {
-          orientBaseBeta = e.beta;
-          orientBaseGamma = e.gamma;
-        }
-        const nx = Math.max(
-          -1,
-          Math.min(1, (e.gamma - orientBaseGamma) / ORIENT_RANGE),
-        );
-        const ny = Math.max(
-          -1,
-          Math.min(1, (e.beta - orientBaseBeta) / ORIENT_RANGE),
-        );
-        setTargetsFromNorm(nx, ny);
-      }
-
-      function requestOrientationAccess() {
-        if (orientListening || typeof DeviceOrientationEvent === 'undefined') {
-          return;
-        }
-
-        function attach() {
-          window.addEventListener('deviceorientation', onOrientation, {
-            passive: true,
-          });
-          orientListening = true;
-        }
-
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-          DeviceOrientationEvent.requestPermission()
-            .then(function (state) {
-              if (state === 'granted') attach();
-            })
-            .catch(function () {});
-        } else {
-          attach();
-        }
-      }
-
-      document.addEventListener(
-        'mousemove',
-        function (e) {
-          if (!canRunDesktop() || !heroVisible()) return;
-          setTargets(e.clientX, e.clientY);
-        },
-        { passive: true },
-      );
-
-      document.addEventListener('mouseleave', function () {
-        if (canRunDesktop()) resetTargets();
-      });
-
-      hero.addEventListener(
-        'touchstart',
-        function (e) {
-          if (!canRunMobile() || !heroVisible()) return;
-          touchActive = true;
-          requestOrientationAccess();
-          if (e.touches[0]) {
-            setTargets(e.touches[0].clientX, e.touches[0].clientY);
-          }
-        },
-        { passive: true },
-      );
-
-      hero.addEventListener(
-        'touchmove',
-        function (e) {
-          if (!canRunMobile() || !touchActive || !e.touches[0]) return;
-          setTargets(e.touches[0].clientX, e.touches[0].clientY);
-        },
-        { passive: true },
-      );
-
-      hero.addEventListener(
-        'touchend',
-        function () {
-          if (!canRunMobile()) return;
-          touchActive = false;
-          if (!orientListening) resetTargets();
-          else {
-            tx = 0;
-            ty = 0;
-            tr = 0;
-            schedule();
-          }
-        },
-        { passive: true },
-      );
-
-      hero.addEventListener(
-        'touchcancel',
-        function () {
-          if (!canRunMobile()) return;
-          touchActive = false;
-          if (!orientListening) resetTargets();
-        },
-        { passive: true },
-      );
-
-      [desktop, mobile, reduce, finePointer].forEach(function (mq) {
-        mq.addEventListener('change', function () {
-          if (!canRun()) resetTargets();
-          else if (canRunMobile() && typeof DeviceOrientationEvent.requestPermission !== 'function') {
-            requestOrientationAccess();
-          }
-        });
-      });
-
-      new MutationObserver(function () {
-        if (!canRun()) {
-          resetTargets();
-          return;
-        }
-        if (canRunMobile() && typeof DeviceOrientationEvent.requestPermission !== 'function') {
-          requestOrientationAccess();
-        }
-      }).observe(root, { attributes: true, attributeFilter: ['class'] });
-    })();
   </script>
 
   <script type="module">
@@ -4557,15 +5226,13 @@
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     container.appendChild(svg);
 
-  const desktopMq = window.matchMedia('(min-width: 768px)');
+    const desktopMq = window.matchMedia('(min-width: 768px)');
 
     function strokeColor() {
-      return 'rgba(88, 86, 82, 0.25)';
+      return 'rgba(112, 108, 102, 0.22)';
     }
 
-    /** Vertical spacing between horizontal lines (larger = fewer lines; ~5 fewer vs 60). */
     const ROW_GAP = 88;
-    /** Horizontal spacing between points (smaller = smoother arcs). */
     const COL_GAP = 24;
     const WAVE_TENSION = 0.42;
     const WAVE_AMP_X = 6.5;
@@ -4631,7 +5298,6 @@
             (p.x + time * 0.0075) * 0.003,
             (p.y + time * 0.003) * 0.0019
           );
-          /* 以垂直起伏為主；WAVE_AMP_Y 控制波浪幅度 */
           const targetX = Math.cos(move) * WAVE_AMP_X;
           const targetY = Math.sin(move) * WAVE_AMP_Y;
           p.wave.x += (targetX - p.wave.x) * 0.12;
@@ -4698,6 +5364,16 @@
     }
 
     function onResize() {
+      if (!desktopMq.matches) {
+        paths.forEach(function (p) {
+          p.remove();
+        });
+        paths = [];
+        lines = [];
+        svg.style.width = '0';
+        svg.style.height = '0';
+        return;
+      }
       setSize();
       setLines();
       paths.forEach(function (p) {
@@ -4705,11 +5381,10 @@
       });
     }
 
-    desktopMq.addEventListener('change', onResize);
-
     const heroEl = document.getElementById('hero');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => {
+        if (!desktopMq.matches) return;
         if (e.isIntersecting) {
           if (!raf) raf = requestAnimationFrame(tick);
         } else {
@@ -4719,11 +5394,26 @@
     }, { threshold: 0 });
     if (heroEl) observer.observe(heroEl);
 
-    setSize();
-    setLines();
     window.addEventListener('resize', onResize);
-    raf = requestAnimationFrame(tick);
+
+    function bootWave() {
+      if (!desktopMq.matches) {
+        onResize();
+        if (raf) {
+          cancelAnimationFrame(raf);
+          raf = null;
+        }
+        return;
+      }
+      setSize();
+      setLines();
+      if (!raf) raf = requestAnimationFrame(tick);
+    }
+
+    bootWave();
+    desktopMq.addEventListener('change', bootWave);
   })();
   </script>
+
 
 <grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></body></html>
