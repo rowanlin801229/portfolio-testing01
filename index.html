@@ -592,44 +592,45 @@
         position: relative;
         isolation: isolate;
         z-index: 2;
-        overflow: hidden;
+        overflow: visible;
       }
 
-      html.hero-mobile-sig-stage .hero-center {
+      html.hero-mobile-sig-stage .hero-mobile-shell .hero-center,
+      html.hero-mobile-sig-stage .hero-photo-parallax .hero-center {
         display: flex !important;
         position: absolute;
         inset: 0;
         z-index: 4;
         align-items: center;
         justify-content: flex-start;
-        padding: 63% 0 0;
+        padding: 58% 0 0;
         box-sizing: border-box;
         pointer-events: none;
-        opacity: 1;
-        visibility: visible;
+        opacity: 1 !important;
+        visibility: visible !important;
         width: 100%;
         height: 100%;
       }
 
       html.hero-mobile-sig-stage .hero-sig-draw {
-        width: min(160%, 340px);
-        max-height: 78%;
+        width: min(150%, 320px);
+        max-height: 72%;
         margin: 0 auto;
-        transform: translateY(24%);
+        transform: translateY(12%);
       }
 
       html.hero-mobile-sig-stage .hero-sig-write {
         position: relative;
         display: block;
         width: 100%;
-        --sig-reveal: 0%;
-        -webkit-clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
-        clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+        --sig-reveal: 100%;
         visibility: hidden;
       }
 
       html.hero-mobile-sig-stage.hero-sig-visible .hero-sig-write {
-        visibility: visible;
+        visibility: visible !important;
+        -webkit-clip-path: none;
+        clip-path: none;
       }
 
       html.hero-mobile-sig-stage .hero-sig-write .hero-sig-fallback,
@@ -639,11 +640,13 @@
       }
 
       html.hero-mobile-sig-stage .hero-sig-final {
-        display: block;
+        display: block !important;
         width: 100%;
         height: auto;
         object-fit: contain;
+        mix-blend-mode: normal;
         filter: saturate(var(--hero-sig-saturate, 0.52));
+        opacity: 1;
       }
 
       .hero-scroll {
@@ -2776,7 +2779,14 @@
       const introTag = document.querySelector('.hero-mobile-shell .hero-intro-tag');
       const visual = document.querySelector('.hero-mobile-shell .hero-visual');
       const photo = document.querySelector('.hero-mobile-shell .hero-photo');
-      const heroSigWrite = document.querySelector('.hero-mobile-shell .hero-sig-write');
+
+      function getMobileSigWrite() {
+        return (
+          document.querySelector('.hero-photo-parallax .hero-sig-write') ||
+          document.querySelector('.hero-mobile-shell .hero-sig-write')
+        );
+      }
+
       if (!hero || !intro || !visual || !introSub || !introTag) return;
 
       let photoIntroPlayed = false;
@@ -2789,6 +2799,11 @@
       const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
       const mqFullBleedHero = window.matchMedia('(min-width: 768px)');
       const mqMobileHero = window.matchMedia('(max-width: 767px)');
+
+      const HERO_PHOTO_ANIM_DELAY_MS = 120;
+      const HERO_PHOTO_ANIM_DURATION_MS = 850;
+      const HERO_PHOTO_UNLOCK_FALLBACK_MS =
+        HERO_PHOTO_ANIM_DELAY_MS + HERO_PHOTO_ANIM_DURATION_MS + 80;
 
       var mobileIntroStackHtml = (function () {
         var stack = document.querySelector('.hero-mobile-shell .hero-intro-stack');
@@ -3119,18 +3134,24 @@
       let mobileFinaleReady = false;
       let mobileFinaleScheduled = false;
       let mobileFinaleMeter = 0;
+      let mobilePhotoReadyHandled = false;
 
       function mountMobileSignatureOnPhoto() {
         if (!photoParallax || !heroCenterEl) return;
-        if (heroCenterEl.dataset.mobileMounted === '1') return;
-        photoParallax.appendChild(heroCenterEl);
+        if (heroCenterEl.parentElement !== photoParallax) {
+          photoParallax.appendChild(heroCenterEl);
+        }
         heroCenterEl.dataset.mobileMounted = '1';
+        heroCenterEl.style.setProperty('display', 'flex', 'important');
+        heroCenterEl.style.visibility = 'visible';
+        heroCenterEl.style.opacity = '1';
       }
 
-      /** 0→1：左→右寫簽名（由使用者下滑驅動；人像不變暗） */
+      /** 0→1：左→右寫簽名；移動端完成時直接顯示完整簽名 */
       function applyMobileFinaleProgress(p) {
         const t = Math.max(0, Math.min(1, p));
         const sigT = t;
+        const sigWrite = getMobileSigWrite();
 
         if (photo) {
           photo.style.filter = 'none';
@@ -3139,24 +3160,26 @@
 
         if (sigT > 0.001) {
           root.classList.add('hero-sig-visible');
-          if (heroSigWrite) {
-            heroSigWrite.style.visibility = 'visible';
-            const eased = 1 - Math.pow(1 - sigT, MOBILE_SIG_EASE);
-            heroSigWrite.style.setProperty(
-              '--sig-reveal',
-              (eased * 100).toFixed(2) + '%',
-            );
+          if (sigWrite) {
+            sigWrite.style.visibility = 'visible';
+            if (t >= 0.999) {
+              sigWrite.style.setProperty('--sig-reveal', '100%');
+              sigWrite.style.webkitClipPath = 'none';
+              sigWrite.style.clipPath = 'none';
+            } else {
+              const eased = 1 - Math.pow(1 - sigT, MOBILE_SIG_EASE);
+              sigWrite.style.setProperty(
+                '--sig-reveal',
+                (eased * 100).toFixed(2) + '%',
+              );
+            }
           }
         } else {
           root.classList.remove('hero-sig-visible');
-          if (heroSigWrite) {
-            heroSigWrite.style.visibility = 'hidden';
-            heroSigWrite.style.setProperty('--sig-reveal', '0%');
+          if (sigWrite) {
+            sigWrite.style.visibility = 'hidden';
+            sigWrite.style.setProperty('--sig-reveal', '0%');
           }
-        }
-
-        if (t >= 0.999 && heroSigWrite) {
-          heroSigWrite.style.setProperty('--sig-reveal', '100%');
         }
       }
 
@@ -3177,7 +3200,17 @@
         root.classList.add('hero-mobile-sig-stage');
         mobileFinaleReady = true;
         mobileFinaleMeter = 0;
-        applyMobileFinaleProgress(0);
+      }
+
+      /** Mobile landing: photo ready → show signature, unlock native page scroll */
+      function completeMobileHeroIntro() {
+        if (!mqMobileHero.matches) return;
+        if (unlocked && mobileFinaleReady && root.classList.contains('hero-sig-visible')) {
+          return;
+        }
+        if (!mobileFinaleReady) enableMobileFinaleScroll();
+        applyMobileFinaleProgress(1);
+        finalizeUnlock();
       }
 
       /** 移動端：三句文字直接置中顯示，不用跑馬燈位移 */
@@ -3218,12 +3251,25 @@
 
       function initMobileHero() {
         if (!mqMobileHero.matches) return;
+        forceCollapseHeroPin();
         forceClearIntroMotion();
-        lockScroll();
         root.classList.add('hero-mobile-static-intro');
         showMobileIntroLinesStatic();
         triggerHeroPhoto();
         scheduleMobilePhotoReadyForScroll();
+        /* Show signature soon after photo starts — do not rely on animationend alone */
+        setTimeout(function () {
+          if (!mqMobileHero.matches) return;
+          completeMobileHeroIntro();
+        }, HERO_PHOTO_UNLOCK_FALLBACK_MS);
+        setTimeout(function () {
+          if (!mqMobileHero.matches) return;
+          if (!root.classList.contains('hero-sig-visible')) {
+            completeMobileHeroIntro();
+          } else if (!unlocked) {
+            finalizeUnlock();
+          }
+        }, 2800);
       }
 
       /** 桌面跑馬燈會搬走 DOM；縮回手機寬度前須還原三句到 viewport */
@@ -3376,6 +3422,13 @@
           syncHeroIntroWidthsMobile();
           if (root.classList.contains('hero-mobile-static-intro')) {
             showMobileIntroLinesStatic();
+            if (
+              !root.classList.contains('hero-sig-visible') &&
+              photo &&
+              photo.classList.contains('hero-photo-in')
+            ) {
+              completeMobileHeroIntro();
+            }
           }
           return;
         }
@@ -3521,6 +3574,7 @@
         mobileFinaleReady = false;
         mobileFinaleScheduled = false;
         mobileFinaleMeter = 0;
+        mobilePhotoReadyHandled = false;
         meter = 0;
         if (!preserveLayout) {
           photoIntroPlayed = false;
@@ -3547,10 +3601,16 @@
             sticky.insertBefore(heroCenterEl, stage);
           }
           delete heroCenterEl.dataset.mobileMounted;
+          heroCenterEl.style.removeProperty('display');
+          heroCenterEl.style.visibility = '';
+          heroCenterEl.style.opacity = '';
         }
-        if (heroSigWrite) {
-          heroSigWrite.style.removeProperty('--sig-reveal');
-          heroSigWrite.style.visibility = '';
+        var sigWrite = getMobileSigWrite();
+        if (sigWrite) {
+          sigWrite.style.removeProperty('--sig-reveal');
+          sigWrite.style.removeProperty('-webkit-clip-path');
+          sigWrite.style.removeProperty('clip-path');
+          sigWrite.style.visibility = '';
         }
       }
 
@@ -3580,7 +3640,8 @@
         enableMobileFinaleScroll();
         applyMobileFinaleProgress(1);
         mobileFinaleScheduled = true;
-        unlocked = true;
+        mobilePhotoReadyHandled = true;
+        finalizeUnlock();
         forceCollapseHeroPin();
       }
 
@@ -3613,14 +3674,23 @@
         enterMobileHero(finishTransition, fromMode);
       }
 
-      /** 人像入場完成後，等待使用者下滑觸發變暗＋簽名 */
+      /** 人像入場完成後顯示簽名並解鎖頁面捲動 */
       function scheduleMobilePhotoReadyForScroll() {
-        if (mobileFinaleScheduled || unlocked) return;
+        if (mobileFinaleScheduled) return;
         mobileFinaleScheduled = true;
 
         function onPhotoIn() {
-          if (mobileFinaleReady) return;
-          enableMobileFinaleScroll();
+          if (mobilePhotoReadyHandled) return;
+          mobilePhotoReadyHandled = true;
+          if (photo && photoAnimHandler) {
+            photo.removeEventListener('animationend', photoAnimHandler);
+            photoAnimHandler = null;
+          }
+          if (photoUnlockTimer) {
+            clearTimeout(photoUnlockTimer);
+            photoUnlockTimer = null;
+          }
+          completeMobileHeroIntro();
         }
 
         if (!photo) {
@@ -3630,15 +3700,24 @@
 
         photoAnimHandler = function (e) {
           if (e.animationName !== 'hero-photo-fade-up') return;
-          photo.removeEventListener('animationend', photoAnimHandler);
-          photoAnimHandler = null;
           onPhotoIn();
         };
         photo.addEventListener('animationend', photoAnimHandler);
-        photoUnlockTimer = setTimeout(function () {
-          photoUnlockTimer = null;
-          onPhotoIn();
-        }, HERO_PHOTO_UNLOCK_FALLBACK_MS);
+        photoUnlockTimer = setTimeout(onPhotoIn, HERO_PHOTO_UNLOCK_FALLBACK_MS);
+
+        (function pollPhotoVisible(attempt) {
+          if (mobilePhotoReadyHandled || attempt > 120) return;
+          if (photo.classList.contains('hero-photo-in')) {
+            var op = parseFloat(getComputedStyle(photo).opacity) || 0;
+            if (op >= 0.99) {
+              onPhotoIn();
+              return;
+            }
+          }
+          requestAnimationFrame(function () {
+            pollPhotoVisible(attempt + 1);
+          });
+        })(0);
       }
 
       /* Tablet wheel intro params (mobile uses static lines + scroll finale) */
@@ -3648,11 +3727,6 @@
       const M12 = MAX_P1 + MAX_P2;
       const MAX_TOTAL = M12 + MAX_P3;
       const TOUCH_DELTA_MULTIPLIER = 2.4;
-
-      const HERO_PHOTO_ANIM_DELAY_MS = 120;
-      const HERO_PHOTO_ANIM_DURATION_MS = 850;
-      const HERO_PHOTO_UNLOCK_FALLBACK_MS =
-        HERO_PHOTO_ANIM_DELAY_MS + HERO_PHOTO_ANIM_DURATION_MS + 80;
 
       let meter = 0;
       let unlocked = false;
@@ -3860,62 +3934,7 @@
         return dy;
       }
 
-      function onMobileHeroWheel(e) {
-        if (!mqMobileHero.matches) return;
-        if (e.ctrlKey || e.metaKey) return;
-        const dy = normWheelDy(e);
-
-        if (mobileFinaleReady && !unlocked) {
-          e.preventDefault();
-          ingestMobileFinaleDelta(dy * TOUCH_DELTA_MULTIPLIER);
-          return;
-        }
-
-        if (unlocked && window.scrollY <= 48 && dy < 0) {
-          e.preventDefault();
-          ingestMobileFinaleDelta(dy * TOUCH_DELTA_MULTIPLIER);
-        }
-      }
-
-      window.addEventListener('wheel', onMobileHeroWheel, { passive: false });
-
-      let mobileTouchY = null;
-      hero.addEventListener(
-        'touchstart',
-        (e) => {
-          if (!mqMobileHero.matches) return;
-          if (unlocked && window.scrollY > 48) return;
-          mobileTouchY = e.touches[0].clientY;
-        },
-        { passive: true },
-      );
-      hero.addEventListener(
-        'touchmove',
-        (e) => {
-          if (!mqMobileHero.matches) return;
-          if (mobileFinaleReady && !unlocked) {
-            if (mobileTouchY === null) return;
-            e.preventDefault();
-            const y = e.touches[0].clientY;
-            ingestMobileFinaleDelta(
-              (mobileTouchY - y) * TOUCH_DELTA_MULTIPLIER,
-            );
-            mobileTouchY = y;
-            return;
-          }
-          if (unlocked || mobileTouchY === null) return;
-          if (window.scrollY > 48) return;
-          e.preventDefault();
-          const y = e.touches[0].clientY;
-          ingestMobileFinaleDelta((mobileTouchY - y) * TOUCH_DELTA_MULTIPLIER);
-          mobileTouchY = y;
-        },
-        { passive: false },
-      );
-      hero.addEventListener('touchend', () => {
-        mobileTouchY = null;
-      }, { passive: true });
-
+      /* Mobile: native touch scroll only — do not capture touchmove on hero */
       let heroBpTimer = null;
       function scheduleHeroBreakpoint() {
         clearTimeout(heroBpTimer);
