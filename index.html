@@ -62,6 +62,11 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
     html { scroll-behavior: smooth; }
 
     /* Hero intro: wheel / mobile finale lock until complete */
@@ -2312,7 +2317,7 @@
         <div class="hero-photo-stage">
           <img
             class="hero-photo-bg"
-            src="images/rowan.png"
+            loading="eager" src="images/rowan.png"
             alt="Portrait of Rowan Lin"
             loading="eager"
             decoding="async"
@@ -2325,12 +2330,6 @@
       <div class="hero-center">
         <div class="hero-sig-draw" role="img" aria-label="林昱嫻">
           <div class="hero-sig-write">
-            <img
-              class="hero-sig-fallback"
-              src="images/signtrue-rowan.png"
-              alt="林昱嫻"
-              decoding="async"
-            />
             <img
               class="hero-sig-final"
               src="images/signtrue-rowan.png"
@@ -2424,10 +2423,6 @@
 
                 <div class="hero-sig-draw" role="img" aria-label="林昱嫻">
                   <div class="hero-sig-write">
-                    <img class="hero-sig-fallback"
-                         src="images/signtrue-rowan.png"
-                         alt="林昱嫻"
-                         decoding="async">
                     <img class="hero-sig-final"
                          src="images/signtrue-rowan.png"
                          alt=""
@@ -2525,7 +2520,8 @@
     <!-- floating work preview -->
     <div id="wk-preview">
       <div class="wk-prev-inner">
-        <img class="wk-prev-img" id="wk-prev-img" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="">
+        <img class="wk-prev-img" id="wk-prev-img" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt=""
+            loading="lazy">
         <div class="wk-prev-overlay">
           <div class="wk-prev-name" id="wk-prev-name">Project</div>
           <div class="wk-prev-tag" id="wk-prev-tag">Type</div>
