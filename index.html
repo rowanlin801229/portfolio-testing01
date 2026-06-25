@@ -273,6 +273,11 @@
       align-items: center;
       gap: 2.5rem;
     }
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
     .nav-links { display: flex; gap: 2.5rem; list-style: none; }
     .nav-links a {
       font-family: 'Cormorant Garamond', serif;
@@ -320,6 +325,34 @@
       opacity: 0.3;
       font: inherit;
       user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .nav-menu {
+        position: static;
+        inset: auto;
+        z-index: auto;
+        flex-direction: row;
+        width: auto;
+        height: auto;
+        padding: 0;
+        background: transparent;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        pointer-events: auto;
+        transition: none;
+      }
+      .nav-lang {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        pointer-events: auto;
+        transition: color 0.3s, border-color 0.3s, opacity 0.3s;
+      }
     }
 
     /* ── SHARED ── */
@@ -373,7 +406,7 @@
       display: none !important;
     }
 
-    @media (pointer: coarse) {
+    @media (max-width: 767px) {
       .hero-pin-wrap,
       #hero-pin-wrap {
         display: block !important;
@@ -1942,7 +1975,7 @@
     }
 
     /* ── RWD: TABLET ── */
-    @media (max-width: 1024px) {
+    @media (max-width: 1024px) and (min-width: 768px) {
       nav {
         padding: 1rem 4vw;
         gap: 1rem;
@@ -1952,7 +1985,7 @@
       }
       .nav-links {
         gap: 1.2rem;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: flex-end;
       }
       .nav-links a {
@@ -2014,8 +2047,8 @@
       }
     }
 
-    /* ── RWD: MOBILE ── */
-    @media (pointer: coarse) {
+    /* ── RWD: MOBILE (≤767px — hamburger nav + layout; width-based, not pointer) ── */
+    @media (max-width: 767px) {
       body {
         cursor: auto;
       }
@@ -2062,27 +2095,27 @@
         top: auto;
         right: auto;
         transform: none;
-        z-index: 2;
+        z-index: 301;
       }
       .nav-links {
         display: flex;
         flex-direction: column;
-        position: fixed;
-        inset: 0;
-        background: #111110;
-        z-index: 300;
-        width: 100%;
-        height: 100dvh;
+        position: static;
+        inset: auto;
+        background: transparent;
+        z-index: auto;
+        width: auto;
+        height: auto;
         justify-content: center;
         align-items: center;
         gap: 2.1rem;
-        padding: 90px 8vw 8vh;
+        padding: 0;
         list-style: none;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(14px);
-        pointer-events: none;
-        transition: opacity 0.28s ease, transform 0.32s ease, visibility 0s linear 0.32s;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        pointer-events: auto;
+        transition: none;
       }
       .nav-links a {
         font-size: clamp(1.8rem, 8vw, 2.3rem);
@@ -2108,15 +2141,43 @@
         z-index: 3;
         position: relative;
       }
+      .nav-menu {
+        position: fixed;
+        inset: 0;
+        z-index: 300;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2.1rem;
+        width: 100%;
+        height: 100dvh;
+        padding: 90px 8vw 8vh;
+        background: #111110;
+        box-sizing: border-box;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(14px);
+        pointer-events: none;
+        transition: opacity 0.28s ease, transform 0.32s ease, visibility 0s linear 0.32s;
+      }
       .nav-lang {
         display: inline-flex;
         gap: 0.35rem;
         font-size: 0.65rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        pointer-events: none;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        transition: opacity 0.28s ease, transform 0.32s ease, visibility 0.28s ease;
       }
       .nav-lang-btn {
         padding: 0.15rem 0.35rem;
       }
-      #nav-toggle:checked ~ .nav-end .nav-links {
+      #nav-toggle:checked ~ .nav-end .nav-menu {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
@@ -2126,6 +2187,13 @@
       #nav-toggle:checked ~ .nav-end .nav-links a {
         opacity: 1;
         transform: translateY(0);
+      }
+      #nav-toggle:checked ~ .nav-end .nav-lang {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+        transition-delay: 0.32s;
       }
       #nav-toggle:checked ~ .nav-end .nav-links li:nth-child(1) a { transition-delay: 0.06s; }
       #nav-toggle:checked ~ .nav-end .nav-links li:nth-child(2) a { transition-delay: 0.11s; }
@@ -2348,6 +2416,7 @@
       </a>
       <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation menu">
       <div class="nav-end">
+      <div class="nav-menu">
       <ul class="nav-links" style="font-weight: 400">
         <li><a href="#work">Projects</a></li>
         <li><a href="#about">About</a></li>
@@ -2359,6 +2428,7 @@
         <button type="button" class="nav-lang-btn is-active" data-lang="en" aria-pressed="true">EN</button>
         <span class="nav-lang-sep" aria-hidden="true">|</span>
         <button type="button" class="nav-lang-btn" data-lang="zh" aria-pressed="false">中文</button>
+      </div>
       </div>
       <label for="nav-toggle" class="nav-toggle-btn" aria-label="Open menu">
         <span></span>
@@ -2935,8 +3005,6 @@
           wave.style.transform = '';
           wave.style.display = 'none';
         }
-
-        window.scrollTo(0, 0);
       }
 
       function resetHeroPinForDesktop() {
@@ -3484,6 +3552,7 @@
       function refreshHeroLayout(mode) {
         if (mode === 'mobile') {
           if (!mqMobileHero.matches) return;
+          /* Layout only — never reset scroll (mobile resize fires while scrolling) */
           forceCollapseHeroPin();
           forceClearIntroMotion();
           syncHeroIntroWidthsMobile();
@@ -3970,8 +4039,8 @@
             clearUnlockSchedule();
             unlockPending = false;
           }
-          /* Desktop hero uses page scroll — never re-lock (was blocking all sections) */
-          if (unlocked && !mqFullBleedHero.matches) {
+          /* Tablet wheel intro only — mobile uses native scroll, never re-lock */
+          if (unlocked && !mqFullBleedHero.matches && !mqMobileHero.matches) {
             unlocked = false;
             lockScroll();
           }
