@@ -3,7 +3,9 @@
     "allow": [
       "Bash(open *)",
       "Bash(python3 -m http.server 8080 --bind 0.0.0.0)",
-      "Bash(ipconfig getifaddr *)"
+      "Bash(ipconfig getifaddr *)",
+      "WebFetch(domain:jasminegunarto.com)",
+      "Bash(python3 -)"
     ]
   }
 }

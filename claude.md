@@ -369,3 +369,59 @@ All projects follow a consistent narrative flow:
 **其他專案**
 - [ ] HUD wireframe（~/hud-wireframe）：四個警示狀態完成，尚未推 Figma
 - [ ] n8n 自動化：GA4 週報 + 訪客通知（尚未開始）
+
+---
+
+### Updates (May 20, 2026)
+
+#### Hero Section 完整改版（Editorial Layout）
+
+**參考來源：** jasminegunarto.com  
+**方向：** 只借用排版結構，保留原有字型（Cormorant Garamond）與配色邏輯
+
+**新版 Hero 架構（桌機）：**
+- Row 1：全寬大字 `Rowan Lin`（Cormorant Garamond italic，JS 自動填滿行寬）
+- Row 2：`Cross-screen` ← [中心照片卡片 + 簽名動畫] → `Designer`
+- 三欄 grid：`minmax(0, 1fr) auto minmax(0, 1fr)`
+
+**桌機 vs 手機分流：**
+- 桌機（≥768px）：顯示 `.hero-desktop-shell`（新 editorial 版型）
+- 手機（≤767px）：顯示 `.hero-mobile-shell`（保留原有 marquee 版型）
+- 兩套 HTML 並存於同一 `#hero` section
+
+**Hero 配色 Token（桌機專用）：**
+```
+--hero-canvas: #111110    /* 深黑背景，用戶確認「我要黑底」 */
+--hero-ink: rgba(112, 108, 102, 0.92)   /* 暖灰文字 */
+--hero-ink-soft: rgba(112, 108, 102, 0.45)  /* 更淡版本，scroll indicator 用 */
+```
+
+**Nav：** 保持黑底 `background: #111110`（用戶確認）
+
+**動畫邏輯（桌機）：**
+- 入場：Text curtain reveal — `.hero-clip { overflow: hidden }` + `translateY(110%)` → `translateY(0)`，stagger：名字先出現（100ms），role 文字 + 卡片後出現（350ms）
+- Scroll Phase 1（0–40%）：照片從 `clip-path: inset(100% 0 0 0)` 由下往上揭開
+- Scroll Phase 2（40–68%）：照片縮小（scale 1→0.62），role 文字向中靠近
+- Scroll Phase 3（68–100%）：照片繼續縮（0.62→0.46），簽名用 `--sig-reveal` clip-path 從左到右繪入
+- 簽名：`mix-blend-mode: screen`，疊在照片上方
+
+**新增圖片資產：**
+- `images/hero-rowan-wide.png`：桌機 hero 卡片用的景觀/寬幅人像照（在 commit 8c660ea 加入）
+
+**CSS 關鍵數值（當前運作值 — 6/25 確認）：**
+
+| 項目 | 當前值 | 備註 |
+|------|--------|------|
+| 卡片寬度 | `clamp(520px, 58vw, 820px)` | 版面視覺無異常，保持 |
+| 照片比例 | 無 aspect-ratio | 父容器自動撐起，視覺合理 |
+| Role 字級 | `clamp(2rem, 5vw, 3.75rem)` | 當前文字大小合適，保持 |
+| 名字填滿率 | `container.clientWidth * 0.98` | fitHeroName() line 4126 |
+| 名字文字 | `Rowan Lin` | Cormorant Garamond italic ✓ |
+| Role 左側 | `Cross-screen` | 確認無「A」 ✓ |
+| Role 右側 | `designer` | 小寫確認 ✓ |
+
+#### 待確認（下次繼續）
+
+- [ ] 卡片內容：目前只有照片，是否要加上 label（UI/UX DESIGN · 2026）和底部資訊列
+- [ ] 手機版 hero 是否需要跟著更新，或繼續沿用舊版 marquee 設計
+- [ ] `images/hero-rowan-wide.png` 是否在實際使用中
