@@ -1595,6 +1595,9 @@
       transition: letter-spacing 0.4s cubic-bezier(0.16,1,0.3,1);
       z-index: 1;
     }
+    html[lang="zh-Hant"] .wi-name {
+      font-size: clamp(1.35rem, 2.85vw, 2.45rem);
+    }
     .work-item:hover .wi-name { letter-spacing: 0.01em; }
 
     .wi-right {
@@ -1662,6 +1665,9 @@
       text-shadow: 0 0 20px rgba(255, 255, 255, 0.75), 0 1px 2px rgba(255, 255, 255, 0.9);
       position: relative;
       z-index: 1;
+    }
+    html[lang="zh-Hant"] .wk-prev-name {
+      font-size: 1.15rem;
     }
     .wk-prev-tag {
       font-size: 0.7rem;
@@ -2019,6 +2025,9 @@
       .wi-name {
         font-size: clamp(1.95rem, 6.15vw, 3.15rem);
       }
+      html[lang="zh-Hant"] .wi-name {
+        font-size: clamp(1.2rem, 3.8vw, 2rem);
+      }
       .wi-type {
         font-size: 0.75rem;
         letter-spacing: 0.15em;
@@ -2306,6 +2315,9 @@
       .wi-name {
         font-size: clamp(1.55rem, 8.2vw, 2.35rem);
       }
+      html[lang="zh-Hant"] .wi-name {
+        font-size: clamp(1.05rem, 5.2vw, 1.55rem);
+      }
       .wi-type {
         font-size: 0.75rem;
       }
@@ -2591,55 +2603,55 @@
       <h2 class="sec-label reveal in" style="transition-delay: 0s;">Projects</h2>
       <p class="hero-desc reveal in" style="transition-delay:0.1s; margin-bottom:3rem;" data-i18n="work.desc">Featured work across cross-screen products, wearable interaction, and responsive systems.</p>
       <ul class="work-list" id="work-list">
-        <li class="work-item reveal in" data-name="FainTV" data-type="Cross-screen · Mobile · Tablet · Web · TV" style="transition-delay: 0s;" onclick="location.href='faintv.html'" style="cursor:pointer;">
+        <li class="work-item reveal in" data-project="faintv" data-name="FainTV" data-type="Cross-screen · Mobile · Tablet · Web · TV" style="transition-delay: 0s;" onclick="location.href='faintv.html'" style="cursor:pointer;">
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">01</span>
-            <span class="wi-name">FainTV</span>
+            <span class="wi-name" data-i18n="work.faintv.name">FainTV</span>
             <div class="wi-right">
               <span class="wi-type" data-i18n="work.faintv.type" data-i18n-work-type="work.faintv.type">Cross-screen · Mobile · Tablet · Web · TV</span>
               <span class="wi-arrow">→</span>
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg')"></div></li>
-        <li class="work-item reveal in" data-name="Health GeneTech" data-type="Responsive Web · Branding" style="transition-delay: 0s;" onclick="location.href='genebook.html'">
+        <li class="work-item reveal in" data-project="genebook" data-name="Health GeneTech" data-type="Responsive Web · Branding" style="transition-delay: 0s;" onclick="location.href='genebook.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">02</span>
-            <span class="wi-name">Health GeneTech</span>
+            <span class="wi-name" data-i18n="work.genebook.name">Health GeneTech</span>
             <div class="wi-right">
               <span class="wi-type" data-i18n="work.genebook.type" data-i18n-work-type="work.genebook.type">Responsive Web · Branding</span>
               <span class="wi-arrow">→</span>
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg')"></div></li>
-        <li class="work-item reveal in" data-name="Training for Life" data-type="Mobile · Wearable" style="transition-delay: 0s;" onclick="location.href='tfl.html'">
+        <li class="work-item reveal in" data-project="tfl" data-name="Training for Life" data-type="Mobile · Wearable" style="transition-delay: 0s;" onclick="location.href='tfl.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">03</span>
-            <span class="wi-name">Training for Life</span>
+            <span class="wi-name" data-i18n="work.tfl.name">Training for Life</span>
             <div class="wi-right">
               <span class="wi-type" data-i18n="work.tfl.type" data-i18n-work-type="work.tfl.type">Mobile · Wearable</span>
               <span class="wi-arrow">→</span>
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg')"></div></li>
-        <li class="work-item reveal in" data-name="Ai Cun Cell" data-type="Mobile · Healthcare" style="transition-delay: 0s;" onclick="location.href='aicuncell.html'">
+        <li class="work-item reveal in" data-project="aicuncell" data-name="Ai Cun Cell" data-type="Mobile · Healthcare" style="transition-delay: 0s;" onclick="location.href='aicuncell.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">04</span>
-            <span class="wi-name">Ai Cun Cell</span>
+            <span class="wi-name" data-i18n="work.aicuncell.name">Ai Cun Cell</span>
             <div class="wi-right">
               <span class="wi-type" data-i18n="work.aicuncell.type" data-i18n-work-type="work.aicuncell.type">Mobile · Healthcare</span>
               <span class="wi-arrow">→</span>
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a2c6df5c-28b9-480b-a51f-171dc085410b/1.1+landing+page.jpg')"></div></li>
-        <li class="work-item reveal in" data-name="Marilyn" data-type="Responsive Web · Campaign" style="transition-delay: 0s;" onclick="location.href='marilyn.html'">
+        <li class="work-item reveal in" data-project="marilyn" data-name="Marilyn" data-type="Responsive Web · Campaign" style="transition-delay: 0s;" onclick="location.href='marilyn.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">05</span>
-            <span class="wi-name">Marilyn</span>
+            <span class="wi-name" data-i18n="work.marilyn.name">Marilyn</span>
             <div class="wi-right">
               <span class="wi-type" data-i18n="work.marilyn.type" data-i18n-work-type="work.marilyn.type">Responsive Web · Campaign</span>
               <span class="wi-arrow">→</span>
@@ -5135,20 +5147,20 @@
       const pTag = document.getElementById('wk-prev-tag');
       const pImg = document.getElementById('wk-prev-img');
       const covers = {
-        'FainTV': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg',
-        'Health GeneTech': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg',
-        'Training for Life': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg',
-        'Ai Cun Cell': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a2c6df5c-28b9-480b-a51f-171dc085410b/1.1+landing+page.jpg',
-        'Marilyn': 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a7f85fc8-9e9d-48cc-8b65-d1ea109acdd0/banner.png'
+        faintv: 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg',
+        genebook: 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg',
+        tfl: 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg',
+        aicuncell: 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a2c6df5c-28b9-480b-a51f-171dc085410b/1.1+landing+page.jpg',
+        marilyn: 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a7f85fc8-9e9d-48cc-8b65-d1ea109acdd0/banner.png'
       };
       let active = false;
 
       document.querySelectorAll('.work-item').forEach(item => {
         item.addEventListener('mouseenter', () => {
-          const name = item.dataset.name;
-          pName.textContent = name;
+          const nameEl = item.querySelector('.wi-name');
+          pName.textContent = nameEl ? nameEl.textContent : item.dataset.name;
           pTag.textContent = item.dataset.type;
-          pImg.src = covers[name] || '';
+          pImg.src = covers[item.dataset.project] || '';
           preview.classList.add('show');
           active = true;
         });
