@@ -21,28 +21,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <script src="i18n.js" defer></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      corePlugins: {
-        preflight: false,
-      },
-      theme: {
-        extend: {
-          colors: {
-            canvas: '#ffffff',
-            /* Softer body text on light canvas (DS dark theme uses --fg #8a8a86 on dark bg, not near-black on white) */
-            ink: '#4a4a48',
-            accent: '#B84545',
-          },
-          fontFamily: {
-            display: ['Cormorant Garamond', 'Georgia', 'serif'],
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-          },
-        },
-      },
-    };
-  </script>
   <style>
     :root {
       --bg: #ffffff;
@@ -88,6 +66,8 @@
       cursor: none;
       overflow-x: hidden;
       background-color: var(--bg) !important;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     /* ── CURSOR ── */
@@ -2390,7 +2370,7 @@
 
   </style>
 </head>
-<body class="antialiased">
+<body>
 
   <div id="tweaks-root"></div>
 
@@ -3272,16 +3252,41 @@
         }
       }
 
-      /** 愈大＝需捲動愈多才能完成簽名（愈慢） */
-      const MOBILE_FINALE_MAX = 580;
+      /** Mobile signature reveal: time-driven (~1.2s), not scroll-driven */
+      const MOBILE_SIG_DURATION_MS = 1200;
       const MOBILE_SIG_EASE = 3.65;
       const photoParallax = document.querySelector('.hero-mobile-shell .hero-photo-parallax');
       const heroCenterEl = document.querySelector('.hero-mobile-shell .hero-center');
 
-      let mobileFinaleReady = false;
-      let mobileFinaleScheduled = false;
-      let mobileFinaleMeter = 0;
+      let mobileSigStageReady = false;
+      let mobileSigScheduled = false;
+      let mobileSigAnimating = false;
+      let mobileSigAnimRaf = null;
+      let mobileSigScrollHandler = null;
       let mobilePhotoReadyHandled = false;
+
+      function cancelMobileSigAnimation() {
+        if (mobileSigAnimRaf) {
+          cancelAnimationFrame(mobileSigAnimRaf);
+          mobileSigAnimRaf = null;
+        }
+        mobileSigAnimating = false;
+        if (mobileSigScrollHandler) {
+          window.removeEventListener('scroll', mobileSigScrollHandler);
+          mobileSigScrollHandler = null;
+        }
+      }
+
+      function attachMobileSigScrollSkip() {
+        if (mobileSigScrollHandler) return;
+        mobileSigScrollHandler = function () {
+          if (!mobileSigAnimating) return;
+          if (window.scrollY > 4) {
+            completeMobileSigInstant();
+          }
+        };
+        window.addEventListener('scroll', mobileSigScrollHandler, { passive: true });
+      }
 
       function mountMobileSignatureOnPhoto() {
         if (!photoParallax || !heroCenterEl) return;
@@ -3294,7 +3299,7 @@
         heroCenterEl.style.opacity = '1';
       }
 
-      /** 0→1：左→右寫簽名；移動端完成時直接顯示完整簽名 */
+      /** 0→1：左→右寫簽名 */
       function applyMobileFinaleProgress(p) {
         const t = Math.max(0, Math.min(1, p));
         const sigT = t;
@@ -3330,34 +3335,62 @@
         }
       }
 
-      function ingestMobileFinaleDelta(dy) {
-        if (!mobileFinaleReady || unlocked) return;
-        mobileFinaleMeter = Math.max(
-          0,
-          Math.min(MOBILE_FINALE_MAX, mobileFinaleMeter + dy),
-        );
-        applyMobileFinaleProgress(mobileFinaleMeter / MOBILE_FINALE_MAX);
-        if (mobileFinaleMeter >= MOBILE_FINALE_MAX * 0.998) {
-          finalizeUnlock();
-        }
-      }
-
-      function enableMobileFinaleScroll() {
+      function prepareMobileSigStage() {
         mountMobileSignatureOnPhoto();
         root.classList.add('hero-mobile-sig-stage');
-        mobileFinaleReady = true;
-        mobileFinaleMeter = 0;
+        mobileSigStageReady = true;
       }
 
-      /** Mobile landing: photo ready → show signature, unlock native page scroll */
-      function completeMobileHeroIntro() {
+      function completeMobileSigInstant() {
         if (!mqMobileHero.matches) return;
-        if (unlocked && mobileFinaleReady && root.classList.contains('hero-sig-visible')) {
+        cancelMobileSigAnimation();
+        if (!mobileSigStageReady) prepareMobileSigStage();
+        applyMobileFinaleProgress(1);
+      }
+
+      function startMobileSigReveal() {
+        if (!mqMobileHero.matches) return;
+        if (mobileSigAnimating) return;
+
+        var sigWrite = getMobileSigWrite();
+        if (
+          root.classList.contains('hero-sig-visible') &&
+          sigWrite &&
+          (sigWrite.style.getPropertyValue('--sig-reveal') === '100%' ||
+            sigWrite.style.clipPath === 'none')
+        ) {
           return;
         }
-        if (!mobileFinaleReady) enableMobileFinaleScroll();
-        applyMobileFinaleProgress(1);
-        finalizeUnlock();
+
+        prepareMobileSigStage();
+
+        if (mqReduce.matches) {
+          applyMobileFinaleProgress(1);
+          return;
+        }
+
+        cancelMobileSigAnimation();
+        applyMobileFinaleProgress(0);
+        mobileSigAnimating = true;
+        attachMobileSigScrollSkip();
+
+        var start = performance.now();
+        function frame(now) {
+          if (!mqMobileHero.matches || !mobileSigAnimating) return;
+          var t = Math.min(1, (now - start) / MOBILE_SIG_DURATION_MS);
+          applyMobileFinaleProgress(t);
+          if (t < 1) {
+            mobileSigAnimRaf = requestAnimationFrame(frame);
+            return;
+          }
+          cancelMobileSigAnimation();
+        }
+        mobileSigAnimRaf = requestAnimationFrame(frame);
+      }
+
+      /** Mobile landing: photo ready → time-driven signature reveal */
+      function completeMobileHeroIntro() {
+        startMobileSigReveal();
       }
 
       /** 移動端：三句文字直接置中顯示，不用跑馬燈位移 */
@@ -3400,23 +3433,14 @@
         if (!mqMobileHero.matches) return;
         forceCollapseHeroPin();
         forceClearIntroMotion();
+        root.classList.remove('hero-intro-lock', 'hero-entrance-scroll-lock');
+        unlockPageScroll();
+        unlocked = false;
+        finalizeUnlock();
         root.classList.add('hero-mobile-static-intro');
         showMobileIntroLinesStatic();
         triggerHeroPhoto();
-        scheduleMobilePhotoReadyForScroll();
-        /* Show signature soon after photo starts — do not rely on animationend alone */
-        setTimeout(function () {
-          if (!mqMobileHero.matches) return;
-          completeMobileHeroIntro();
-        }, HERO_PHOTO_UNLOCK_FALLBACK_MS);
-        setTimeout(function () {
-          if (!mqMobileHero.matches) return;
-          if (!root.classList.contains('hero-sig-visible')) {
-            completeMobileHeroIntro();
-          } else if (!unlocked) {
-            finalizeUnlock();
-          }
-        }, 2800);
+        scheduleMobilePhotoReadyForSig();
       }
 
       /** 桌面跑馬燈會搬走 DOM；縮回手機寬度前須還原三句到 viewport */
@@ -3488,6 +3512,7 @@
           'hero-mobile-static-intro',
           'hero-mobile-sig-stage',
           'hero-intro-lock',
+          'hero-entrance-scroll-lock',
         ];
 
         shared.forEach(function (cls) {
@@ -3719,9 +3744,9 @@
         opts = opts || {};
         var preserveLayout = !!opts.preserveLayout;
 
-        mobileFinaleReady = false;
-        mobileFinaleScheduled = false;
-        mobileFinaleMeter = 0;
+        cancelMobileSigAnimation();
+        mobileSigStageReady = false;
+        mobileSigScheduled = false;
         mobilePhotoReadyHandled = false;
         meter = 0;
         if (!preserveLayout) {
@@ -3764,19 +3789,24 @@
 
       function finishMobileHeroInstant() {
         if (!mqMobileHero.matches) return;
+        root.classList.remove('hero-intro-lock', 'hero-entrance-scroll-lock');
+        unlockPageScroll();
+        unlocked = false;
+        finalizeUnlock();
         root.classList.add('hero-mobile-static-intro');
         showMobileIntroLinesStatic();
         triggerHeroPhoto();
         if (photo) photo.classList.add('hero-photo-in');
-        enableMobileFinaleScroll();
+        prepareMobileSigStage();
         applyMobileFinaleProgress(1);
-        finalizeUnlock();
       }
 
       /** Desktop → mobile resize: restore static layout + signature on photo */
       function finishMobileHeroFromResize() {
         if (!mqMobileHero.matches) return;
         unlockPageScroll();
+        unlocked = false;
+        finalizeUnlock();
         root.classList.add('hero-mobile-static-intro');
         showMobileIntroLinesStatic();
         triggerHeroPhoto();
@@ -3785,11 +3815,10 @@
           photo.style.opacity = '1';
           photo.style.transform = 'none';
         }
-        enableMobileFinaleScroll();
+        prepareMobileSigStage();
         applyMobileFinaleProgress(1);
-        mobileFinaleScheduled = true;
+        mobileSigScheduled = true;
         mobilePhotoReadyHandled = true;
-        finalizeUnlock();
         forceCollapseHeroPin();
       }
 
@@ -3822,10 +3851,10 @@
         enterMobileHero(finishTransition, fromMode);
       }
 
-      /** 人像入場完成後顯示簽名並解鎖頁面捲動 */
-      function scheduleMobilePhotoReadyForScroll() {
-        if (mobileFinaleScheduled) return;
-        mobileFinaleScheduled = true;
+      /** 人像入場完成後啟動時間驅動簽名動畫 */
+      function scheduleMobilePhotoReadyForSig() {
+        if (mobileSigScheduled) return;
+        mobileSigScheduled = true;
 
         function onPhotoIn() {
           if (mobilePhotoReadyHandled) return;
@@ -3838,7 +3867,13 @@
             clearTimeout(photoUnlockTimer);
             photoUnlockTimer = null;
           }
-          completeMobileHeroIntro();
+          startMobileSigReveal();
+          setTimeout(function () {
+            if (!mqMobileHero.matches) return;
+            if (mobileSigAnimating || !root.classList.contains('hero-sig-visible')) {
+              completeMobileSigInstant();
+            }
+          }, MOBILE_SIG_DURATION_MS + 800);
         }
 
         if (!photo) {
@@ -3868,7 +3903,7 @@
         })(0);
       }
 
-      /* Tablet wheel intro params (mobile uses static lines + scroll finale) */
+      /* Tablet wheel intro params (mobile uses static lines + time-driven signature) */
       const MAX_P1 = 380;
       const MAX_P2 = 380;
       const MAX_P3 = 380;
@@ -3942,15 +3977,10 @@
       }
 
       function lockScroll() {
+        if (mqMobileHero.matches) return;
         root.classList.add('hero-intro-lock');
         if (!mqFullBleedHero.matches) {
           root.classList.remove('hero-intro-done');
-          if (lockScrollTimer) clearTimeout(lockScrollTimer);
-          lockScrollTimer = setTimeout(function () {
-            lockScrollTimer = null;
-            if (!mqMobileHero.matches) return;
-            finalizeUnlock();
-          }, 2500);
         }
       }
 
@@ -4043,7 +4073,7 @@
           triggerHeroPhoto();
           polishAtEnd();
           if (!unlocked) {
-            if (mqMobileHero.matches) scheduleMobilePhotoReadyForScroll();
+            if (mqMobileHero.matches) scheduleMobilePhotoReadyForSig();
             else scheduleUnlockAfterPhoto();
           }
         } else {
@@ -5180,17 +5210,51 @@
     /* ── STARS ── */
     (function () {
       const canvas = document.getElementById('stars');
+      const hero = document.getElementById('hero');
+      if (!canvas) return;
       const ctx = canvas.getContext('2d');
-      let W, H, stars = [];
+      if (!ctx) return;
+
+      const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const mqMobile = window.matchMedia('(max-width: 767px)');
+
+      let W = 0;
+      let H = 0;
+      let stars = [];
+      let frame = 0;
+      let rafId = null;
+      let heroVisible = true;
+      let tabVisible = document.visibilityState !== 'hidden';
+      let staticDrawn = false;
+      let resizeTimer = null;
+      let lastInnerWidth = window.innerWidth;
+
+      function getDpr() {
+        return Math.min(window.devicePixelRatio || 1, 2);
+      }
+
+      function shouldAnimate() {
+        return !mqReduce.matches && heroVisible && tabVisible;
+      }
+
+      function starDensityDivisor() {
+        return mqMobile.matches ? 10000 : 5000;
+      }
 
       function resize() {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
+        const dpr = getDpr();
+        W = window.innerWidth;
+        H = window.innerHeight;
+        canvas.width = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+        canvas.style.width = W + 'px';
+        canvas.style.height = H + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
 
       function initStars() {
         stars = [];
-        const count = Math.floor((W * H) / 5000);
+        const count = Math.floor((W * H) / starDensityDivisor());
         for (let i = 0; i < count; i++) {
           stars.push({
             x: Math.random() * W,
@@ -5199,31 +5263,113 @@
             a: Math.random(),
             speed: Math.random() * 0.004 + 0.001,
             phase: Math.random() * Math.PI * 2,
-            blue: Math.random() > 0.7
+            blue: Math.random() > 0.7,
           });
         }
       }
 
-      let frame = 0;
-      function draw() {
+      function paintFrame(animate) {
         ctx.clearRect(0, 0, W, H);
-        frame++;
-        stars.forEach(s => {
-          const alpha = s.a * (0.5 + 0.5 * Math.sin(s.phase + frame * s.speed));
+        if (animate) frame += 1;
+        stars.forEach(function (s) {
+          const alpha = animate
+            ? s.a * (0.5 + 0.5 * Math.sin(s.phase + frame * s.speed))
+            : s.a;
           ctx.beginPath();
           ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
           ctx.fillStyle = s.blue
-            ? `rgba(184,69,69,${alpha * 0.7})`
-            : `rgba(138,138,134,${alpha * 0.45})`;
+            ? 'rgba(184,69,69,' + alpha * 0.7 + ')'
+            : 'rgba(138,138,134,' + alpha * 0.45 + ')';
           ctx.fill();
         });
-        requestAnimationFrame(draw);
       }
+
+      function stopLoop() {
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+      }
+
+      function draw() {
+        if (!shouldAnimate()) return;
+        paintFrame(true);
+        rafId = requestAnimationFrame(draw);
+      }
+
+      function startLoop() {
+        stopLoop();
+        if (!shouldAnimate()) return;
+        staticDrawn = false;
+        rafId = requestAnimationFrame(draw);
+      }
+
+      function drawStatic() {
+        stopLoop();
+        paintFrame(false);
+        staticDrawn = true;
+      }
+
+      function syncMode() {
+        if (mqReduce.matches) {
+          drawStatic();
+          return;
+        }
+        if (shouldAnimate()) {
+          startLoop();
+        } else {
+          if (!staticDrawn) drawStatic();
+          else stopLoop();
+        }
+      }
+
+      function onResize() {
+        const w = window.innerWidth;
+        if (mqMobile.matches && w === lastInnerWidth) return;
+        lastInnerWidth = w;
+        resize();
+        initStars();
+        staticDrawn = false;
+        syncMode();
+      }
+
+      function scheduleResize() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(onResize, 150);
+      }
+
+      if (hero && 'IntersectionObserver' in window) {
+        new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              heroVisible = e.isIntersecting;
+              syncMode();
+            });
+          },
+          { threshold: 0 },
+        ).observe(hero);
+      }
+
+      document.addEventListener('visibilitychange', function () {
+        tabVisible = document.visibilityState === 'visible';
+        syncMode();
+      });
+
+      mqReduce.addEventListener('change', function () {
+        staticDrawn = false;
+        syncMode();
+      });
+
+      mqMobile.addEventListener('change', function () {
+        initStars();
+        staticDrawn = false;
+        syncMode();
+      });
 
       resize();
       initStars();
-      draw();
-      window.addEventListener('resize', () => { resize(); initStars(); });
+      syncMode();
+      window.addEventListener('resize', scheduleResize);
     })();
 
     /* ── CURSOR ── */
