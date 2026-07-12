@@ -46,12 +46,12 @@
     .nav-next:hover .nav-next-arrow { transform: translateX(4px); }
 
     .cs-hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 120px 5vw 8vh; border-bottom: 1px solid var(--line); }
-    .cs-label { font-size: 1rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 2rem; display: block; opacity: 0; transform: translateY(12px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards; }
-    .cs-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(4rem, 11vw, 11rem); line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 2rem; opacity: 0; transform: translateY(60px); animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
-    .cs-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; border-top: 1px solid var(--line); padding-top: 2.5rem; opacity: 0; transform: translateY(20px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s forwards; }
+    .cs-label { font-size: 1rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 2rem; display: block; opacity: 0; transform: translateY(12px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards; }
+    .cs-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(4rem, 11vw, 11rem); line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 2rem; opacity: 0; transform: translateY(60px); filter: blur(4px); animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
+    .cs-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; border-top: 1px solid var(--line); padding-top: 2.5rem; opacity: 0; transform: translateY(20px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s forwards; }
     .cs-meta-label { font-size: 1rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.6rem; }
     .cs-meta-val { font-size: 1.125rem; line-height: 1.6; color: var(--fg); }
-    @keyframes fadeup { to { opacity: 1; transform: none; } }
+    @keyframes fadeup { to { opacity: 1; transform: none; filter: blur(0); } }
 
     .cs-img { width: 100%; display: block; object-fit: cover; transition: transform 0.9s cubic-bezier(0.16,1,0.3,1), opacity 0.6s ease; }
     .cs-img:hover { transform: scale(1.03); }
@@ -112,8 +112,8 @@
     .cs-next-arrow { font-size: 3rem; color: var(--accent); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
     .cs-next:hover .cs-next-arrow { transform: translateX(12px); }
 
-    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1); }
-    .reveal.in { opacity: 1; transform: none; }
+    .reveal { opacity: 0; transform: translateY(24px); filter: blur(4px); transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.in { opacity: 1; transform: none; filter: blur(0); }
 
     footer { padding: 2.5vh 5vw; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 1rem; letter-spacing: 0.1em; color: rgba(138,138,134,0.28); }
 
@@ -139,6 +139,13 @@
       .cs-next{padding:5vh 4vw;align-items:flex-end}
       .cs-next-arrow{font-size:2rem}
       footer{padding:2vh 4vw;flex-direction:column;gap:.45rem;align-items:flex-start}
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
