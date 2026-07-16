@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ERYYE1R633"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-ERYYE1R633");
+</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual Cues Study — Rowan Lin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0e0e0d;
+      --fg: #8a8a86;
+      --accent: #B84545;
+      --muted: rgba(138,138,134,0.55);
+      --line: rgba(138,138,134,0.13);
+      --surface: #141413;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--fg); font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 300; cursor: none; overflow-x: hidden; }
+    .display { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+    #cur-ring { position: fixed; width: 38px; height: 38px; border: 1px solid rgba(184,69,69,0.45); border-radius: 50%; pointer-events: none; z-index: 9998; top: 0; left: 0; transition: width .35s, height .35s, border-color .3s, background .3s; will-change: transform; }
+    #cur-dot { position: fixed; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; top: 0; left: 0; will-change: transform; }
+    #cur-ring.expanded { width: 60px; height: 60px; border-color: var(--accent); background: rgba(184,69,69,0.06); }
+
+    nav { position: fixed; inset: 0 0 auto; z-index: 200; display: flex; justify-content: space-between; align-items: center; padding: 2rem 5vw; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(14,14,13,0.86); backdrop-filter: blur(12px); }
+    .nav-back { display: flex; align-items: center; gap: 0.7rem; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(210,210,205,0.88); text-decoration: none; transition: color 0.3s; }
+    .nav-back:hover { color: var(--fg); }
+    .nav-back-arrow { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+    .nav-back:hover .nav-back-arrow { transform: translateX(-4px); }
+    .nav-right { display: flex; align-items: center; gap: 2rem; }
+    .nav-index { font-size: 1rem; letter-spacing: 0.15em; color: rgba(210,210,205,0.72); }
+    .nav-prev, .nav-next { display: flex; align-items: center; gap: 0.6rem; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(210,210,205,0.88); text-decoration: none; transition: color 0.3s; }
+    .nav-prev:hover, .nav-next:hover { color: var(--fg); }
+    .nav-next-arrow { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+    .nav-next:hover .nav-next-arrow { transform: translateX(4px); }
+
+    /* HERO */
+    .cs-hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 120px 5vw 8vh; border-bottom: 1px solid var(--line); }
+    .cs-label { font-size: 1rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 2rem; display: block; opacity: 0; transform: translateY(12px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards; }
+    .cs-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(4rem, 11vw, 11rem); line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 1.5rem; opacity: 0; transform: translateY(60px); filter: blur(4px); animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
+    .cs-subtitle { font-size: clamp(1rem, 1.4vw, 1.2rem); line-height: 1.8; color: var(--muted); max-width: 58ch; margin-bottom: 3rem; opacity: 0; transform: translateY(20px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.45s forwards; }
+    .cs-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; border-top: 1px solid var(--line); padding-top: 2.5rem; opacity: 0; transform: translateY(20px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.6s forwards; }
+    .cs-meta-label { font-size: 1rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.6rem; }
+    .cs-meta-val { font-size: 1.125rem; line-height: 1.6; color: var(--fg); }
+    @keyframes fadeup { to { opacity: 1; transform: none; filter: blur(0); } }
+
+    /* IMAGES */
+    .cs-img { width: 100%; display: block; object-fit: cover; transition: transform 0.9s cubic-bezier(0.16,1,0.3,1); }
+    .cs-img:hover { transform: scale(1.02); }
+    .cs-img-full { border-bottom: 1px solid var(--line); overflow: hidden; }
+    .cs-img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border-bottom: 1px solid var(--line); overflow: hidden; }
+    .cs-img-grid-4 { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; border-bottom: 1px solid var(--line); overflow: hidden; }
+    .cs-img-single { border-bottom: 1px solid var(--line); overflow: hidden; }
+    .cs-img-light { background: #f5f4f0; }
+
+    /* SECTIONS */
+    .cs-section { padding: clamp(5rem, 9vh, 8rem) 5vw; border-bottom: 1px solid var(--line); }
+    .cs-sec-header { display: grid; grid-template-columns: 220px 1fr; gap: 6vw; margin-bottom: 5rem; }
+    .cs-sec-label { font-size: 1rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); padding-top: 0.3rem; }
+    .cs-sec-headline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.15; letter-spacing: -0.02em; }
+    .cs-text-grid { display: grid; grid-template-columns: 220px 1fr; gap: 6vw; }
+    .cs-text-label { font-size: 1rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); padding-top: 0.25rem; }
+    .cs-text-body { font-size: 1.125rem; line-height: 1.95; color: var(--muted); max-width: 68ch; text-wrap: pretty; }
+    .cs-text-body strong { color: var(--fg); font-weight: 400; }
+
+    /* INSIGHT QUOTE */
+    .cs-insight { background: var(--surface); padding: 4rem 5vw; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 220px 1fr; gap: 6vw; align-items: start; }
+    .cs-insight-label { font-size: 1rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); padding-top: 0.3rem; }
+    .cs-insight-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(1.4rem, 2.5vw, 2.1rem); font-weight: 300; line-height: 1.5; }
+    .cs-insight-text em { color: var(--accent); }
+
+    /* STATS BAR */
+    .stats-bar { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid var(--line); }
+    .stat-item { padding: 3rem 5vw; border-right: 1px solid var(--line); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 300; line-height: 1; color: var(--fg); display: block; }
+    .stat-num em { color: var(--accent); font-style: normal; }
+    .stat-lbl { font-size: 1rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); display: block; margin-top: 0.7rem; }
+
+    /* PROCESS STEPS */
+    .cs-process-steps { display: flex; flex-direction: column; gap: 0; margin-top: 3rem; }
+    .cs-proc-step { display: grid; grid-template-columns: 60px 220px 1fr; gap: 3rem; align-items: start; padding: 2.5rem 0; border-bottom: 1px solid var(--line); }
+    .cs-proc-step:last-child { border-bottom: none; }
+    .cs-proc-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.6rem; font-weight: 300; color: rgba(184,69,69,0.72); }
+    .cs-proc-name { font-size: 1rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg); padding-top: 0.2rem; }
+    .cs-proc-desc { font-size: 1.125rem; line-height: 1.85; color: var(--muted); }
+    .cs-proc-desc strong { color: var(--fg); font-weight: 400; }
+    .cs-proc-tag { display: inline-block; font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); border: 1px solid rgba(184,69,69,0.3); padding: 0.2rem 0.6rem; margin-bottom: 0.8rem; }
+
+    /* 4 CUE TYPE CARDS */
+    .cue-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 3rem; }
+    .cue-card { background: var(--surface); padding: 3rem; display: flex; flex-direction: column; gap: 1.5rem; transition: background 0.3s; overflow: hidden; }
+    .cue-card:hover { background: #1a1a18; }
+    .cue-card-img-wrap { margin: -3rem -3rem 0; overflow: hidden; flex-shrink: 0; }
+    .cue-card-img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; background: #0a0a09; transition: transform 0.9s cubic-bezier(0.16,1,0.3,1); }
+    .cue-card:hover .cue-card-img { transform: scale(1.04); }
+    .cue-card-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.1rem; color: rgba(184,69,69,0.7); margin-top: 0.5rem; }
+    .cue-card-name { font-size: 1.125rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fg); font-weight: 500; }
+    .cue-card-def { font-size: 1rem; line-height: 1.75; color: var(--muted); }
+    .cue-verdict { font-size: 1rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+
+    /* FINDINGS TABLE */
+    .findings-table { width: 100%; border-collapse: collapse; margin-top: 3rem; }
+    .findings-table th { font-size: 1rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); font-weight: 400; text-align: left; padding: 1rem 1.5rem 1.2rem; border-bottom: 1px solid var(--line); }
+    .findings-table td { font-size: 1.125rem; padding: 1.4rem 1.5rem; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: middle; }
+    .findings-table tr:last-child td { border-bottom: none; }
+    .findings-table .cue-name { color: var(--fg); font-weight: 400; }
+    .findings-table .num-high { color: var(--fg); font-weight: 500; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.4rem; }
+    .findings-table .num-low { color: var(--muted); font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.4rem; }
+    .findings-table .zone-badge { display: inline-block; font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; padding: 0.25rem 0.65rem; border: 1px solid; }
+    .zone-optimal { color: var(--accent); border-color: rgba(184,69,69,0.4); }
+    .zone-useful { color: rgba(138,138,134,0.85); border-color: rgba(138,138,134,0.3); }
+    .zone-expert { color: rgba(138,138,134,0.65); border-color: rgba(138,138,134,0.2); }
+    .zone-confusing { color: rgba(138,138,134,0.5); border-color: rgba(138,138,134,0.15); }
+
+    /* GIOIA METHODOLOGY FLOW */
+    .gioia-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 2rem; align-items: start; margin-top: 4rem; }
+    .gioia-step { display: flex; flex-direction: column; gap: 1.2rem; }
+    .gioia-step-head { display: flex; align-items: baseline; gap: 0.8rem; }
+    .gioia-step-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 2rem; font-weight: 300; color: rgba(184,69,69,0.6); line-height: 1; }
+    .gioia-step-title { font-size: 1rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg); }
+    .gioia-step-desc { font-size: 0.95rem; line-height: 1.75; color: var(--muted); }
+    .gioia-codes { display: flex; flex-direction: column; gap: 0.45rem; padding-top: 0.4rem; }
+    .gioia-code { font-size: 0.9rem; line-height: 1.5; color: rgba(138,138,134,0.65); padding: 0.35rem 0.7rem; background: rgba(138,138,134,0.05); font-style: italic; }
+    .gioia-code.theme { color: var(--fg); font-style: normal; background: rgba(138,138,134,0.09); }
+    .gioia-code.dimension { color: var(--accent); font-style: normal; background: rgba(184,69,69,0.06); }
+    .gioia-arrow { font-size: 1.5rem; color: rgba(184,69,69,0.35); padding-top: 3.2rem; align-self: start; }
+    .gioia-scroll-wrap { border-bottom: 1px solid var(--line); overflow: hidden; }
+    .gioia-scroll-hint { display: flex; justify-content: flex-end; align-items: center; gap: 0.5rem; padding: 0.8rem 5vw; border-bottom: 1px solid var(--line); }
+    .gioia-scroll-hint span { font-size: 0.85rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+    .gioia-scroll { display: flex; overflow-x: auto; gap: 1.5rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; cursor: grab; user-select: none; padding: 3rem 5vw; }
+    .gioia-scroll::-webkit-scrollbar { display: none; }
+    .gioia-scroll.grabbing { cursor: grabbing; }
+    .gioia-scroll-item { flex: 0 0 min(46vw, 540px); scroll-snap-align: start; display: flex; flex-direction: column; border: 1px solid var(--line); overflow: hidden; }
+    .gioia-scroll-item:last-child { flex: 0 0 min(46vw, 540px); }
+    .gioia-scroll-item .cs-img-light { flex: 1; }
+    .gioia-scroll-label { padding: 0.75rem 1rem; background: var(--surface); border-top: 1px solid var(--line); font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); flex-shrink: 0; }
+
+    /* GIOIA CUE FINDINGS */
+    .gioia-cue-findings { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .gioia-cue-item { background: var(--surface); padding: 2rem; display: flex; flex-direction: column; gap: 0.8rem; }
+    .gioia-cue-name { font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+    .gioia-cue-body { font-size: 1rem; line-height: 1.8; color: var(--muted); }
+    .gioia-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; }
+    .gioia-bullets li { font-size: 1.05rem; line-height: 1.8; color: var(--muted); padding-left: 1.2rem; position: relative; }
+    .gioia-bullets li::before { content: '—'; position: absolute; left: 0; color: rgba(184,69,69,0.5); }
+    .gioia-bullets li strong { color: var(--fg); font-weight: 400; }
+    .gioia-flow-caption { font-size: 0.85rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); margin-top: 4rem; margin-bottom: 1.5rem; }
+    .gioia-scroll-title { display: block; font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+    .gioia-scroll-insight { display: block; font-size: 0.8rem; line-height: 1.5; color: rgba(138,138,134,0.68); margin-top: 0.25rem; font-style: italic; }
+
+    /* BEGINNERS VS EXPERTS COMPARISON */
+    .bve-comparison { margin-top: 3rem; }
+    .bve-head { display: grid; grid-template-columns: 170px 1fr 1fr; gap: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+    .bve-head span { font-size: 0.85rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); }
+    .bve-row { display: grid; grid-template-columns: 170px 1fr 1fr; gap: 2rem; align-items: center; padding: 1.8rem 0; border-bottom: 1px solid var(--line); }
+    .bve-row:last-child { border-bottom: none; }
+    .bve-cue-n { font-size: 1rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg); }
+    .bve-bar-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .bve-bar-row { display: flex; align-items: center; gap: 0.8rem; }
+    .bve-track { flex: 1; height: 3px; background: var(--line); }
+    .bve-fill { height: 100%; background: var(--fg); opacity: 0.55; }
+    .bve-bar-val { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.1rem; color: var(--fg); white-space: nowrap; min-width: 36px; }
+    .bve-expert-cell { display: flex; flex-direction: column; gap: 0.5rem; }
+    .bve-expert-badge { display: inline-flex; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.2rem 0.6rem; border: 1px solid; width: fit-content; }
+    .bve-expert-badge.aligned { color: var(--fg); border-color: rgba(138,138,134,0.35); }
+    .bve-expert-badge.divergent { color: var(--accent); border-color: rgba(184,69,69,0.45); }
+    .bve-expert-badge.tolerated { color: rgba(138,138,134,0.75); border-color: rgba(138,138,134,0.25); }
+    .bve-expert-note { font-size: 0.9rem; line-height: 1.6; color: var(--muted); }
+
+    /* DYNAMIC BALANCE MODEL */
+    .balance-model { position: relative; width: 100%; aspect-ratio: 4/3; max-width: 760px; margin: 3rem auto 0; overflow: hidden; }
+    .balance-quad-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; width: 100%; height: 100%; gap: 2px; }
+    .balance-quad { padding: 1.8rem; display: flex; flex-direction: column; justify-content: flex-end; position: relative; }
+    .bq-optimal { background: rgba(184,69,69,0.08); border: 1px solid rgba(184,69,69,0.2); }
+    .bq-overload { background: rgba(138,138,134,0.04); border: 1px solid rgba(138,138,134,0.1); }
+    .bq-ineffective { background: rgba(138,138,134,0.04); border: 1px solid rgba(138,138,134,0.1); }
+    .bq-confusing { background: rgba(138,138,134,0.04); border: 1px solid rgba(138,138,134,0.1); }
+    .bq-zone { font-size: 0.85rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+    .bq-zone.accent { color: var(--accent); }
+    .bq-desc { font-size: 1rem; line-height: 1.5; color: rgba(138,138,134,0.5); }
+    .bq-point { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+    .bq-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+    .bq-dot.dim { background: var(--fg); opacity: 0.5; }
+    .bq-point-label { font-size: 0.85rem; letter-spacing: 0.12em; white-space: nowrap; color: var(--fg); }
+    .balance-axis-x { display: flex; justify-content: space-between; padding: 0.8rem 0 0; }
+    .balance-axis-y { position: absolute; left: -3.5rem; top: 0; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; }
+    .axis-label { font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+    .balance-wrapper { position: relative; }
+    .axis-title-x { text-align: center; font-size: 0.85rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-top: 1rem; }
+    .axis-title-y { position: absolute; left: 0; top: 50%; transform: translateY(-50%) rotate(-90deg); font-size: 0.85rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); white-space: nowrap; transform-origin: center; }
+
+    /* TAKEAWAYS */
+    .cs-takeaways { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; }
+    .cs-take-item { display: flex; flex-direction: column; gap: 1.2rem; }
+    .cs-take-title { font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+    .cs-take-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+    .cs-take-list li { font-size: 1.125rem; line-height: 1.8; color: var(--muted); padding-left: 1.2rem; position: relative; }
+    .cs-take-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent); opacity: 0.5; }
+    .cs-take-list li strong { color: var(--fg); font-weight: 400; }
+
+    /* NEXT */
+    .cs-next { border-top: 1px solid var(--line); padding: 6vh 5vw; display: flex; justify-content: space-between; align-items: center; text-decoration: none; transition: background 0.4s; }
+    .cs-next:hover { background: var(--surface); }
+    .cs-next-label { font-size: 1rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem; display: block; }
+    .cs-next-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 300; letter-spacing: -0.02em; line-height: 1; color: var(--fg); transition: letter-spacing 0.4s cubic-bezier(0.16,1,0.3,1); }
+    .cs-next:hover .cs-next-name { letter-spacing: 0.01em; }
+    .cs-next-arrow { font-size: 3rem; color: var(--accent); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
+    .cs-next:hover .cs-next-arrow { transform: translateX(12px); }
+
+    .reveal { opacity: 0; transform: translateY(24px); filter: blur(4px); transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1), filter 0.85s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.in { opacity: 1; transform: none; filter: blur(0); }
+
+    footer { padding: 2.5vh 5vw; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 1rem; letter-spacing: 0.1em; color: rgba(138,138,134,0.28); }
+
+    @media (max-width: 767px) {
+      body { cursor: auto; }
+      #cur-ring, #cur-dot { display: none; }
+      nav { padding: 1rem 4vw; align-items: flex-start; gap: .75rem; }
+      .nav-right { gap: .8rem; flex-wrap: wrap; justify-content: flex-end; }
+      .nav-prev, .nav-next, .nav-back { font-size: 1rem; letter-spacing: .14em; }
+      .cs-hero { padding: 96px 4vw 6vh; }
+      .cs-title { font-size: clamp(3rem,16vw,5rem); }
+      .cs-meta { grid-template-columns: 1fr 1fr; gap: 1rem; padding-top: 1.5rem; }
+      .stats-bar { grid-template-columns: 1fr 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--line); }
+      .cs-section { padding: 7vh 4vw; }
+      .cs-sec-header, .cs-text-grid, .cs-insight { grid-template-columns: 1fr; gap: 1.2rem; }
+      .cs-sec-header { margin-bottom: 2.2rem; }
+      .cs-text-body, .cs-proc-desc { font-size: 1.125rem; line-height: 1.75; }
+      .cs-proc-step { grid-template-columns: 32px 1fr; gap: .8rem 1rem; padding: 1.2rem 0; }
+      .cs-proc-name, .cs-proc-desc { grid-column: 2; }
+      .cue-grid, .cs-takeaways { grid-template-columns: 1fr; gap: 2px; }
+      .cs-img-grid { grid-template-columns: 1fr; }
+      .gioia-scroll { padding: 2rem 4vw; gap: 1rem; }
+      .gioia-scroll-item { flex: 0 0 80vw; }
+      .gioia-scroll-item:last-child { flex: 0 0 80vw; }
+      .balance-wrapper { padding-left: 0; }
+      .balance-axis-y { display: none; }
+      .axis-title-y { display: none; }
+      .balance-model { aspect-ratio: 1/1; max-width: 100%; }
+      .balance-quad { padding: 0.8rem; }
+      .bq-zone { font-size: 0.7rem; letter-spacing: 0.12em; }
+      .bq-desc { font-size: 0.75rem; line-height: 1.4; }
+      .bq-point-label { font-size: 0.7rem; white-space: normal; text-align: center; max-width: 56px; }
+      .bve-head { grid-template-columns: 1fr; gap: 0.5rem; }
+      .bve-row { grid-template-columns: 1fr; gap: 0.8rem; padding: 1.2rem 0; }
+      .gioia-flow { grid-template-columns: 1fr; }
+      .gioia-arrow { display: none; }
+      .gioia-cue-findings { grid-template-columns: 1fr; }
+      .gioia-caption { grid-template-columns: 1fr; }
+      .cs-next { padding: 5vh 4vw; align-items: flex-end; }
+      .cs-next-arrow { font-size: 2rem; }
+      footer { padding: 2vh 4vw; flex-direction: column; gap: .45rem; align-items: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur-ring"></div>
+  <div id="cur-dot"></div>
+
+  <nav>
+    <a class="nav-back" href="index.html"><span class="nav-back-arrow">←</span> All Projects</a>
+    <div class="nav-right">
+      <span class="nav-index">02 / 06</span>
+      <a class="nav-prev" href="faintv.html">← FainTV</a>
+      <a class="nav-next" href="genebook.html">Next <span class="nav-next-arrow">→</span></a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="cs-hero">
+    <span class="cs-label">02 — UX Research · Mixed Methods · Goldsmiths MSc · 2025</span>
+    <h1 class="cs-title">Visual Cues Study</h1>
+    <p class="cs-subtitle">How visual cues in fitness instructional videos affect beginner motor learning — a three-phase mixed-methods study producing an original design framework.</p>
+    <div class="cs-meta">
+      <div>
+        <span class="cs-meta-label">Role</span>
+        <span class="cs-meta-val">Lead Researcher<br>& Designer</span>
+      </div>
+      <div>
+        <span class="cs-meta-label">Institution</span>
+        <span class="cs-meta-val">Goldsmiths,<br>University of London</span>
+      </div>
+      <div>
+        <span class="cs-meta-label">Duration</span>
+        <span class="cs-meta-val">6 Months<br>MSc Dissertation</span>
+      </div>
+      <div>
+        <span class="cs-meta-label">Methods</span>
+        <span class="cs-meta-val">Survey · Usability Testing<br>Expert Evaluation</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar reveal">
+    <div class="stat-item">
+      <span class="stat-num">58</span>
+      <span class="stat-lbl">Participants · 3 Phases</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">3</span>
+      <span class="stat-lbl">Research Phases</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">4</span>
+      <span class="stat-lbl">Visual Cue Types</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">1</span>
+      <span class="stat-lbl">Design Framework</span>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <section class="cs-section">
+    <div class="cs-text-grid reveal">
+      <span class="cs-text-label">Overview</span>
+      <p class="cs-text-body">
+        This study investigates <strong>how visual cues in fitness instructional videos affect beginners' motor learning</strong>. Through a three-phase approach, I evaluated four types of visual cues — directional, measurement, body highlight, and metaphor — across quantitative performance data and qualitative user insights. The study produced an original design framework: the <strong>Dynamic Balance Model of Cognitive Load and Learning Effectiveness</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Research Gap</span>
+      <h2 class="cs-sec-headline">86% of people use video to learn physical skills. Almost no one has studied whether those videos actually work.</h2>
+    </div>
+    <div class="cs-text-grid reveal">
+      <span class="cs-text-label">The Problem</span>
+      <p class="cs-text-body">
+        Digital learning has fundamentally changed how beginners approach physical training. Over <strong>70% of users turn to YouTube</strong> to learn exercises like squats and stretching. Yet without professional guidance, learners routinely imitate incorrectly — leading to poor form and risk of injury. The deeper problem is systemic: the design of visual cues in existing tutorial videos is <strong>driven by intuition and aesthetic preference, not evidence</strong>. There are no established guidelines for what works.
+      </p>
+    </div>
+    <div class="cs-text-grid reveal" style="margin-top:3rem;">
+      <span class="cs-text-label">Research Context</span>
+      <p class="cs-text-body">
+        Prior research has focused on VR/AR and interactive systems, leaving <strong>video-based motor learning systematically underexplored</strong>. This study addresses that gap by examining four cue types through the lens of Cognitive Load Theory and the theory of external attention.
+      </p>
+    </div>
+  </section>
+
+  <!-- RESEARCH QUESTION -->
+  <div class="cs-insight reveal">
+    <span class="cs-insight-label">Research Question</span>
+    <p class="cs-insight-text">
+      How do four types of visual cues — <em>directional, measurement, body highlighting, and metaphorical</em> — support and improve beginner motor learning in instructional videos?
+    </p>
+  </div>
+
+  <!-- METHODOLOGY -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Methodology</span>
+      <h2 class="cs-sec-headline">A three-phase mixed-methods approach — quantitative and qualitative, beginners and experts.</h2>
+    </div>
+
+    <div class="cs-process-steps reveal">
+      <div class="cs-proc-step">
+        <span class="cs-proc-num">01</span>
+        <span class="cs-proc-name">Online Survey</span>
+        <div class="cs-proc-desc">
+          <span class="cs-proc-tag">38 beginners · Quantitative</span>
+          <p>Distributed to fitness beginners aged 18–40 via social media and university networks. The survey mapped <strong>learning habits, video-watching behaviour, and initial preferences</strong> for six types of visual cues — including skeletal overlays and muscle activation highlights. Participant feedback identified four cue types as the focus for subsequent testing.</p>
+        </div>
+      </div>
+      <div class="cs-proc-step">
+        <span class="cs-proc-num">02</span>
+        <span class="cs-proc-name">Usability Testing</span>
+        <div class="cs-proc-desc">
+          <span class="cs-proc-tag">10 beginners · Observation + Interview</span>
+          <p>Each participant watched <strong>four short squat tutorial videos</strong>, each embedding a different visual cue type. Performance was observed and recorded. Post-task interviews collected qualitative insights on clarity, helpfulness, and perceived cognitive load. A <strong>counterbalanced design</strong> controlled for order effects.</p>
+        </div>
+      </div>
+      <div class="cs-proc-step">
+        <span class="cs-proc-num">03</span>
+        <span class="cs-proc-name">Expert Evaluation</span>
+        <div class="cs-proc-desc">
+          <span class="cs-proc-tag">10 coaches &amp; practitioners · Triangulation</span>
+          <p>Coaches, personal trainers, and experienced exercisers evaluated an optimised video integrating all four cue types. This phase gathered <strong>professional validation and critical perspective</strong>, allowing cross-comparison between novice and expert responses — which revealed significant differences in how cues are perceived across experience levels.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY INSIGHT -->
+  <div class="cs-insight reveal">
+    <span class="cs-insight-label">Core Premise</span>
+    <p class="cs-insight-text">
+      Most instructional video designs are built on <em>intuition and aesthetic preference</em>, not evidence. This study produced a systematic ranking of the four cue types for beginner motor learning in instructional fitness videos — grounding design decisions in observed data rather than assumption.
+    </p>
+  </div>
+
+  <!-- THE EXPERIMENT — 4 CUE TYPES -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">The Experiment</span>
+      <h2 class="cs-sec-headline">Four cue types. One squat. Measured against the same beginners, under the same conditions.</h2>
+    </div>
+
+    <div class="cue-grid reveal">
+      <div class="cue-card">
+        <div class="cue-card-img-wrap">
+          <img class="cue-card-img" src="images/vcue/vcue-01-directional.jpg" alt="Directional cue — green arrows showing downward foot pressure" loading="lazy">
+        </div>
+        <span class="cue-card-num">01</span>
+        <span class="cue-card-name">Directional Cues</span>
+        <p class="cue-card-def">Arrows and motion lines that indicate the direction and path of movement. Immediately communicates where the body should go, reducing ambiguity about force and trajectory.</p>
+        <span class="cue-verdict">Optimal Zone — Best for beginners</span>
+      </div>
+
+      <div class="cue-card">
+        <div class="cue-card-img-wrap">
+          <img class="cue-card-img" src="images/vcue/vcue-03-body-highlight.jpg" alt="Body highlight cue — anatomical muscle labels overlaid on the body" loading="lazy">
+        </div>
+        <span class="cue-card-num">02</span>
+        <span class="cue-card-name">Body Highlight Cues</span>
+        <p class="cue-card-def">Glow or colour emphasis on specific muscle groups or joints during movement. Draws attention to where activation should occur, supporting body awareness and proprioception.</p>
+        <span class="cue-verdict">Useful — Frequency must be controlled</span>
+      </div>
+
+      <div class="cue-card">
+        <div class="cue-card-img-wrap">
+          <img class="cue-card-img" src="images/vcue/vcue-04-metaphor.jpg" alt="Metaphor cue — a virtual chair illustrating the sit-back movement" loading="lazy">
+        </div>
+        <span class="cue-card-num">03</span>
+        <span class="cue-card-name">Metaphor Cues</span>
+        <p class="cue-card-def">Life-like comparisons that translate abstract movement concepts into familiar imagery — e.g. "sit back into an invisible chair." Relies on prior experience to be decoded correctly.</p>
+        <span class="cue-verdict">Expert-first — Novices find harder to interpret</span>
+      </div>
+
+      <div class="cue-card">
+        <div class="cue-card-img-wrap">
+          <img class="cue-card-img" src="images/vcue/vcue-02-measurement.jpg" alt="Measurement cue — 45-degree angle line overlaid on torso lean" loading="lazy">
+        </div>
+        <span class="cue-card-num">04</span>
+        <span class="cue-card-name">Measurement Cues</span>
+        <p class="cue-card-def">Angle lines, degree markers, and depth indicators overlaid on the body. Provides precise numerical reference but requires abstract interpretation that overwhelms beginners.</p>
+        <span class="cue-verdict">Confusing Zone — Precise but overloading</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- GIOIA QUALITATIVE ANALYSIS -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Qualitative Findings</span>
+      <h2 class="cs-sec-headline">Gioia coding made the hierarchy visible: each cue has a different role — and a different cost for beginners.</h2>
+    </div>
+
+    <!-- Block A: What the coding revealed -->
+    <p class="gioia-flow-caption reveal" style="margin-top:0; margin-bottom:1.5rem;">What the coding revealed</p>
+
+    <div class="gioia-cue-findings reveal">
+      <div class="gioia-cue-item">
+        <span class="gioia-cue-name">Directional</span>
+        <p class="gioia-cue-body">Provides real-time movement guidance and corrective feedback. Participants found it immediately clear and lowest in cognitive cost — but weak contrast, missing motion, or poor timing could make the arrow feel like UI chrome rather than instruction.</p>
+      </div>
+      <div class="gioia-cue-item">
+        <span class="gioia-cue-name">Body Highlight</span>
+        <p class="gioia-cue-body">Directs attention to muscle activation and postural control. Useful when timed well; pacing and overuse emerged as key qualitative risks.</p>
+      </div>
+      <div class="gioia-cue-item">
+        <span class="gioia-cue-name">Metaphor</span>
+        <p class="gioia-cue-body">Conveys movement via analogy. Intuitive for participants with prior exercise experience — ambiguous and harder to embody for true beginners.</p>
+      </div>
+      <div class="gioia-cue-item">
+        <span class="gioia-cue-name">Measurement</span>
+        <p class="gioia-cue-body">Offers precision and standards, but abstract numbers are hard to translate into physical movement. High cognitive load with limited beginner payoff.</p>
+      </div>
+    </div>
+
+    <div class="cs-text-grid reveal" style="margin-top:3rem;">
+      <span class="cs-text-label">Cross-cutting</span>
+      <ul class="gioia-bullets">
+        <li>Cues differ in <strong>function</strong>, not only preference rank: guidance vs. attention vs. analogy vs. precision.</li>
+        <li>High precision ≠ beginner-usable: measurement's qualitative reception explains its weak quantitative standing.</li>
+        <li>Design priorities from the coding: visual clarity first; then timing and pacing; avoid stacking too many cue types simultaneously.</li>
+      </ul>
+    </div>
+
+    <!-- Block B: Bridge -->
+    <div class="cs-text-grid reveal" style="margin-top:3rem;">
+      <span class="cs-text-label">From coding to model</span>
+      <p class="cs-text-body">
+        Comparing these roles across the four coding trees — not researcher intuition alone — underpinned the <strong>Dynamic Balance Model</strong> (learning effectiveness × cognitive load). The quantitative scores in the next section align with these qualitative roles.
+      </p>
+    </div>
+
+    <!-- Block C: Method (short) -->
+    <div class="cs-text-grid reveal" style="margin-top:3rem;">
+      <span class="cs-text-label">Method</span>
+      <p class="cs-text-body">
+        Inductive Gioia coding (1st-order concepts → 2nd-order themes → aggregate dimensions) was applied to post-task interview transcripts from beginner usability testing. The analysis ran <strong>per cue</strong>, producing four comparable coding trees. Staying in participant language before theorising ensured the framework reflected what users said, not what was assumed.
+      </p>
+    </div>
+
+    <!-- Block D: 3-step flow (demoted) -->
+    <p class="gioia-flow-caption reveal">How conclusions were derived</p>
+    <div class="gioia-flow reveal">
+      <div class="gioia-step">
+        <div class="gioia-step-head">
+          <span class="gioia-step-num">01</span>
+          <span class="gioia-step-title">1st Order Concepts</span>
+        </div>
+        <p class="gioia-step-desc">Raw participant quotes tagged with emergent descriptive codes — language stays close to the informant's own words</p>
+        <div class="gioia-codes">
+          <span class="gioia-code">"more clear and intuitive"</span>
+          <span class="gioia-code">"easier to understand and implement"</span>
+          <span class="gioia-code">"helps me achieve the right posture"</span>
+          <span class="gioia-code">"specific numbers are of little help"</span>
+        </div>
+      </div>
+      <div class="gioia-arrow">→</div>
+      <div class="gioia-step">
+        <div class="gioia-step-head">
+          <span class="gioia-step-num">02</span>
+          <span class="gioia-step-title">2nd Order Themes</span>
+        </div>
+        <p class="gioia-step-desc">1st order codes grouped by conceptual similarity into researcher-identified theoretical categories</p>
+        <div class="gioia-codes">
+          <span class="gioia-code theme">Clarity &amp; Understanding</span>
+          <span class="gioia-code theme">Practical Application</span>
+          <span class="gioia-code theme">Feature Preference</span>
+          <span class="gioia-code theme">Personal Exercise Experience</span>
+        </div>
+      </div>
+      <div class="gioia-arrow">→</div>
+      <div class="gioia-step">
+        <div class="gioia-step-head">
+          <span class="gioia-step-num">03</span>
+          <span class="gioia-step-title">Aggregate Dimensions</span>
+        </div>
+        <p class="gioia-step-desc">2nd order themes consolidated into high-level theoretical constructs that explain the underlying phenomenon</p>
+        <div class="gioia-codes">
+          <span class="gioia-code dimension">Cognitive Preference</span>
+          <span class="gioia-code dimension">Embodied Experience</span>
+          <span class="gioia-code dimension">Instructional Value</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GIOIA CODING SHEETS — horizontal scroll -->
+  <div class="gioia-scroll-hint">
+    <span>Scroll to explore coding evidence</span>
+    <span>→</span>
+  </div>
+  <div class="gioia-scroll-wrap">
+    <div class="gioia-scroll" id="gioiaScroll">
+      <div class="gioia-scroll-item">
+        <div class="cs-img-light">
+          <img class="cs-img" src="images/vcue/gioia-directional.jpg" alt="Gioia Coding Analysis — Directional Cues" loading="lazy">
+        </div>
+        <div class="gioia-scroll-label">
+          <span class="gioia-scroll-title">01 — Directional Cues</span>
+          <span class="gioia-scroll-insight">Clear real-time guidance — but can be misread as UI chrome</span>
+        </div>
+      </div>
+      <div class="gioia-scroll-item">
+        <div class="cs-img-light">
+          <img class="cs-img" src="images/vcue/gioia-body-highlight.jpg" alt="Gioia Coding Analysis — Body Highlight Cues" loading="lazy">
+        </div>
+        <div class="gioia-scroll-label">
+          <span class="gioia-scroll-title">02 — Body Highlight Cues</span>
+          <span class="gioia-scroll-insight">Focuses attention on form — pacing can overload</span>
+        </div>
+      </div>
+      <div class="gioia-scroll-item">
+        <div class="cs-img-light">
+          <img class="cs-img" src="images/vcue/gioia-metaphor.jpg" alt="Gioia Coding Analysis — Metaphor Cues" loading="lazy">
+        </div>
+        <div class="gioia-scroll-label">
+          <span class="gioia-scroll-title">03 — Metaphor Cues</span>
+          <span class="gioia-scroll-insight">Relatable for some — ambiguous for true beginners</span>
+        </div>
+      </div>
+      <div class="gioia-scroll-item">
+        <div class="cs-img-light">
+          <img class="cs-img" src="images/vcue/gioia-measurement.jpg" alt="Gioia Coding Analysis — Measurement Cues" loading="lazy">
+        </div>
+        <div class="gioia-scroll-label">
+          <span class="gioia-scroll-title">04 — Measurement Cues</span>
+          <span class="gioia-scroll-insight">Precise on paper — hard to embody; high load</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINDINGS TABLE -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Findings</span>
+      <h2 class="cs-sec-headline">A clear hierarchy emerged. Not all visual cues help beginners equally.</h2>
+    </div>
+
+    <div class="cs-text-grid reveal" style="margin-bottom:2.5rem;">
+      <span class="cs-text-label">Data Source</span>
+      <p class="cs-text-body" style="font-size:1rem; line-height:1.8;">
+        These scores align with the qualitative roles above. Scores are Likert mean ratings from post-condition self-report questionnaires (n=10 beginners, Iteration 01 usability testing). Each participant watched all four cue videos in counterbalanced order and rated each immediately after. <strong>Effectiveness</strong> summarises the Preference dimension from dissertation Table 2; <strong>Cognitive Load</strong> summarises the self-reported Mental Effort dimension. Full six-dimension data (Usefulness, Clarity, Distraction, Mental Effort, Engagement, Preference) with standard deviations are reported in dissertation Table 2.
+      </p>
+    </div>
+
+    <table class="findings-table reveal">
+      <thead>
+        <tr>
+          <th>Visual Cue</th>
+          <th>Effectiveness (M)</th>
+          <th>Cognitive Load (M)</th>
+          <th>Zone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="cue-name">Directional Cues</td>
+          <td><span class="num-high">6.5</span></td>
+          <td><span class="num-low">1.5</span></td>
+          <td><span class="zone-badge zone-optimal">Optimal</span></td>
+        </tr>
+        <tr>
+          <td class="cue-name">Body Highlight Cues</td>
+          <td><span class="num-high">4.7</span></td>
+          <td><span class="num-low">4.2</span></td>
+          <td><span class="zone-badge zone-useful">Useful</span></td>
+        </tr>
+        <tr>
+          <td class="cue-name">Metaphor Cues</td>
+          <td><span class="num-low">4.4</span></td>
+          <td><span class="num-low">3.6</span></td>
+          <td><span class="zone-badge zone-expert">Expert-first</span></td>
+        </tr>
+        <tr>
+          <td class="cue-name">Measurement Cues</td>
+          <td><span class="num-low">3.1</span></td>
+          <td><span class="num-high">4.8</span></td>
+          <td><span class="zone-badge zone-confusing">Confusing</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- BEGINNERS VS EXPERTS -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Beginners vs Experts</span>
+      <h2 class="cs-sec-headline">Experience changes everything. The same cue lands completely differently depending on who is watching.</h2>
+    </div>
+    <div class="cs-text-grid reveal">
+      <span class="cs-text-label">Key Divergence</span>
+      <p class="cs-text-body">
+        Expert evaluators rated <strong>metaphor cues significantly higher</strong> than beginners — because they already possess the conceptual framework to decode abstract comparisons. For beginners, the same cue created confusion. Measurement cues showed the opposite pattern: experts valued precision, but beginners were overwhelmed by numbers they couldn't contextualise into physical movement. This divergence confirms that <strong>visual cue design cannot be one-size-fits-all</strong>.
+      </p>
+    </div>
+
+    <div class="bve-comparison reveal">
+      <div class="bve-head">
+        <span>Visual Cue</span>
+        <span>Beginners — Effectiveness (M, usability testing, n=10)</span>
+        <span>Experts — Perceived Reception (qualitative, n=10)</span>
+      </div>
+      <div class="bve-row">
+        <span class="bve-cue-n">Directional</span>
+        <div class="bve-bar-group">
+          <div class="bve-bar-row">
+            <div class="bve-track"><div class="bve-fill" style="width:93%;"></div></div>
+            <span class="bve-bar-val">M = 6.5</span>
+          </div>
+        </div>
+        <div class="bve-expert-cell">
+          <span class="bve-expert-badge aligned">Strongly positive</span>
+          <span class="bve-expert-note">Agreement across groups — unanimously the clearest cue</span>
+        </div>
+      </div>
+      <div class="bve-row">
+        <span class="bve-cue-n">Body Highlight</span>
+        <div class="bve-bar-group">
+          <div class="bve-bar-row">
+            <div class="bve-track"><div class="bve-fill" style="width:67%;"></div></div>
+            <span class="bve-bar-val">M = 4.7</span>
+          </div>
+        </div>
+        <div class="bve-expert-cell">
+          <span class="bve-expert-badge aligned">Moderately positive</span>
+          <span class="bve-expert-note">Experts more precise in feedback — noted timing and overuse risks</span>
+        </div>
+      </div>
+      <div class="bve-row">
+        <span class="bve-cue-n">Metaphor</span>
+        <div class="bve-bar-group">
+          <div class="bve-bar-row">
+            <div class="bve-track"><div class="bve-fill" style="width:63%;"></div></div>
+            <span class="bve-bar-val">M = 4.4</span>
+          </div>
+        </div>
+        <div class="bve-expert-cell">
+          <span class="bve-expert-badge divergent">Expert preferred ↑↑</span>
+          <span class="bve-expert-note">Experts found it intuitive and memorable; beginners found it ambiguous without context</span>
+        </div>
+      </div>
+      <div class="bve-row">
+        <span class="bve-cue-n">Measurement</span>
+        <div class="bve-bar-group">
+          <div class="bve-bar-row">
+            <div class="bve-track"><div class="bve-fill" style="width:44%;"></div></div>
+            <span class="bve-bar-val">M = 3.1</span>
+          </div>
+        </div>
+        <div class="bve-expert-cell">
+          <span class="bve-expert-badge tolerated">Tolerated by experts</span>
+          <span class="bve-expert-note">Experts valued precision; beginners were overwhelmed by numbers without physical reference</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DYNAMIC BALANCE MODEL -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Original Framework</span>
+      <h2 class="cs-sec-headline">The Dynamic Balance Model — plotting visual cues against the tension between learning effectiveness and cognitive cost.</h2>
+    </div>
+    <div class="cs-text-grid reveal">
+      <span class="cs-text-label">The Model</span>
+      <p class="cs-text-body">
+        This study's primary contribution is a two-axis framework for evaluating instructional visual cues. By mapping <strong>Learning Effectiveness</strong> against <strong>Cognitive Load</strong>, the model creates four zones — Optimal, Overload, Ineffective, and Confusing — that provide actionable guidance for video designers. The model also identifies the <strong>Double-Edged Sword Effect</strong>: integrating multiple cues simultaneously increases perceived professionalism but raises cognitive load, potentially undermining learning efficiency.
+      </p>
+    </div>
+
+    <div class="balance-wrapper reveal" style="margin-top: 3rem;">
+      <div class="balance-model">
+        <div class="balance-quad-grid">
+          <!-- Top-left: Optimal (High effectiveness, Low load) -->
+          <div class="balance-quad bq-optimal" style="position:relative;">
+            <div class="bq-zone accent">Optimal Zone</div>
+            <div class="bq-desc">High effectiveness,<br>low cognitive load</div>
+            <!-- Directional cue point -->
+            <div class="bq-point" style="top:30%; left:25%;">
+              <div class="bq-dot"></div>
+              <span class="bq-point-label" style="color:var(--accent);">Directional</span>
+            </div>
+          </div>
+          <!-- Top-right: Overload (High effectiveness, High load) -->
+          <div class="balance-quad bq-overload" style="position:relative;">
+            <div class="bq-zone">Overload Zone</div>
+            <div class="bq-desc">High effectiveness but<br>costly for learners</div>
+          </div>
+          <!-- Bottom-left: Ineffective (Low effectiveness, Low load) -->
+          <div class="balance-quad bq-ineffective" style="position:relative;">
+            <div class="bq-zone">Ineffective Zone</div>
+            <div class="bq-desc">Insufficient to<br>support learning</div>
+          </div>
+          <!-- Bottom-right: Confusing (Low effectiveness, High load) -->
+          <div class="balance-quad bq-confusing" style="position:relative;">
+            <div class="bq-zone">Confusing Zone</div>
+            <div class="bq-desc">Low effectiveness,<br>high cognitive cost</div>
+            <!-- Measurement cue point -->
+            <div class="bq-point" style="bottom:35%; right:20%;">
+              <div class="bq-dot dim"></div>
+              <span class="bq-point-label">Measurement</span>
+            </div>
+          </div>
+        </div>
+        <!-- Body Highlight + Metaphor points positioned at boundaries -->
+        <div class="bq-point" style="position:absolute; top:42%; left:48%; transform:translate(-50%,-50%);">
+          <div class="bq-dot dim"></div>
+          <span class="bq-point-label">Body Highlight</span>
+        </div>
+        <div class="bq-point" style="position:absolute; top:52%; left:58%; transform:translate(-50%,-50%);">
+          <div class="bq-dot dim"></div>
+          <span class="bq-point-label">Metaphor</span>
+        </div>
+      </div>
+      <div class="balance-axis-x">
+        <span class="axis-label">Low</span>
+        <span class="axis-label">High</span>
+      </div>
+      <div class="axis-title-x">Cognitive Load →</div>
+    </div>
+  </section>
+
+  <!-- DOUBLE EDGED SWORD -->
+  <div class="cs-insight reveal">
+    <span class="cs-insight-label">Key Finding</span>
+    <p class="cs-insight-text">
+      The <em>Double-Edged Sword Effect</em>: integrating multiple visual cues simultaneously enhances professionalism and trust — but raises cognitive load and may fragment focus, ultimately reducing overall learning efficiency.
+    </p>
+  </div>
+
+  <!-- DESIGN PRINCIPLES -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Design Principles</span>
+      <h2 class="cs-sec-headline">Eight evidence-based guidelines for instructional video creators.</h2>
+    </div>
+    <div class="cs-takeaways reveal">
+      <div class="cs-take-item">
+        <span class="cs-take-title">Cue Selection</span>
+        <ul class="cs-take-list">
+          <li><strong>Prioritise directional cues</strong> for clear and immediate movement guidance.</li>
+          <li><strong>Use body highlighting</strong> to focus on key body parts — but avoid overuse.</li>
+          <li><strong>Be cautious with measurement cues;</strong> numbers may confuse beginners.</li>
+          <li><strong>Apply metaphorical cues contextually</strong> — they work better for experienced learners.</li>
+        </ul>
+      </div>
+      <div class="cs-take-item">
+        <span class="cs-take-title">Delivery & Structure</span>
+        <ul class="cs-take-list">
+          <li><strong>Ensure timely appearance</strong> of cues at critical movement moments.</li>
+          <li><strong>Keep videos short</strong> (~90 seconds) to match beginner attention and preference.</li>
+          <li><strong>Do not display more than two cue types</strong> simultaneously — cognitive overload risk.</li>
+          <li><strong>Incorporate multiple camera angles</strong> to reduce blind spots and support diverse learner needs.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="cs-section">
+    <div class="cs-sec-header reveal">
+      <span class="cs-sec-label">Reflection</span>
+      <h2 class="cs-sec-headline">What it means to design with evidence, not assumption.</h2>
+    </div>
+    <div class="cs-text-grid reveal">
+      <span class="cs-text-label">As a Researcher</span>
+      <p class="cs-text-body">
+        This project deepened my conviction that <strong>design decisions must be grounded in evidence</strong>. The multi-phase methodology — survey to usability testing to expert evaluation — showed me how much a single method misses, and how triangulation builds credibility. The Gioia coding process transformed raw participant quotes into a structured framework, revealing patterns invisible to intuition.
+      </p>
+    </div>
+    <div class="cs-text-grid reveal" style="margin-top:3rem;">
+      <span class="cs-text-label">As a Designer</span>
+      <p class="cs-text-body">
+        The most surprising finding was the <strong>experience gap</strong>: cues that experts found intuitive were actively confusing to beginners. This reinforced a principle I now carry into every design project — that your own familiarity with a system is the least reliable measure of its usability. Designing for someone who doesn't yet know what you know requires deliberate research, not empathy alone.
+      </p>
+    </div>
+    <div class="cs-text-grid reveal" style="margin-top:3rem;">
+      <span class="cs-text-label">Limitations</span>
+      <p class="cs-text-body">
+        The study has inherent constraints worth acknowledging. The sample sizes were small — 10 beginners for usability testing, 10 experts for evaluation — limiting statistical generalisability. The findings are based on a <strong>single movement (the squat)</strong>, and may not transfer directly to other exercises or motor skill domains. Cognitive load was measured through <strong>self-report scales</strong> rather than physiological methods, introducing subjective bias. Additionally, the controlled research setting differs from real-world video consumption conditions. These constraints are common to early-stage exploratory research and point to productive directions for future work.
+      </p>
+    </div>
+  </section>
+
+  <!-- NEXT PROJECT -->
+  <a class="cs-next" href="genebook.html">
+    <div>
+      <span class="cs-next-label">Next Project</span>
+      <div class="cs-next-name">Health GeneTech</div>
+    </div>
+    <span class="cs-next-arrow">→</span>
+  </a>
+
+  <footer>
+    <span>© 2026 Yu-Hsien (Rowan) Lin</span>
+    <span>Visual Cues Study — 02 / 06</span>
+  </footer>
+
+  <script>
+    const ring = document.getElementById('cur-ring');
+    const dot  = document.getElementById('cur-dot');
+    let mx = -100, my = -100, rx = -100, ry = -100;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = `translate(${mx-2}px,${my-2}px)`;
+    });
+    (function loop() {
+      rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+      ring.style.transform = `translate(${rx-19}px,${ry-19}px)`;
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('a').forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('expanded'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('expanded'));
+    });
+    const gScroll = document.getElementById('gioiaScroll');
+    if (gScroll) {
+      let isDown = false, startX, scrollLeft;
+      gScroll.addEventListener('mousedown', e => { isDown = true; gScroll.classList.add('grabbing'); startX = e.pageX - gScroll.offsetLeft; scrollLeft = gScroll.scrollLeft; });
+      gScroll.addEventListener('mouseleave', () => { isDown = false; gScroll.classList.remove('grabbing'); });
+      gScroll.addEventListener('mouseup', () => { isDown = false; gScroll.classList.remove('grabbing'); });
+      gScroll.addEventListener('mousemove', e => { if (!isDown) return; e.preventDefault(); const x = e.pageX - gScroll.offsetLeft; gScroll.scrollLeft = scrollLeft - (x - startX) * 1.5; });
+    }
+
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
