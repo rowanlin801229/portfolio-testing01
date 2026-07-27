@@ -1746,8 +1746,15 @@
       line-height: 1;
       color: var(--fg);
       display: block;
+      font-variant-numeric: tabular-nums;
     }
     .stat-val .u { color: var(--accent); font-size: 0.6em; vertical-align: super; }
+    .stat-val .stat-arrow {
+      font-style: italic;
+      font-weight: 300;
+      margin: 0 0.08em;
+      color: var(--fg);
+    }
     .stat-lbl {
       display: block;
       font-size: 0.72rem;
@@ -1820,83 +1827,435 @@
       flex-shrink: 0;
     }
 
-    /* ── EXPERIENCE ── */
+    /* ── EXPERIENCE — specialne Selected Work layout (center axis + pin) ── */
     #experience {
-      padding: 10vh 5vw;
-      border-top: none;
-    }
-    #experience .sec-label {
-      font-size: 1rem;
-      letter-spacing: 0.2em;
-      margin-bottom: 2rem;
-    }
-    .exp-item {
-      border-bottom: 1px solid var(--line);
+      --exp-hairline: var(--line);
+      --exp-soft: rgba(74, 74, 72, 0.36);
       position: relative;
-      overflow: hidden;
-      opacity: 0;
-      max-height: 0;
+      border-top: none;
+      padding: 0;
+      background: var(--bg);
     }
-    @keyframes exp-accordion {
-      0% {
-        opacity: 0;
-        max-height: 0;
-        transform: translateY(10px);
-      }
-      100% {
-        opacity: 1;
-        max-height: 180px;
-        transform: translateY(0);
-      }
-    }
-    .exp-item.expand {
-      animation: exp-accordion 0.72s cubic-bezier(0.16,1,0.3,1) forwards;
-    }
-    .exp-inner {
+    .exp-pin {
+      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
+      flex-direction: column;
+      padding: 4.75rem 4vw 2rem;
+      box-sizing: border-box;
+    }
+    .exp-header {
+      flex: 0 0 auto;
+      margin-bottom: clamp(1.25rem, 3vh, 2rem);
+    }
+    .exp-header-top {
+      display: flex;
+      align-items: baseline;
       justify-content: space-between;
-      align-items: center;
-      padding: 2rem 0;
-      gap: 2rem;
+      gap: 1rem;
+      margin-bottom: clamp(1rem, 2.2vh, 1.5rem);
     }
-    .exp-left {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-    .exp-company {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: clamp(1.4rem, 2.5vw, 2.2rem);
-      font-weight: 300;
-      letter-spacing: -0.01em;
-      line-height: 1.1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
-    .exp-sub {
-      font-style: normal;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
+    #experience .exp-kicker {
+      margin: 0;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    #experience .exp-kicker .exp-kicker-num {
+      color: var(--fg);
+      margin-right: 0.15rem;
+    }
+    #experience .exp-kicker .exp-kicker-slash {
+      opacity: 0.45;
+      margin: 0 0.35rem;
+    }
+    .exp-meta {
+      margin: 0;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .exp-meta-value {
+      color: var(--fg);
+      margin-left: 0.45rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+    .exp-header-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 2rem 4vw;
+      align-items: end;
+      padding-bottom: clamp(1rem, 2vh, 1.4rem);
+      border-bottom: none;
+    }
+    .exp-title {
+      margin: 0;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(2.4rem, 5.2vw, 4.1rem);
+      line-height: 0.98;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+    }
+    .exp-title span {
+      display: block;
+    }
+    .exp-lede {
+      margin: 0;
+      max-width: 22rem;
+      justify-self: end;
+      text-align: right;
+      font-size: clamp(0.82rem, 1.1vw, 0.95rem);
+      line-height: 1.55;
       color: var(--muted);
       font-weight: 400;
     }
-    .exp-period {
-      font-size: 0.7rem;
-      letter-spacing: 0.18em;
+
+    .exp-axis-list {
+      --exp-chip-col: 2.35rem;
+      position: relative;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Vertical axis through chip column center (= 50%) */
+    .exp-axis-list::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      border-left: 1px solid var(--exp-hairline);
+      transform: translateX(-0.5px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .exp-axis-item {
+      /* Left content | fixed chip on axis | right content */
+      --exp-gap: 1rem;
+      position: relative;
+      z-index: 1;
+      flex: 1 1 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--exp-chip-col) minmax(0, 1fr);
+      align-items: center;
+      column-gap: 0;
+      border-top: 1px solid var(--exp-hairline);
+      color: var(--exp-soft);
+      cursor: pointer;
+      transition: color 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+    .exp-axis-item:last-child {
+      border-bottom: 1px solid var(--exp-hairline);
+    }
+    /*
+     * Scroll FOCUS (is-active): lighter — bright name, filled chip, role, axis rail.
+     * Mouse HOVER  (is-preview): full expand — + left time brackets, + description, + double lines.
+     * (Swapped vs earlier: expand details are hover, not scroll.)
+     */
+    .exp-axis-item.is-active {
+      color: var(--fg);
+    }
+    .exp-axis-item.is-preview {
+      color: var(--fg);
+      z-index: 4;
+    }
+    /* Double accent hairlines — HOVER only (contained to row; time stays inside) */
+    .exp-axis-item::before,
+    .exp-axis-item::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 0;
+      border-top: 1px solid var(--accent);
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: 50% 50%;
+      pointer-events: none;
+      transition: transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.12s ease;
+      z-index: 2;
+    }
+    .exp-axis-item::before { top: -1px; }
+    .exp-axis-item::after { bottom: -1px; }
+    .exp-axis-item.is-preview::before,
+    .exp-axis-item.is-preview::after {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+    .exp-active-rail {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      border-left: 1px solid var(--accent);
+      transform: translateX(-0.5px);
+      display: none;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .exp-axis-item.is-active > .exp-active-rail,
+    .exp-axis-item.is-preview > .exp-active-rail {
+      display: block;
+    }
+
+    /* LEFT: [brackets | company] — company always in last auto col → names share one edge */
+    .exp-col--left {
+      grid-column: 1;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      column-gap: 1rem;
+      padding: 0.85rem var(--exp-gap) 0.85rem 0.75rem;
+      text-align: right;
+      overflow: hidden; /* keep time inside row / double lines */
+    }
+    /* CENTER: chip only — fixed track, pinned on vertical axis */
+    .exp-col--center {
+      grid-column: 2;
+      width: var(--exp-chip-col);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      padding: 0;
+    }
+    /* RIGHT: role + desc, left-aligned from axis */
+    .exp-col--right {
+      grid-column: 3;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.85rem 0.75rem 0.85rem var(--exp-gap);
+      text-align: left;
+      overflow: hidden;
+    }
+
+    .exp-brackets {
+      grid-column: 1;
+      justify-self: end;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--accent);
+      line-height: 1.35;
+      color: var(--muted);
+      max-width: 12.5rem;
+      max-height: 2.7em;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      white-space: normal;
+      text-align: right;
+      overflow: hidden;
+    }
+    /* Time meta only on HOVER full expand */
+    .exp-axis-item.is-preview .exp-brackets {
+      opacity: 1;
+      color: var(--fg);
+    }
+    .exp-brackets .exp-br {
+      opacity: 0.4;
+    }
+
+    .exp-company-name {
+      grid-column: 2;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.35rem, 2.2vw, 2.05rem);
+      letter-spacing: -0.015em;
+      line-height: 1.12;
+      color: currentColor;
+      text-align: right;
+      white-space: nowrap;
+      transition: font-size 0.3s cubic-bezier(0.22, 0.61, 0.36, 1), font-weight 0.25s ease;
+    }
+    /* Scroll focus: slightly stronger name */
+    .exp-axis-item.is-active .exp-company-name {
       font-weight: 400;
     }
-    .exp-role {
-      font-size: 0.82rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--fg);
-      white-space: nowrap;
+    /* Hover: larger name like specialne expanded row */
+    .exp-axis-item.is-preview .exp-company-name {
       font-weight: 400;
+      font-size: clamp(1.55rem, 2.55vw, 2.35rem);
+    }
+
+    .exp-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.1rem;
+      min-width: 2.1rem;
+      height: 1.4rem;
+      border: 1px solid rgba(184, 69, 69, 0.4);
+      background: var(--bg);
+      color: rgba(184, 69, 69, 0.75);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      box-sizing: border-box;
+      transition: background 0.28s ease, color 0.28s ease, border-color 0.28s ease;
+    }
+    .exp-axis-item.is-active .exp-chip,
+    .exp-axis-item.is-preview .exp-chip {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .exp-axis-role {
+      font-size: 0.66rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: currentColor;
+      line-height: 1.3;
+    }
+    .exp-axis-desc {
+      font-size: 0.88rem;
+      line-height: 1.45;
+      color: var(--muted);
+      max-width: 18rem;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      transform: translateY(4px);
+      transition: opacity 0.28s ease, transform 0.28s ease, max-height 0.35s ease;
+    }
+    /* Description only on HOVER */
+    .exp-axis-item.is-preview .exp-axis-desc {
+      opacity: 1;
+      max-height: 4rem;
+      transform: none;
+    }
+    .exp-axis-item.is-active .exp-axis-role,
+    .exp-axis-item.is-preview .exp-axis-role {
+      color: var(--fg);
+    }
+
+    /* Mobile / reduced motion */
+    @media (max-width: 899px), (prefers-reduced-motion: reduce) {
+      .exp-pin {
+        min-height: 0;
+        padding: 9vh 5vw 7vh;
+      }
+      .exp-header-body {
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+        align-items: start;
+      }
+      .exp-lede {
+        justify-self: start;
+        text-align: left;
+        max-width: none;
+      }
+      .exp-title {
+        font-size: clamp(2rem, 8vw, 2.8rem);
+      }
+      .exp-axis-list {
+        --exp-chip-col: 2.25rem;
+      }
+      .exp-axis-list::before {
+        left: 1.05rem;
+        transform: none;
+      }
+      .exp-axis-item {
+        grid-template-columns: var(--exp-chip-col) minmax(0, 1fr);
+        grid-template-rows: auto auto;
+        flex: none;
+        min-height: 0;
+        color: var(--fg);
+        padding: 1.1rem 0;
+        cursor: default;
+        row-gap: 0.35rem;
+      }
+      .exp-active-rail {
+        left: 1.05rem;
+        transform: none;
+      }
+      .exp-col--center {
+        grid-column: 1;
+        grid-row: 1;
+        width: var(--exp-chip-col);
+        align-self: start;
+        padding-top: 0.25rem;
+      }
+      .exp-col--left {
+        grid-column: 2;
+        grid-row: 1;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        text-align: left;
+        gap: 0.3rem;
+        padding: 0 0 0 0.75rem;
+      }
+      .exp-col--right {
+        grid-column: 2;
+        grid-row: 2;
+        padding: 0 0 0 0.75rem;
+      }
+      .exp-col--left {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+        padding: 0 0 0 0.75rem;
+        text-align: left;
+      }
+      .exp-brackets {
+        opacity: 1 !important;
+        max-width: none;
+        max-height: none;
+        text-align: left;
+        justify-self: start;
+        order: 2;
+        color: var(--fg);
+      }
+      .exp-company-name {
+        order: 1;
+        text-align: left;
+        white-space: normal;
+        font-size: clamp(1.3rem, 5.5vw, 1.7rem);
+      }
+      .exp-axis-item.is-active .exp-company-name,
+      .exp-axis-item.is-preview .exp-company-name {
+        font-size: clamp(1.3rem, 5.5vw, 1.7rem);
+      }
+      .exp-axis-desc {
+        opacity: 1 !important;
+        max-height: none !important;
+        transform: none !important;
+      }
+      .exp-axis-item.is-active .exp-chip,
+      .exp-axis-item.is-preview .exp-chip {
+        background: var(--accent);
+        color: #fff;
+      }
+      .exp-axis-item::before,
+      .exp-axis-item::after {
+        display: none;
+      }
     }
 
     /* ── CONTACT ── */
@@ -1985,9 +2344,12 @@
 
 
       #work,
-      #impact,
-      #experience {
+      #impact {
         padding: 9vh 4vw;
+      }
+      /* Experience uses .exp-pin padding — keep section shell clean for ScrollTrigger pin */
+      #experience {
+        padding: 0;
       }
       #about {
         padding: 10vh 4vw;
@@ -2018,12 +2380,7 @@
         gap: 1.4rem;
       }
 
-      .exp-inner {
-        align-items: flex-start;
-      }
-      .exp-role {
-        font-size: 0.72rem;
-      }
+
 
       .ct-headline {
         font-size: clamp(3rem, 11vw, 6rem);
@@ -2219,16 +2576,21 @@
       #work,
       #about,
       #impact,
-      #experience,
       #contact {
         padding-left: 4vw;
         padding-right: 4vw;
       }
       #work,
-      #impact,
-      #experience {
+      #impact {
         padding-top: 7vh;
         padding-bottom: 7vh;
+      }
+      #experience {
+        padding: 0;
+      }
+      #experience .exp-pin {
+        padding-left: 4vw;
+        padding-right: 4vw;
       }
       #about {
         grid-template-columns: 1fr;
@@ -2312,22 +2674,7 @@
         font-size: clamp(2.2rem, 12vw, 3rem);
       }
 
-      .exp-inner {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.8rem;
-        padding: 1.3rem 0;
-      }
-      .exp-company {
-        font-size: clamp(1.15rem, 6.5vw, 1.65rem);
-      }
-      .exp-period,
-      .exp-sub {
-        font-size: 0.7rem;
-      }
-      .exp-role {
-        font-size: 0.58rem;
-      }
+
 
       #contact {
         padding-top: 9vh;
@@ -2413,7 +2760,7 @@
         <li><a href="#work">Projects</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#impact">Impact</a></li>
-        <li><a href="#experience">Experience</a></li>
+        <li><a href="#experience">Selected Work</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
       <div class="nav-lang" role="group" aria-label="Language">
@@ -2747,78 +3094,122 @@
       <h2 class="sec-label reveal">Impact</h2>
       <div class="stats-grid-full reveal" style="text-align: center">
         <div class="stat-block">
-          <span class="stat-val" style="font-size: 70px">1M<span class="u">+</span></span>
+          <span class="stat-val" style="font-size: 70px"><span class="stat-num" data-count="1">1</span>M<span class="u">+</span></span>
           <span class="stat-lbl" data-i18n="impact.stat1.label">Users Reached</span>
           <span class="stat-lbl stat-note" data-i18n="impact.stat1.note">FainTV · mobile, tablet, web, TV</span>
         </div>
         <div class="stat-block">
-          <span class="stat-val" style="font-size: 70px">45<span class="u">%</span></span>
+          <span class="stat-val" style="font-size: 70px"><span class="stat-num" data-count="45">45</span><span class="u">%</span></span>
           <span class="stat-lbl" data-i18n="impact.stat2.label">Revenue Growth</span>
           <span class="stat-lbl stat-note" data-i18n="impact.stat2.note">User journey and onboarding redesign</span>
         </div>
         <div class="stat-block">
-          <span class="stat-val" style="font-size: 70px">40<span class="u">%</span></span>
+          <span class="stat-val" style="font-size: 70px"><span class="stat-num" data-count="40">40</span><span class="u">%</span></span>
           <span class="stat-lbl" data-i18n="impact.stat3.label">Bounce Rate Reduction</span>
           <span class="stat-lbl stat-note" data-i18n="impact.stat3.note">Responsive website restructure</span>
         </div>
         <div class="stat-block">
-          <span class="stat-val" style="font-size: 55px">30→80<span class="u">%</span></span>
+          <span class="stat-val" style="font-size: 55px"><span class="stat-num" data-count="30">30</span><span class="stat-arrow" aria-hidden="true">→</span><span class="stat-num" data-count="80">80</span><span class="u">%</span></span>
           <span class="stat-lbl" data-i18n="impact.stat4.label">Task Completion Rate</span>
           <span class="stat-lbl stat-note" data-i18n="impact.stat4.note">Voice UI for elderly TV users</span>
         </div>
       </div>
     </section>
 
-    <!-- EXPERIENCE -->
-    <section id="experience">
-      <h2 class="sec-label reveal">Work Experience</h2>
-      <ul class="exp-list">
-        <li class="exp-item">
-          <div class="exp-inner">
-            <div class="exp-left">
-              <span class="exp-company"><span data-i18n="exp.company1">Global Social Innovators</span><span class="exp-sub">London, UK</span></span>
-              <span class="exp-period" data-i18n="exp.period1">2025 — Present</span>
-            </div>
-            <span class="exp-role" data-i18n="exp.role1">UI/UX Designer</span>
+    <!-- EXPERIENCE — specialne center-axis + pin lock -->
+    <section id="experience" data-exp-axis>
+      <div class="exp-pin">
+        <header class="exp-header">
+          <div class="exp-header-top">
+            <p class="exp-kicker">
+              <span class="exp-kicker-num">04</span><span class="exp-kicker-slash" aria-hidden="true">/</span>Selected Work
+            </p>
+            <p class="exp-meta">
+              <span data-exp-meta-label>Active</span>
+              <span class="exp-meta-value" data-exp-meta-value>01 / 05</span>
+            </p>
           </div>
-        </li>
-        <li class="exp-item">
-          <div class="exp-inner">
-            <div class="exp-left">
-              <span class="exp-company"><span data-i18n="exp.company2">Self-employed</span><span class="exp-sub">London, UK</span></span>
-              <span class="exp-period" data-i18n="exp.period2">2021 — Present</span>
-            </div>
-            <span class="exp-role" data-i18n="exp.role2">Product Design Consultant</span>
+          <div class="exp-header-body">
+            <h2 class="exp-title">
+              <span>Selected work.</span>
+            </h2>
+            <p class="exp-lede">Roles across product, interface and multi-platform systems — London and Taipei.</p>
           </div>
-        </li>
-        <li class="exp-item">
-          <div class="exp-inner">
-            <div class="exp-left">
-              <span class="exp-company"><span data-i18n="exp.company3">Intersense Tech.</span><span class="exp-sub">Taipei, Taiwan</span></span>
-              <span class="exp-period" data-i18n="exp.period3">2020 — 2021</span>
+        </header>
+
+        <ol class="exp-axis-list" aria-label="Selected work">
+          <li class="exp-axis-item is-active" data-exp-item>
+            <span class="exp-active-rail" aria-hidden="true"></span>
+            <div class="exp-col exp-col--left">
+              <span class="exp-brackets"><span class="exp-br">[</span> <span data-i18n="exp.period1">2025 — Present</span> · London, UK <span class="exp-br">]</span></span>
+              <span class="exp-company-name" data-i18n="exp.company1">Global Social Innovators</span>
             </div>
-            <span class="exp-role" data-i18n="exp.role3">Lead UI Designer</span>
-          </div>
-        </li>
-        <li class="exp-item">
-          <div class="exp-inner">
-            <div class="exp-left">
-              <span class="exp-company"><span data-i18n="exp.company4">Tones Design Ltd.</span><span class="exp-sub">Taipei, Taiwan</span></span>
-              <span class="exp-period" data-i18n="exp.period4">2019 — 2020</span>
+            <div class="exp-col exp-col--center">
+              <span class="exp-chip" aria-hidden="true">01</span>
             </div>
-            <span class="exp-role" data-i18n="exp.role4">Product Designer</span>
-          </div>
-        </li>
-        <li class="exp-item">
-          <div class="exp-inner">
-            <div class="exp-left">
-              <span class="exp-company"><span data-i18n="exp.company5">Hawsing Co., Ltd.</span><span class="exp-sub">Taipei, Taiwan</span></span>
-              <span class="exp-period" data-i18n="exp.period5">2018 — 2019</span>
+            <div class="exp-col exp-col--right">
+              <span class="exp-axis-role" data-i18n="exp.role1">UI/UX Designer</span>
+              <span class="exp-axis-desc">Product design for social innovation platforms.</span>
             </div>
-            <span class="exp-role" data-i18n="exp.role5">UI/UX Designer</span>
-          </div>
-        </li>
-      </ul>
+          </li>
+          <li class="exp-axis-item" data-exp-item>
+            <span class="exp-active-rail" aria-hidden="true"></span>
+            <div class="exp-col exp-col--left">
+              <span class="exp-brackets"><span class="exp-br">[</span> <span data-i18n="exp.period2">2021 — Present</span> · London, UK <span class="exp-br">]</span></span>
+              <span class="exp-company-name" data-i18n="exp.company2">Self-employed</span>
+            </div>
+            <div class="exp-col exp-col--center">
+              <span class="exp-chip" aria-hidden="true">02</span>
+            </div>
+            <div class="exp-col exp-col--right">
+              <span class="exp-axis-role" data-i18n="exp.role2">Product Design Consultant</span>
+              <span class="exp-axis-desc">Independent product and interface consulting.</span>
+            </div>
+          </li>
+          <li class="exp-axis-item" data-exp-item>
+            <span class="exp-active-rail" aria-hidden="true"></span>
+            <div class="exp-col exp-col--left">
+              <span class="exp-brackets"><span class="exp-br">[</span> <span data-i18n="exp.period3">2020 — 2021</span> · Taipei, Taiwan <span class="exp-br">]</span></span>
+              <span class="exp-company-name" data-i18n="exp.company3">Intersense Tech.</span>
+            </div>
+            <div class="exp-col exp-col--center">
+              <span class="exp-chip" aria-hidden="true">03</span>
+            </div>
+            <div class="exp-col exp-col--right">
+              <span class="exp-axis-role" data-i18n="exp.role3">Lead UI Designer</span>
+              <span class="exp-axis-desc">Led UI systems across core product surfaces.</span>
+            </div>
+          </li>
+          <li class="exp-axis-item" data-exp-item>
+            <span class="exp-active-rail" aria-hidden="true"></span>
+            <div class="exp-col exp-col--left">
+              <span class="exp-brackets"><span class="exp-br">[</span> <span data-i18n="exp.period4">2019 — 2020</span> · Taipei, Taiwan <span class="exp-br">]</span></span>
+              <span class="exp-company-name" data-i18n="exp.company4">Tones Design Ltd.</span>
+            </div>
+            <div class="exp-col exp-col--center">
+              <span class="exp-chip" aria-hidden="true">04</span>
+            </div>
+            <div class="exp-col exp-col--right">
+              <span class="exp-axis-role" data-i18n="exp.role4">Product Designer</span>
+              <span class="exp-axis-desc">End-to-end product design with brand systems.</span>
+            </div>
+          </li>
+          <li class="exp-axis-item" data-exp-item>
+            <span class="exp-active-rail" aria-hidden="true"></span>
+            <div class="exp-col exp-col--left">
+              <span class="exp-brackets"><span class="exp-br">[</span> <span data-i18n="exp.period5">2018 — 2019</span> · Taipei, Taiwan <span class="exp-br">]</span></span>
+              <span class="exp-company-name" data-i18n="exp.company5">Hawsing Co., Ltd.</span>
+            </div>
+            <div class="exp-col exp-col--center">
+              <span class="exp-chip" aria-hidden="true">05</span>
+            </div>
+            <div class="exp-col exp-col--right">
+              <span class="exp-axis-role" data-i18n="exp.role5">UI/UX Designer</span>
+              <span class="exp-axis-desc">UI/UX for digital product experiences.</span>
+            </div>
+          </li>
+        </ol>
+      </div>
     </section>
 
     <!-- CONTACT -->
@@ -5157,28 +5548,266 @@
     })();
 
 
-    /* ── EXPERIENCE ACCORDION ENTRANCE ── */
+    /* ── IMPACT COUNT-UP ── */
     (function () {
-      const expSection = document.getElementById('experience');
-      if (!expSection) return;
-      const items = expSection.querySelectorAll('.exp-item');
-      let triggered = false;
+      const section = document.getElementById('impact');
+      if (!section) return;
+      const nums = section.querySelectorAll('.stat-num[data-count]');
+      if (!nums.length) return;
 
-      const io = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-          if (e.isIntersecting && !triggered) {
-            triggered = true;
-            items.forEach((item, index) => {
-              setTimeout(() => {
-                item.classList.add('expand');
-              }, index * 170);
-            });
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const DURATION = 1400;
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function setFinal(el) {
+        const end = Number(el.dataset.count) || 0;
+        el.textContent = String(Math.round(end));
+      }
+
+      function displayValue(end, eased) {
+        if (eased <= 0) return '0';
+        if (eased >= 1) return String(Math.round(end));
+        // Small targets (1M) would stick on 0 for half the ease curve with pure rounding
+        if (end <= 3) {
+          return String(Math.min(end, Math.max(1, Math.round(end * eased))));
+        }
+        return String(Math.round(end * eased));
+      }
+
+      function animateOne(el) {
+        if (el.dataset.done === '1') return;
+        el.dataset.done = '1';
+        const end = Number(el.dataset.count) || 0;
+        if (reduce.matches) {
+          setFinal(el);
+          return;
+        }
+        const t0 = performance.now();
+        el.textContent = '0';
+        function tick(now) {
+          const p = Math.min(1, (now - t0) / DURATION);
+          const eased = easeOutCubic(p);
+          el.textContent = displayValue(end, eased);
+          if (p < 1) requestAnimationFrame(tick);
+          else setFinal(el);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      function runAll() {
+        nums.forEach(animateOne);
+      }
+
+      if (reduce.matches) {
+        nums.forEach(setFinal);
+        return;
+      }
+
+      // Start at 0 so first paint can still show final HTML, then reset before count
+      nums.forEach(function (el) {
+        el.textContent = '0';
+      });
+
+      if (!('IntersectionObserver' in window)) {
+        runAll();
+        return;
+      }
+
+      const io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            runAll();
             io.disconnect();
+          });
+        },
+        { threshold: 0.45 }
+      );
+      io.observe(section);
+    })();
+
+    /* ── EXPERIENCE AXIS (specia1ne Selected Work style) ── */
+    (function () {
+      const section = document.getElementById('experience');
+      if (!section) return;
+      const pin = section.querySelector('.exp-pin');
+      const items = Array.prototype.slice.call(section.querySelectorAll('[data-exp-item]'));
+      const metaLabel = section.querySelector('[data-exp-meta-label]');
+      const metaValue = section.querySelector('[data-exp-meta-value]');
+      if (!pin || !items.length) return;
+
+      const total = items.length;
+      let activeIndex = 0;
+      let st = null;
+      let hoverIndex = -1;
+
+      // Match specialne: pin only when desktop + fine pointer + enough height
+      const mqDesktop = window.matchMedia(
+        '(min-width: 900px) and (min-height: 560px) and (hover: hover) and (pointer: fine)'
+      );
+      const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      function pad(n) {
+        return String(n).padStart(2, '0');
+      }
+
+      function setActive(index, allResolved) {
+        const i = Math.max(0, Math.min(total - 1, index));
+        activeIndex = i;
+        items.forEach(function (item, idx) {
+          const isActive = !allResolved && idx === i;
+          const isResolved = allResolved || idx < i;
+          item.classList.toggle('is-active', isActive || (allResolved && idx === total - 1));
+          item.classList.toggle('is-resolved', isResolved);
+          if (allResolved && idx === total - 1) {
+            item.classList.add('is-active');
           }
         });
-      }, { threshold: 0.1 });
+        if (metaLabel) metaLabel.textContent = allResolved ? 'Resolved' : 'Active';
+        if (metaValue) {
+          metaValue.textContent = allResolved
+            ? pad(total) + ' / ' + pad(total)
+            : pad(i + 1) + ' / ' + pad(total);
+        }
+      }
 
-      io.observe(expSection);
+      function setPreview(index) {
+        hoverIndex = index;
+        items.forEach(function (item, idx) {
+          // Hover can expand any row (including scroll-focused) — full specialne hover look
+          item.classList.toggle('is-preview', index >= 0 && idx === index);
+        });
+      }
+
+      function clearPreview() {
+        hoverIndex = -1;
+        items.forEach(function (item) {
+          item.classList.remove('is-preview');
+        });
+      }
+
+      function killPin() {
+        if (st) {
+          st.kill();
+          st = null;
+        }
+        // unpin leftovers
+        if (typeof ScrollTrigger !== 'undefined') {
+          ScrollTrigger.getAll().forEach(function (t) {
+            if (t.vars && t.vars.id === 'exp-axis-pin') t.kill();
+          });
+        }
+        section.style.height = '';
+        pin.style.position = '';
+        pin.style.top = '';
+        pin.style.width = '';
+      }
+
+      function enableAxis() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+          setActive(0, false);
+          return;
+        }
+        gsap.registerPlugin(ScrollTrigger);
+        killPin();
+
+        // Longer lock distance so the “pinned while scrolling” feel is obvious
+        const scrollLen = Math.round(window.innerHeight * Math.max(3.6, total * 0.95));
+
+        st = ScrollTrigger.create({
+          id: 'exp-axis-pin',
+          trigger: section,
+          start: 'top top',
+          end: '+=' + scrollLen,
+          pin: pin,
+          pinSpacing: true,
+          scrub: 0.45,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: function (self) {
+            const p = self.progress;
+            // Hold first, step through jobs, resolve near the end
+            if (p >= 0.96) {
+              setActive(total - 1, true);
+              return;
+            }
+            const t = Math.min(0.999, Math.max(0, (p - 0.04) / 0.90));
+            const idx = Math.min(total - 1, Math.floor(t * total));
+            setActive(idx, false);
+          },
+          onEnter: function () {
+            section.dataset.expPinned = 'true';
+          },
+          onLeave: function () {
+            section.dataset.expPinned = 'false';
+            setActive(total - 1, true);
+          },
+          onEnterBack: function () {
+            section.dataset.expPinned = 'true';
+          },
+          onLeaveBack: function () {
+            section.dataset.expPinned = 'false';
+            setActive(0, false);
+          }
+        });
+
+        setActive(0, false);
+        ScrollTrigger.refresh();
+      }
+
+      function enableStatic() {
+        killPin();
+        // All open on mobile / reduced motion
+        items.forEach(function (item) {
+          item.classList.add('is-active');
+          item.classList.remove('is-preview', 'is-resolved');
+        });
+        if (metaLabel) metaLabel.textContent = 'Timeline';
+        if (metaValue) metaValue.textContent = pad(total) + ' / ' + pad(total);
+      }
+
+      function syncMode() {
+        if (mqReduce.matches || !mqDesktop.matches) {
+          enableStatic();
+        } else {
+          enableAxis();
+        }
+      }
+
+      // Hover = full expand; scroll focus = lighter highlight (swapped)
+      items.forEach(function (item, idx) {
+        item.addEventListener('pointerenter', function () {
+          if (!mqDesktop.matches || mqReduce.matches) return;
+          setPreview(idx);
+        });
+        item.addEventListener('pointerleave', function () {
+          if (!mqDesktop.matches || mqReduce.matches) return;
+          clearPreview();
+        });
+        item.addEventListener('click', function () {
+          if (!mqDesktop.matches || mqReduce.matches || !st) return;
+          clearPreview();
+          const start = st.start;
+          const end = st.end;
+          const target = start + ((idx + 0.35) / total) * (end - start);
+          window.scrollTo({ top: target, behavior: 'smooth' });
+        });
+      });
+
+      mqDesktop.addEventListener('change', syncMode);
+      mqReduce.addEventListener('change', syncMode);
+      window.addEventListener('load', function () {
+        syncMode();
+        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+      });
+
+      // Wait a frame so layout/fonts settle, then boot
+      requestAnimationFrame(function () {
+        requestAnimationFrame(syncMode);
+      });
     })();
 
     /* ── WORK HOVER PREVIEW ── */
