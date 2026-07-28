@@ -1843,6 +1843,9 @@
       flex-direction: column;
       padding: 4.75rem 4vw 2rem;
       box-sizing: border-box;
+      background: var(--bg);
+      position: relative;
+      z-index: 1;
     }
     .exp-header {
       flex: 0 0 auto;
@@ -5867,6 +5870,14 @@
         syncMode();
         if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
       });
+      // Web fonts (display=swap) can reflow text above this section after `load` fires,
+      // leaving the pin's cached scroll position stale — refresh once fonts settle.
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function () {
+          syncMode();
+          if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+        });
+      }
 
       // Wait a frame so layout/fonts settle, then boot
       requestAnimationFrame(function () {
