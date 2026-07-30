@@ -79,6 +79,14 @@
       var value = t(lang, key);
       if (item) item.dataset.type = value;
     });
+    /* Keep data-name in sync so pin / hover preview never stick to English */
+    document.querySelectorAll('.work-item[data-project]').forEach(function (item) {
+      var slug = item.getAttribute('data-project');
+      if (!slug) return;
+      var nameKey = 'work.' + slug + '.name';
+      var name = t(lang, nameKey);
+      if (name && name !== nameKey) item.dataset.name = name;
+    });
   }
 
   function applyTranslations(lang) {
@@ -148,7 +156,8 @@
     applyTranslations(initial);
   }
 
-  fetch('translations.json')
+  /* Cache-bust so new work.* keys are not stuck on an old translations.json */
+  fetch('translations.json?v=' + Date.now())
     .then(function (res) {
       if (!res.ok) throw new Error('Failed to load translations.json');
       return res.json();
@@ -164,5 +173,8 @@
   window.switchLanguage = switchLanguage;
   window.getPortfolioLanguage = function () {
     return currentLang;
+  };
+  window.tPortfolio = function (key) {
+    return t(currentLang, key);
   };
 })();

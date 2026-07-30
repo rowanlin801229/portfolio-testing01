@@ -1658,6 +1658,244 @@
       z-index: 1;
     }
 
+    /* ── WORK desktop only: Obys-style pin (mobile keeps .work-list unchanged) ── */
+    .work-pin-wrap {
+      display: none; /* shown only ≥901px */
+      position: relative;
+      /* Fallback; JS sets compact runway (n × 62vh + 22vh) */
+      height: 400vh;
+      margin-top: 0;
+    }
+    .work-stage {
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      height: calc(100dvh - 64px);
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 0 clamp(1rem, 2vw, 2rem);
+      transform-origin: 50% 42%;
+      will-change: opacity, transform;
+    }
+    /* Title + desc sit in the sticky stage so content isn't miles below */
+    .work-stage-intro {
+      flex: 0 0 auto;
+      padding: 1.25rem 0 0.85rem;
+      position: relative;
+      z-index: 6;
+      /* Full-width solid sheet — cards must never read through copy */
+      background: var(--bg);
+      isolation: isolate;
+    }
+    /* Soft veil under intro so any bleed is already white */
+    .work-stage-intro::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      height: 2.5rem;
+      background: linear-gradient(to bottom, var(--bg) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .work-stage-intro .sec-label {
+      margin-bottom: 0.5rem;
+    }
+    .work-stage-intro .hero-desc {
+      margin-bottom: 0 !important;
+      max-width: 36rem;
+    }
+    .work-stage-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(12rem, 1fr) var(--work-card-w, 300px) minmax(12rem, 1fr);
+      column-gap: clamp(2rem, 5vw, 4.5rem);
+      align-items: center;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      /* Clip cards/names to the body only — was bleeding into intro (破板) */
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .wp-list-wrap {
+      position: relative;
+      height: 100%;
+      justify-self: start;
+      display: flex;
+      align-items: center;
+      max-width: 22rem;
+      width: 100%;
+      overflow: hidden;
+      z-index: 4;
+    }
+    .wp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      text-align: left;
+      will-change: transform;
+    }
+    .wp-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1.35rem;
+      line-height: 1.45;
+      color: var(--muted);
+      opacity: 0.38;
+      /* no font-size transition — keeps mid-line lock accurate */
+      transition: color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      cursor: none;
+    }
+    .wp-name .num {
+      font-size: 0.85em;
+      margin-right: 0.5rem;
+    }
+    .wp-name.is-focus {
+      font-size: clamp(1.95rem, 3.1vw, 2.55rem);
+      color: var(--fg);
+      opacity: 1;
+    }
+    .wp-name.is-focus .num { color: var(--accent); }
+    html[lang="zh-Hant"] .wp-name.is-focus {
+      font-size: clamp(1.45rem, 2.6vw, 2rem);
+    }
+    .wp-rail {
+      position: relative;
+      width: var(--work-card-w, 300px);
+      height: 100%;
+      justify-self: center;
+      overflow: hidden; /* secondary clip for absolute cards */
+      z-index: 4;
+    }
+    .wp-card {
+      position: absolute;
+      left: 0;
+      width: var(--work-card-w, 300px);
+      height: var(--work-card-h, 184px);
+      transform-origin: 50% 50%;
+      will-change: top, transform;
+      cursor: none;
+      /*
+        No opacity transition — ghost thumbs were lingering over PROJECTS copy
+        while fading. Scale can ease; opacity snaps hide/show.
+      */
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .wp-card.is-off {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    .wp-card .inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 2px;
+      overflow: hidden;
+      background: #ececec;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.1);
+    }
+    .wp-card img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .wp-card.is-focus {
+      z-index: 5;
+      /* opacity/transform driven by JS so pin-exit fade can run */
+    }
+    .wp-card.is-focus .inner {
+      box-shadow: 0 24px 60px rgba(0,0,0,0.16);
+    }
+    .wp-right-wrap {
+      position: relative;
+      height: 100%;
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 100%;
+      max-width: 18rem;
+      overflow: hidden;
+      z-index: 4;
+    }
+    .wp-right {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    .wp-type {
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      line-height: 1.55;
+      color: var(--muted);
+      text-align: right;
+      transition: opacity 0.28s ease;
+    }
+    .wp-type.is-swap {
+      opacity: 0;
+    }
+    .wp-arrow {
+      flex-shrink: 0;
+      color: var(--accent);
+      font-size: 1.55rem;
+      line-height: 1;
+      transition: opacity 0.35s ease;
+    }
+    /* Soft land into About after pin releases */
+    @media (min-width: 901px) {
+      #work + #wk-preview + #about,
+      #work ~ #about {
+        scroll-margin-top: 4rem;
+      }
+    }
+
+    @media (min-width: 901px) {
+      #work {
+        --work-card-w: 300px;
+        --work-card-h: 184px;
+        --work-card-gap: 52px;
+        /* Tight bottom — pin runway already hands off to About */
+        padding: 4vh 5vw 4vh;
+      }
+      /* Outer intro hidden on desktop; same copy shown inside .work-stage-intro */
+      #work > .sec-label,
+      #work > .hero-desc {
+        display: none;
+      }
+      #work .work-list {
+        display: none; /* classic list: mobile only */
+      }
+      #work .work-pin-wrap {
+        display: block;
+      }
+      #wk-preview {
+        display: none !important;
+      }
+    }
+    @media (max-width: 900px) {
+      #work .work-pin-wrap {
+        display: none !important;
+      }
+      #work .work-list {
+        display: block; /* original list, untouched */
+      }
+      #work .work-stage-intro {
+        display: none; /* mobile uses outer PROJECTS heading */
+      }
+    }
+
     /* ── ABOUT ── */
     #about {
       padding: 12vh 5vw;
@@ -1728,6 +1966,10 @@
     #impact {
       padding: 10vh 5vw;
       border-top: none;
+      position: relative;
+      z-index: 2;
+      background: var(--bg);
+      isolation: isolate;
     }
     .stats-grid-full {
       display: grid;
@@ -1781,6 +2023,22 @@
       padding: 5vh 0;
       overflow: hidden;
       background: #111110;
+      position: relative;
+      z-index: 0;
+      /* Keep animated rows from painting over later pinned sections */
+      isolation: isolate;
+      contain: paint;
+    }
+    /* Pause CSS marquee when off-screen (set via JS / IntersectionObserver) */
+    #skills.is-marquee-paused .mq-row {
+      animation-play-state: paused;
+    }
+    /* Hard hide when fully off-screen — no black strip can composite over later pins */
+    #skills.is-marquee-paused {
+      visibility: hidden;
+    }
+    #skills:not(.is-marquee-paused) {
+      visibility: visible;
     }
 
     .marquee-track {
@@ -1788,6 +2046,8 @@
       gap: 0;
       white-space: nowrap;
       margin-bottom: 0;
+      overflow: hidden;
+      max-width: 100%;
     }
     .marquee-track:first-child { margin-bottom: 0; }
 
@@ -1795,6 +2055,7 @@
       display: flex;
       animation: mq-fwd 28s linear infinite;
       flex-shrink: 0;
+      will-change: transform;
     }
     .mq-row.rev { animation: mq-rev 34s linear infinite; }
 
@@ -1833,19 +2094,39 @@
       --exp-soft: rgba(74, 74, 72, 0.36);
       position: relative;
       border-top: none;
-      padding: 0;
+      /* Must stay full-bleed: any horizontal padding shrinks the pin width and
+         lets full-width sections (#skills black marquee) show in the gutters. */
+      padding: 0 !important;
       background: var(--bg);
+      z-index: 4;
+      isolation: isolate;
+      width: 100%;
+      max-width: none;
+      box-sizing: border-box;
     }
     .exp-pin {
       min-height: 100vh;
       min-height: 100dvh;
+      width: 100%;
+      max-width: none;
       display: flex;
       flex-direction: column;
-      padding: 4.75rem 4vw 2rem;
+      padding: 4.75rem 5vw 2rem;
       box-sizing: border-box;
       background: var(--bg);
       position: relative;
-      z-index: 1;
+      z-index: 4;
+    }
+    /* Full-viewport white sheet while pinned — no side bleed of #skills */
+    #experience.is-exp-pinned .exp-pin {
+      z-index: 30;
+      background: var(--bg);
+      left: 0 !important;
+      right: 0 !important;
+      width: 100vw !important;
+      max-width: 100vw !important;
+      margin-left: 0 !important;
+      box-shadow: none;
     }
     .exp-header {
       flex: 0 0 auto;
@@ -2667,9 +2948,21 @@
       #work,
       #about,
       #impact,
-      #experience,
       #contact,
       footer {
+        padding-left: 6vw;
+        padding-right: 6vw;
+      }
+      /*
+        Do NOT pad #experience horizontally — ScrollTrigger pins .exp-pin to that
+        padded width, leaving side gutters where #skills (full-bleed black) bleeds
+        through ("破板"). Horizontal inset stays on .exp-pin only.
+      */
+      #experience {
+        padding-left: 0;
+        padding-right: 0;
+      }
+      #experience .exp-pin {
         padding-left: 6vw;
         padding-right: 6vw;
       }
@@ -2961,8 +3254,32 @@
 
     <!-- WORK -->
     <section id="work">
-      <h2 class="sec-label reveal in" style="transition-delay: 0s;">Projects</h2>
+      <!-- Mobile + a11y: classic heading (hidden on desktop; desktop copy lives inside sticky stage) -->
+      <h2 class="sec-label reveal in" style="transition-delay: 0s;" data-i18n="work.title">Projects</h2>
       <p class="hero-desc reveal in" style="transition-delay:0.1s; margin-bottom:3rem;" data-i18n="work.desc">Featured work across cross-screen products, wearable interaction, and responsive systems.</p>
+
+      <!-- Desktop only (≥901px): Obys pin-scroll. Mobile keeps classic .work-list below. -->
+      <div class="work-pin-wrap" id="workPin" aria-hidden="true">
+        <div class="work-stage" id="workStage">
+          <div class="work-stage-intro">
+            <h2 class="sec-label" data-i18n="work.title">Projects</h2>
+            <p class="hero-desc" data-i18n="work.desc">Featured work across cross-screen products, wearable interaction, and responsive systems.</p>
+          </div>
+          <div class="work-stage-body" id="wpStageBody">
+            <div class="wp-list-wrap">
+              <div class="wp-list" id="wpList"></div>
+            </div>
+            <div class="wp-rail" id="wpRail"></div>
+            <div class="wp-right-wrap" id="wpRightWrap">
+              <div class="wp-right">
+                <div class="wp-type" id="wpType"></div>
+                <span class="wp-arrow">→</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <ul class="work-list" id="work-list">
         <li class="work-item reveal in" data-project="faintv" data-name="FainTV" data-type="Cross-screen · Mobile · Tablet · Web · TV" style="transition-delay: 0s;" onclick="location.href='faintv.html'" style="cursor:pointer;">
           <div class="wi-bg"></div>
@@ -5649,6 +5966,24 @@
       io.observe(section);
     })();
 
+    /* ── SKILLS marquee: pause when off-screen (avoids bleed + saves paint) ── */
+    (function () {
+      const skills = document.getElementById('skills');
+      if (!skills) return;
+      if (!('IntersectionObserver' in window)) return;
+      const io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (e) {
+            skills.classList.toggle('is-marquee-paused', !e.isIntersecting);
+          });
+        },
+        { root: null, rootMargin: '10% 0px', threshold: 0 }
+      );
+      io.observe(skills);
+      /* default paused until first intersect callback */
+      skills.classList.add('is-marquee-paused');
+    })();
+
     /* ── EXPERIENCE AXIS (specia1ne Selected Work style) ── */
     (function () {
       const section = document.getElementById('experience');
@@ -5720,10 +6055,15 @@
             if (t.vars && t.vars.id === 'exp-axis-pin') t.kill();
           });
         }
+        section.classList.remove('is-exp-pinned');
+        section.dataset.expPinned = 'false';
         section.style.height = '';
         pin.style.position = '';
         pin.style.top = '';
         pin.style.width = '';
+        pin.style.maxWidth = '';
+        pin.style.left = '';
+        pin.style.right = '';
       }
 
       function enableAxis() {
@@ -5747,6 +6087,12 @@
           scrub: 0.45,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          /* Pin full viewport width — never inherit old padded width */
+          onRefreshInit: function () {
+            pin.style.width = '';
+            pin.style.maxWidth = '';
+            pin.style.left = '';
+          },
           onUpdate: function (self) {
             const p = self.progress;
             // Hold first, step through jobs, resolve near the end
@@ -5760,17 +6106,43 @@
           },
           onEnter: function () {
             section.dataset.expPinned = 'true';
+            section.classList.add('is-exp-pinned');
+            pin.style.width = '100vw';
+            pin.style.maxWidth = '100vw';
+            pin.style.left = '0';
           },
           onLeave: function () {
             section.dataset.expPinned = 'false';
+            section.classList.remove('is-exp-pinned');
+            pin.style.width = '';
+            pin.style.maxWidth = '';
+            pin.style.left = '';
             setActive(total - 1, true);
           },
           onEnterBack: function () {
             section.dataset.expPinned = 'true';
+            section.classList.add('is-exp-pinned');
+            pin.style.width = '100vw';
+            pin.style.maxWidth = '100vw';
+            pin.style.left = '0';
           },
           onLeaveBack: function () {
             section.dataset.expPinned = 'false';
+            section.classList.remove('is-exp-pinned');
+            pin.style.width = '';
+            pin.style.maxWidth = '';
+            pin.style.left = '';
             setActive(0, false);
+          },
+          onRefresh: function (self) {
+            if (self.isActive) {
+              section.classList.add('is-exp-pinned');
+              pin.style.width = '100vw';
+              pin.style.maxWidth = '100vw';
+              pin.style.left = '0';
+            } else {
+              section.classList.remove('is-exp-pinned');
+            }
           }
         });
 
@@ -5923,6 +6295,351 @@
         if (!active) return;
         preview.style.left = e.clientX + 'px';
         preview.style.top = (e.clientY - 20) + 'px';
+      });
+    })();
+
+    /* ── WORK desktop Obys pin (mobile keeps classic #work-list only) ── */
+    (function () {
+      const wrap = document.getElementById('workPin');
+      const stage = document.getElementById('workStage');
+      const list = document.getElementById('wpList');
+      const rail = document.getElementById('wpRail');
+      const typeEl = document.getElementById('wpType');
+      const workList = document.getElementById('work-list');
+      if (!wrap || !stage || !list || !rail || !typeEl || !workList) return;
+
+      const mqDesktop = window.matchMedia('(min-width: 901px)');
+      const CARD_H = 184;
+      const CARD_GAP = 52;
+      const STEP = CARD_H + CARD_GAP;
+      /*
+        Scroll budget (was n×100vh + 58 → huge white void).
+        ~62vh per project + short exit → denser, less blank runway.
+      */
+      const PROJECT_VH = 62;
+      const EXIT_VH = 22;
+      let typeSwapTimer = 0;
+      let lastIdx = -1;
+
+      function parseBgUrl(el) {
+        if (!el) return '';
+        const bg = el.style.backgroundImage || '';
+        const m = bg.match(/url\(["']?([^"')]+)["']?\)/);
+        return m ? m[1] : '';
+      }
+
+      function projectHref(item) {
+        const oc = item.getAttribute('onclick') || '';
+        const m = oc.match(/location\.href\s*=\s*['"]([^'"]+)['"]/);
+        if (m) return m[1];
+        const map = {
+          faintv: 'faintv.html',
+          vcue: 'vcue.html',
+          genebook: 'genebook.html',
+          tfl: 'tfl.html',
+          aicuncell: 'aicuncell.html',
+          marilyn: 'marilyn.html'
+        };
+        return map[item.dataset.project] || '#';
+      }
+
+      function readProjectsFromDom() {
+        return Array.prototype.map.call(
+          workList.querySelectorAll('.work-item'),
+          function (item) {
+            const slug = item.dataset.project || '';
+            const nameEl = item.querySelector('.wi-name');
+            const typeNode = item.querySelector('.wi-type');
+            const nameKey = slug ? 'work.' + slug + '.name' : '';
+            const typeKey = slug ? 'work.' + slug + '.type' : '';
+            /* Prefer live translated DOM; then tPortfolio; then data-* fallbacks */
+            let name = nameEl ? nameEl.textContent.trim() : '';
+            if ((!name || name === item.getAttribute('data-name')) && nameKey && typeof window.tPortfolio === 'function') {
+              const tr = window.tPortfolio(nameKey);
+              if (tr && tr !== nameKey) name = tr;
+            }
+            if (!name) name = item.dataset.name || '';
+
+            let typeRaw = (typeNode && typeNode.textContent.trim()) || item.dataset.type || '';
+            if (typeKey && typeof window.tPortfolio === 'function') {
+              const tr = window.tPortfolio(typeKey);
+              if (tr && tr !== typeKey) typeRaw = tr;
+            }
+            const typeHtml = typeRaw.replace(/\s*·\s*/g, '<br>');
+            return {
+              slug: slug,
+              nameKey: nameKey,
+              typeKey: typeKey,
+              name: name,
+              type: typeHtml || typeRaw,
+              typePlain: typeRaw,
+              img: parseBgUrl(item.querySelector('.wi-cover')),
+              href: projectHref(item)
+            };
+          }
+        );
+      }
+
+      function setTypeHtml(html) {
+        if (!typeEl) return;
+        typeEl.innerHTML = html || '';
+      }
+
+      let projects = readProjectsFromDom();
+      const n = projects.length;
+      if (!n) return;
+
+      const cards = [];
+      const names = [];
+
+      projects.forEach(function (p, i) {
+        const nameEl = document.createElement('div');
+        nameEl.className = 'wp-name';
+        nameEl.innerHTML =
+          '<span class="num">' + String(i + 1).padStart(2, '0') + '</span><span class="wp-name-text"></span>';
+        const textEl = nameEl.querySelector('.wp-name-text');
+        textEl.textContent = p.name;
+        /* Let i18n.js update pin labels the same way as the classic list */
+        if (p.nameKey) textEl.setAttribute('data-i18n', p.nameKey);
+        if (p.slug) nameEl.setAttribute('data-project', p.slug);
+        nameEl.addEventListener('click', function () {
+          location.href = p.href;
+        });
+        list.appendChild(nameEl);
+        names.push(nameEl);
+
+        const card = document.createElement('div');
+        card.className = 'wp-card';
+        card.innerHTML =
+          '<div class="inner"><img src="' + p.img + '" alt="" draggable="false" loading="lazy"></div>';
+        card.querySelector('img').alt = p.name;
+        if (p.slug) card.setAttribute('data-project', p.slug);
+        card.addEventListener('click', function () {
+          location.href = p.href;
+        });
+        rail.appendChild(card);
+        cards.push(card);
+      });
+
+      /** Re-read classic list after i18n and refresh pin labels / meta */
+      function refreshPinLanguage() {
+        projects = readProjectsFromDom();
+        projects.forEach(function (p, i) {
+          if (!names[i] || !cards[i]) return;
+          const textEl = names[i].querySelector('.wp-name-text');
+          if (textEl) {
+            if (p.nameKey) textEl.setAttribute('data-i18n', p.nameKey);
+            textEl.textContent = p.name;
+          }
+          const img = cards[i].querySelector('img');
+          if (img) img.alt = p.name;
+        });
+        const focusIdx = lastIdx >= 0 ? lastIdx : 0;
+        /* Force type line to re-render even if focus index unchanged */
+        lastIdx = -1;
+        if (projects[focusIdx]) {
+          typeEl.classList.remove('is-swap');
+          setTypeHtml(projects[focusIdx].type);
+        }
+        list.style.transform = 'none';
+        onScroll();
+      }
+
+      window.addEventListener('portfolio:languagechange', refreshPinLanguage);
+      var prevOnLang = window.__onPortfolioLanguageChange;
+      window.__onPortfolioLanguageChange = function (lang) {
+        try {
+          if (typeof prevOnLang === 'function') prevOnLang(lang);
+        } catch (err) {
+          console.warn('[work-pin] prev language handler', err);
+        }
+        refreshPinLanguage();
+      };
+
+      function setRunway() {
+        if (!mqDesktop.matches) {
+          wrap.style.height = 'auto';
+          wrap.setAttribute('aria-hidden', 'true');
+          stage.style.opacity = '';
+          stage.style.transform = '';
+          return;
+        }
+        /* Compact runway: n × PROJECT_VH + short exit (no huge white gap) */
+        wrap.style.height = (n * PROJECT_VH + EXIT_VH) + 'vh';
+        wrap.setAttribute('aria-hidden', 'false');
+      }
+
+      function progress() {
+        const r = wrap.getBoundingClientRect();
+        const scrollable = r.height - window.innerHeight;
+        if (scrollable <= 1) return 0;
+        return Math.max(0, Math.min(1, -r.top / scrollable));
+      }
+
+      /** Split runway: project scrub then short soft exit into next section */
+      function progressParts() {
+        const p = progress();
+        const projectShare = (n * PROJECT_VH) / (n * PROJECT_VH + EXIT_VH);
+        const scrub = Math.min(1, p / projectShare);
+        const exitP = p <= projectShare ? 0 : (p - projectShare) / (1 - projectShare);
+        return { scrub: scrub, exitP: exitP };
+      }
+
+      function easeOutCubic(x) {
+        return 1 - Math.pow(1 - x, 3);
+      }
+
+      function swapTypeToProject(p) {
+        if (!typeEl || !p) return;
+        if (typeSwapTimer) window.clearTimeout(typeSwapTimer);
+        typeEl.classList.add('is-swap');
+        typeSwapTimer = window.setTimeout(function () {
+          setTypeHtml(p.type);
+          typeEl.classList.remove('is-swap');
+          typeSwapTimer = 0;
+        }, 160);
+      }
+
+      let raf = 0;
+
+      function frame() {
+        raf = 0;
+        if (!mqDesktop.matches) {
+          list.style.transform = '';
+          stage.style.opacity = '';
+          stage.style.transform = '';
+          return;
+        }
+
+        const parts = progressParts();
+        const scrub = parts.scrub;
+        const exitP = parts.exitP;
+        const exitE = easeOutCubic(exitP);
+
+        /* Soft exit — keep some content visible (never full white void) */
+        if (exitP > 0.001) {
+          stage.style.opacity = String(Math.max(0.35, 1 - exitE * 0.55));
+          stage.style.transform =
+            'translateY(' + (-exitE * 28) + 'px) scale(' + (1 - exitE * 0.03) + ')';
+        } else {
+          stage.style.opacity = '1';
+          stage.style.transform = 'none';
+        }
+
+        const railRect = rail.getBoundingClientRect();
+        /*
+          Mid-line of the stage BODY (area under PROJECTS intro), so title /
+          thumb / meta sit just below the section copy — not a half-screen gap.
+        */
+        const body = stage.querySelector('.work-stage-body') || stage;
+        const bodyRect = body.getBoundingClientRect();
+        const midY = bodyRect.top + bodyRect.height * 0.5;
+        /* Hold last project during exit buffer (scrub stays at 1) */
+        const t = scrub * (n - 1);
+        /* Slightly softer focus handoff: threshold before index flips */
+        const idx = Math.max(0, Math.min(n - 1, Math.round(t)));
+
+        cards.forEach(function (card, i) {
+          const centerY = midY + (i - t) * STEP;
+          card.style.top = (centerY - CARD_H * 0.5 - railRect.top) + 'px';
+          const dist = Math.abs(i - t);
+          const slotDist = Math.abs(i - idx); /* integer distance from focused row */
+          const isFocus = i === idx;
+          card.classList.toggle('is-focus', isFocus);
+
+          /*
+            Only focus + immediate neighbors (±1 slot) stay visible.
+            ±2 and beyond → fully off so distant thumbs never sit on PROJECTS copy.
+          */
+          if (slotDist > 1) {
+            card.classList.add('is-off');
+            card.style.opacity = '0';
+            card.style.visibility = 'hidden';
+            card.style.pointerEvents = 'none';
+            card.style.transform = 'scale(0.84)';
+            return;
+          }
+          card.classList.remove('is-off');
+          card.style.visibility = 'visible';
+          card.style.pointerEvents = '';
+          if (isFocus) {
+            card.style.opacity = String(Math.max(0.15, 1 - exitE * 0.85));
+            card.style.transform = 'scale(1)';
+          } else {
+            /* One above / one below only — soft ghost */
+            const neighborT = Math.max(0, Math.min(1, 1.2 - dist));
+            card.style.opacity = String((0.24 * neighborT) * (1 - exitE * 0.9));
+            card.style.transform = 'scale(0.88)';
+          }
+        });
+
+        names.forEach(function (el, i) {
+          el.classList.toggle('is-focus', i === idx);
+          const dist = Math.abs(i - t);
+          /* Names: keep a slightly wider list for orientation, but fade hard past ±2 */
+          if (dist > 2.05) {
+            el.style.opacity = '0';
+            el.style.visibility = 'hidden';
+            return;
+          }
+          el.style.visibility = 'visible';
+          const base = i === idx
+            ? 1
+            : Math.max(0.14, 0.38 - dist * 0.14);
+          el.style.opacity = String(base * (1 - exitE * 0.9));
+        });
+
+        /* Snap focus title to same midY as focus image (stable, non-cumulative) */
+        list.style.transform = 'none';
+        void list.offsetHeight;
+        const focusName = names[idx];
+        const nameRect = focusName.getBoundingClientRect();
+        const nameCenter = nameRect.top + nameRect.height * 0.5;
+        list.style.transform = 'translateY(' + (midY - nameCenter) + 'px)';
+
+        if (typeEl) {
+          typeEl.style.opacity = exitP > 0.001
+            ? String(Math.max(0, 1 - exitE * 1.05))
+            : '';
+        }
+        const arrow = stage.querySelector('.wp-arrow');
+        if (arrow) {
+          arrow.style.opacity = exitP > 0.001
+            ? String(Math.max(0, 1 - exitE * 1.05))
+            : '';
+        }
+
+        if (idx !== lastIdx) {
+          lastIdx = idx;
+          if (projects[idx]) swapTypeToProject(projects[idx]);
+        }
+      }
+
+      function onScroll() {
+        if (!raf) raf = requestAnimationFrame(frame);
+      }
+
+      setRunway();
+      setTypeHtml(projects[0].type);
+      names[0].classList.add('is-focus');
+      cards[0].classList.add('is-focus');
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', function () {
+        list.style.transform = 'translateY(0px)';
+        setRunway();
+        onScroll();
+      }, { passive: true });
+      mqDesktop.addEventListener('change', function () {
+        list.style.transform = 'translateY(0px)';
+        setRunway();
+        onScroll();
+      });
+
+      requestAnimationFrame(function () {
+        setRunway();
+        frame();
+        requestAnimationFrame(frame);
       });
     })();
 
