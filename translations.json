@@ -65,7 +65,9 @@
     "contact.email": "Email",
     "contact.linkedin": "LinkedIn",
     "contact.cv": "Download CV",
-    "footer.copyright": "© 2026 Yu-Hsien \"Rowan\" Lin"
+    "footer.copyright": "© 2026 Yu-Hsien \"Rowan\" Lin",
+    "work.overheadflights.name": "Overhead Flights",
+    "work.overheadflights.type": "macOS Screen Saver · AI-Assisted Product"
   },
   "zh": {
     "meta.title": "林昱嫻 Rowan Lin — UI/UX 設計師",
@@ -133,6 +135,8 @@
     "contact.email": "Email",
     "contact.linkedin": "LinkedIn",
     "contact.cv": "下載履歷",
-    "footer.copyright": "© 2026 林昱嫻 Rowan Lin"
+    "footer.copyright": "© 2026 林昱嫻 Rowan Lin",
+    "work.overheadflights.name": "頭頂航班",
+    "work.overheadflights.type": "macOS 螢幕保護程式 · AI 協作"
   }
 }
