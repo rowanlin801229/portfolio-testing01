@@ -27,7 +27,7 @@
       --surface: #141413;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: auto; }
     body {
       background: var(--bg);
       color: var(--fg);
@@ -154,6 +154,53 @@
       color: var(--muted);
       border-bottom: 1px solid var(--line);
       background: var(--surface);
+    }
+    .cs-journey-cta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem 2rem;
+      padding: 1.75rem 5vw;
+      border-bottom: 1px solid var(--line);
+      background: var(--bg);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.35s ease;
+    }
+    .cs-journey-cta:hover { background: var(--surface); color: inherit; }
+    .cs-journey-cta-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.55rem;
+      display: block;
+    }
+    .cs-journey-cta-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+      color: #c8c8c2;
+      letter-spacing: -0.01em;
+    }
+    .cs-journey-cta-hint {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      max-width: 36ch;
+      line-height: 1.55;
+    }
+    .cs-journey-cta-arrow {
+      font-size: 1.5rem;
+      color: var(--muted);
+      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), color 0.3s;
+      flex-shrink: 0;
+    }
+    .cs-journey-cta:hover .cs-journey-cta-arrow {
+      transform: translateX(8px);
+      color: var(--accent);
     }
 
     /* SECTIONS */
@@ -484,11 +531,173 @@
       .cs-back-arrow{font-size:2rem}
     }
 
+
+    /* ═══ CINEMATIC JOURNEY (scroll scrub) — then case study below ═══ */
+    .ofj-loader {
+      position: fixed; inset: 0; z-index: 200;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1.1rem; background: rgb(5,5,7);
+      transition: opacity .55s ease, visibility .55s ease;
+    }
+    .ofj-loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .ofj-loader-mark {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: .68rem; letter-spacing: .32em; text-transform: uppercase;
+      color: rgba(235,236,240,.32);
+    }
+    .ofj-loader-bar {
+      width: min(12rem, 40vw); height: 1px; background: rgba(235,236,240,.12);
+      position: relative; overflow: hidden;
+    }
+    .ofj-loader-fill {
+      position: absolute; inset: 0 auto 0 0; width: 0%;
+      background: rgba(235,236,240,.55); transition: width .12s ease-out;
+    }
+    .ofj-loader-pct {
+      font-size: .7rem; letter-spacing: .14em; color: rgba(235,236,240,.36);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ofj-journey {
+      position: relative;
+      height: 720vh;
+      background: rgb(5,5,7);
+    }
+    .ofj-stage {
+      position: sticky; top: 0;
+      height: 100dvh; width: 100%;
+      overflow: hidden; background: rgb(5,5,7);
+    }
+    .ofj-media { position: absolute; inset: 0; background: rgb(5,5,7); }
+    #ofj-canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      display: block;
+    }
+    .ofj-poster {
+      position: absolute; inset: 0;
+      /* reverse journey starts at plane / last frame */
+      background: center / cover no-repeat url("overheadflights-journey/assets/frames/frame-0196.jpg");
+      transition: opacity .4s ease;
+    }
+    .ofj-poster.is-hidden { opacity: 0; pointer-events: none; }
+    .ofj-vignette {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        linear-gradient(to top, rgba(5,5,7,.5) 0%, transparent 26%),
+        linear-gradient(to bottom, rgba(5,5,7,.22) 0%, transparent 16%);
+    }
+    .ofj-hud {
+      position: absolute; left: 5vw; right: 5vw; bottom: 4.5vh;
+      z-index: 4; display: flex; align-items: center; gap: 1rem;
+      pointer-events: none;
+    }
+    .ofj-hud-track {
+      flex: 1; height: 1px; background: rgba(235,236,240,.12); position: relative;
+    }
+    .ofj-hud-fill {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
+      background: rgba(235,236,240,.5);
+    }
+    .ofj-hud-hint {
+      font-size: .58rem; letter-spacing: .28em; text-transform: uppercase;
+      color: rgba(235,236,240,.3); white-space: nowrap;
+      transition: opacity .4s ease;
+    }
+    /* Opening beat: callsign over the plane (start of reverse journey) */
+    .ofj-product {
+      position: absolute; inset: 0; z-index: 5;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      pointer-events: none;
+      opacity: 0; background: rgba(5,5,7,0);
+      transition: opacity .45s ease, background .45s ease;
+    }
+    .ofj-product.is-visible {
+      opacity: 1; background: rgba(5,5,7,.55);
+    }
+    .ofj-product-mono {
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: clamp(.65rem,1.1vw,.8rem); letter-spacing: .28em;
+      color: rgba(235,236,240,.28); margin-bottom: .65em;
+    }
+    .ofj-product-callsign {
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: clamp(2.8rem,10vh,6.5rem); font-weight: 200; letter-spacing: .08em;
+      color: rgba(235,236,240,.86); line-height: 1;
+    }
+    .ofj-product-airline {
+      font-size: clamp(.8rem,1.4vw,1.05rem); letter-spacing: .06em;
+      color: rgba(235,236,240,.5); margin-top: .9em; font-weight: 300;
+    }
+    .ofj-product-meta {
+      font-size: clamp(.68rem,1.1vw,.85rem); letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(235,236,240,.34); margin-top: .5em;
+    }
+    /* End of reverse journey: desk frame → case study */
+    .ofj-continue {
+      position: absolute; left: 50%; bottom: 9vh; transform: translateX(-50%) translateY(6px);
+      z-index: 6; pointer-events: none;
+      font-size: .62rem; letter-spacing: .28em; text-transform: uppercase;
+      color: rgba(235,236,240,.42);
+      opacity: 0;
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .ofj-continue.is-visible {
+      opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+
+    /* case study block sits after journey in document flow */
+    .of-case-study { position: relative; z-index: 1; background: var(--bg); }
+
+    @media (max-width: 767px) {
+      .ofj-journey { height: 580vh; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ofj-loader { display: none !important; }
+      .ofj-journey { height: auto; }
+      .ofj-stage { position: relative; height: 70dvh; }
+      #ofj-canvas { display: none; }
+      .ofj-poster { opacity: 1 !important; }
+      .ofj-product, .ofj-hud { display: none; }
+    }
+
   </style>
 </head>
 <body>
   <div id="cur-ring"></div>
   <div id="cur-dot"></div>
+
+  <!-- ═══ ACT 1: cinematic scroll (no film-script captions) ═══ -->
+  <div class="ofj-loader" id="ofjLoader" aria-live="polite" aria-busy="true">
+    <div class="ofj-loader-mark">Overhead Flights</div>
+    <div class="ofj-loader-bar"><div class="ofj-loader-fill" id="ofjLoaderFill"></div></div>
+    <div class="ofj-loader-pct" id="ofjLoaderPct">0%</div>
+  </div>
+
+  <section class="ofj-journey" id="ofjJourney" aria-label="Cinematic product journey">
+    <div class="ofj-stage">
+      <div class="ofj-media">
+        <div class="ofj-poster" id="ofjPoster" role="img" aria-label="Commercial airliner at night — start of reverse journey"></div>
+        <canvas id="ofj-canvas" width="1280" height="720" aria-hidden="true"></canvas>
+      </div>
+      <div class="ofj-vignette" aria-hidden="true"></div>
+      <!-- Opening: plane overhead → callsign -->
+      <div class="ofj-product" id="ofjProduct" aria-hidden="true">
+        <div class="ofj-product-mono">OF</div>
+        <div class="ofj-product-callsign">BAW118</div>
+        <div class="ofj-product-airline">British Airways</div>
+        <div class="ofj-product-meta">Altitude 35,000 ft</div>
+      </div>
+      <!-- Closing: reverse scrub lands on desk frame (no demo video overlay) -->
+      <div class="ofj-continue" id="ofjContinue" aria-hidden="true">Continue ↓</div>
+      <div class="ofj-hud" aria-hidden="true">
+        <div class="ofj-hud-track"><div class="ofj-hud-fill" id="ofjHudFill"></div></div>
+        <span class="ofj-hud-hint" id="ofjHudHint">Scroll</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ACT 2: full case study (existing content) ═══ -->
+  <div class="of-case-study" id="case-study">
   <nav>
     <a class="nav-back" href="index.html"><span class="nav-back-arrow">←</span> All Projects</a>
     <div class="nav-right">
@@ -530,25 +739,7 @@
   </header>
 
   
-  <figure class="cs-img-full reveal">
-    <img class="cs-img" src="images/overheadflights/hero.jpg" alt="Overhead Flights screensaver product shot showing callsign stack on near-black background." width="1920" height="1080" loading="lazy">
-  </figure>
-  <p class="cs-media-caption">Product mockup — real-data screensaver in context</p>
-
-  <!-- DEMO VIDEO -->
-  <div class="cs-video-wrap reveal">
-    <video class="cs-video"
-      src="videos/overhead-flights-demo.mp4"
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="metadata"
-      controls
-      aria-label="Overhead Flights demo: a real overhead flight with live route data">
-    </video>
-  </div>
-  <p class="cs-media-caption">Demo — a real overhead flight (BAW8RM, en route to London)</p>
+  <!-- DEMO VIDEO removed for now (file still at videos/overhead-flights-demo.mp4) -->
 
   <!-- S1 MARKET -->
   <section class="cs-section reveal">
@@ -936,6 +1127,7 @@
     <span class="cs-back-arrow">←</span>
   </a>
   <footer><span>© 2026 Yu-Hsien (Rowan) Lin</span><span>Overhead Flights — 07 / 07</span></footer>
+  </div><!-- /of-case-study -->
 
 
   
@@ -947,6 +1139,186 @@
     document.querySelectorAll('a').forEach(el=>{el.addEventListener('mouseenter',()=>ring.classList.add('expanded'));el.addEventListener('mouseleave',()=>ring.classList.remove('expanded'))});
     const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  </script>
+
+
+  <script>
+  (function () {
+    var TOTAL = 196;
+    var PATH = function (i) {
+      var n = String(i).padStart(4, '0');
+      return 'overheadflights-journey/assets/frames/frame-' + n + '.jpg';
+    };
+    var BATCH = 20;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var journey = document.getElementById('ofjJourney');
+    var canvas = document.getElementById('ofj-canvas');
+    var ctx = canvas ? canvas.getContext('2d') : null;
+    var poster = document.getElementById('ofjPoster');
+    var loader = document.getElementById('ofjLoader');
+    var loaderFill = document.getElementById('ofjLoaderFill');
+    var loaderPct = document.getElementById('ofjLoaderPct');
+    var hudFill = document.getElementById('ofjHudFill');
+    var hudHint = document.getElementById('ofjHudHint');
+    var product = document.getElementById('ofjProduct');
+    var contEl = document.getElementById('ofjContinue');
+
+    var frames = [];
+    var targetP = 0, smoothP = 0;
+    var currentFrame = 0, drawnFrame = -1;
+    var ready = false;
+    // Narrative: plane overhead → sky/city → desk (export). REVERSED scrub: p=0 plane, p=1 desk.
+
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function setLoader(pct) {
+      pct = clamp(pct, 0, 100);
+      if (loaderFill) loaderFill.style.width = pct + '%';
+      if (loaderPct) loaderPct.textContent = Math.round(pct) + '%';
+    }
+    function hideLoader() {
+      if (!loader) return;
+      loader.classList.add('is-done');
+      loader.setAttribute('aria-busy', 'false');
+    }
+
+    function loadImage(src) {
+      return new Promise(function (resolve) {
+        var img = new Image();
+        img.onload = function () { resolve(img); };
+        img.onerror = function () { resolve(null); };
+        img.src = src;
+      });
+    }
+
+    async function preload() {
+      frames = new Array(TOTAL);
+      var loaded = 0;
+      for (var i = 0; i < TOTAL; i += BATCH) {
+        var batch = [];
+        var end = Math.min(i + BATCH, TOTAL);
+        for (var j = i; j < end; j++) {
+          (function (idx) {
+            batch.push(loadImage(PATH(idx + 1)).then(function (img) {
+              frames[idx] = img;
+              loaded++;
+              setLoader((loaded / TOTAL) * 100);
+            }));
+          })(j);
+        }
+        await Promise.all(batch);
+      }
+      return frames.filter(Boolean).length > TOTAL * 0.8;
+    }
+
+    function drawCover(img) {
+      if (!ctx || !canvas || !img) return;
+      var cw = canvas.width, ch = canvas.height;
+      var iw = img.naturalWidth || img.width;
+      var ih = img.naturalHeight || img.height;
+      var scale = Math.max(cw / iw, ch / ih);
+      var dw = iw * scale, dh = ih * scale;
+      ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+    }
+
+    function resizeCanvas() {
+      if (!canvas) return;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var w = window.innerWidth, h = window.innerHeight;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      drawnFrame = -1;
+    }
+
+    function readProgress() {
+      if (!journey) return 0;
+      var rect = journey.getBoundingClientRect();
+      var total = journey.offsetHeight - window.innerHeight;
+      if (total <= 0) return 0;
+      return clamp(-rect.top / total, 0, 1);
+    }
+
+    function nearest(want) {
+      if (frames[want]) return want;
+      var a = want, b = want;
+      while (a > 0 || b < TOTAL - 1) {
+        if (--a >= 0 && frames[a]) return a;
+        if (++b < TOTAL && frames[b]) return b;
+      }
+      return 0;
+    }
+
+    function apply(p) {
+      if (ready && frames.length) {
+        // Reverse scrub: start at plane (last frame), end at desk (first frame)
+        var forward = Math.min(Math.floor(p * (TOTAL - 1)), TOTAL - 1);
+        currentFrame = nearest((TOTAL - 1) - forward);
+      }
+      if (hudFill) hudFill.style.width = (p * 100).toFixed(2) + '%';
+      if (hudHint) hudHint.style.opacity = p > 0.03 ? '0' : '1';
+
+      // Opening: callsign on the plane
+      if (product) {
+        var openOn = p < 0.14;
+        product.classList.toggle('is-visible', openOn);
+        product.setAttribute('aria-hidden', openOn ? 'false' : 'true');
+      }
+
+      // Closing: reverse scrub ends on desk frame — invite into case study
+      if (contEl) {
+        var contOn = p >= 0.9;
+        contEl.classList.toggle('is-visible', contOn);
+        contEl.setAttribute('aria-hidden', contOn ? 'false' : 'true');
+      }
+      if (poster) poster.classList.toggle('is-hidden', ready && p > 0.015);
+      if (canvas) canvas.style.opacity = '1';
+    }
+
+    function tick() {
+      smoothP = lerp(smoothP, targetP, 0.14);
+      if (Math.abs(smoothP - targetP) < 0.00015) smoothP = targetP;
+      apply(smoothP);
+      if (ready && currentFrame !== drawnFrame && frames[currentFrame]) {
+        drawCover(frames[currentFrame]);
+        drawnFrame = currentFrame;
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function onScroll() { targetP = readProgress(); }
+
+    async function init() {
+      if (reduced) {
+        hideLoader();
+        return;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', function () { resizeCanvas(); onScroll(); });
+      ready = await preload();
+      // Start on last frame (plane side / end of original render)
+      var startIdx = TOTAL - 1;
+      if (ready && frames[startIdx]) {
+        drawCover(frames[startIdx]);
+        drawnFrame = startIdx;
+        currentFrame = startIdx;
+      } else if (ready && frames[0]) {
+        drawCover(frames[0]);
+        drawnFrame = 0;
+      }
+      setLoader(100);
+      hideLoader();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      targetP = readProgress();
+      smoothP = targetP;
+      apply(smoothP);
+      tick();
+    }
+    init();
+  })();
   </script>
 
 </body>
