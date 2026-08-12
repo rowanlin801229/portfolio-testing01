@@ -575,8 +575,8 @@
     }
     .ofj-poster {
       position: absolute; inset: 0;
-      /* reverse journey starts at plane / last frame */
-      background: center / cover no-repeat url("overheadflights-journey/assets/frames/frame-0196.jpg");
+      /* CapCut master v3 — starts on plane side */
+      background: center / cover no-repeat url("overheadflights-journey/assets/frames/frame-0001.jpg");
       transition: opacity .4s ease;
     }
     .ofj-poster.is-hidden { opacity: 0; pointer-events: none; }
@@ -603,34 +603,42 @@
       color: rgba(235,236,240,.3); white-space: nowrap;
       transition: opacity .4s ease;
     }
-    /* Opening beat: callsign over the plane (start of reverse journey) */
+    /* Opening beat: project title (not airline callsign — avoids BA ad feel) */
     .ofj-product {
       position: absolute; inset: 0; z-index: 5;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end;
+      padding: 0 6vw 16vh;
       pointer-events: none;
-      opacity: 0; background: rgba(5,5,7,0);
-      transition: opacity .45s ease, background .45s ease;
+      opacity: 0;
+      background: linear-gradient(
+        to top,
+        rgba(5,5,7,.72) 0%,
+        rgba(5,5,7,.35) 42%,
+        transparent 72%
+      );
+      transition: opacity .5s ease;
     }
-    .ofj-product.is-visible {
-      opacity: 1; background: rgba(5,5,7,.55);
+    .ofj-product.is-visible { opacity: 1; }
+    .ofj-open-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(2.4rem, 7vw, 5.2rem);
+      line-height: .95;
+      letter-spacing: -0.02em;
+      color: rgba(232,232,228,.92);
+      margin: 0 0 1.1rem;
+      max-width: 14ch;
     }
-    .ofj-product-mono {
-      font-family: ui-monospace, Menlo, Consolas, monospace;
-      font-size: clamp(.65rem,1.1vw,.8rem); letter-spacing: .28em;
-      color: rgba(235,236,240,.28); margin-bottom: .65em;
-    }
-    .ofj-product-callsign {
-      font-family: ui-monospace, Menlo, Consolas, monospace;
-      font-size: clamp(2.8rem,10vh,6.5rem); font-weight: 200; letter-spacing: .08em;
-      color: rgba(235,236,240,.86); line-height: 1;
-    }
-    .ofj-product-airline {
-      font-size: clamp(.8rem,1.4vw,1.05rem); letter-spacing: .06em;
-      color: rgba(235,236,240,.5); margin-top: .9em; font-weight: 300;
-    }
-    .ofj-product-meta {
-      font-size: clamp(.68rem,1.1vw,.85rem); letter-spacing: .12em; text-transform: uppercase;
-      color: rgba(235,236,240,.34); margin-top: .5em;
+    .ofj-open-sub {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-weight: 300;
+      font-size: clamp(.92rem, 1.35vw, 1.1rem);
+      line-height: 1.65;
+      letter-spacing: 0.01em;
+      color: rgba(210,210,205,.55);
+      max-width: 42ch;
+      margin: 0;
     }
     /* End of reverse journey: desk frame → case study */
     .ofj-continue {
@@ -680,14 +688,11 @@
         <canvas id="ofj-canvas" width="1280" height="720" aria-hidden="true"></canvas>
       </div>
       <div class="ofj-vignette" aria-hidden="true"></div>
-      <!-- Opening: plane overhead → callsign -->
+      <!-- Opening: project identity (not airline promo) -->
       <div class="ofj-product" id="ofjProduct" aria-hidden="true">
-        <div class="ofj-product-mono">OF</div>
-        <div class="ofj-product-callsign">BAW118</div>
-        <div class="ofj-product-airline">British Airways</div>
-        <div class="ofj-product-meta">Altitude 35,000 ft</div>
+        <h1 class="ofj-open-title">Overhead Flights</h1>
+        <p class="ofj-open-sub">Overhead Flights: real flight data, quietly displayed on a macOS screen saver — showing the one plane passing overhead right now.</p>
       </div>
-      <!-- Closing: reverse scrub lands on desk frame (no demo video overlay) -->
       <div class="ofj-continue" id="ofjContinue" aria-hidden="true">Continue ↓</div>
       <div class="ofj-hud" aria-hidden="true">
         <div class="ofj-hud-track"><div class="ofj-hud-fill" id="ofjHudFill"></div></div>
@@ -1144,12 +1149,14 @@
 
   <script>
   (function () {
-    var TOTAL = 196;
+    // CapCut "overhead flight03" — 180 frames @ ~960w (~2.7MB total)
+    var TOTAL = 180;
+    var EAGER = 24; // block only these, then open scroll; rest loads in background
     var PATH = function (i) {
       var n = String(i).padStart(4, '0');
       return 'overheadflights-journey/assets/frames/frame-' + n + '.jpg';
     };
-    var BATCH = 20;
+    var BATCH = 12;
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     var journey = document.getElementById('ofjJourney');
@@ -1164,11 +1171,11 @@
     var product = document.getElementById('ofjProduct');
     var contEl = document.getElementById('ofjContinue');
 
-    var frames = [];
+    var frames = new Array(TOTAL);
     var targetP = 0, smoothP = 0;
     var currentFrame = 0, drawnFrame = -1;
-    var ready = false;
-    // Narrative: plane overhead → sky/city → desk (export). REVERSED scrub: p=0 plane, p=1 desk.
+    var ready = false; // true after eager frames — scrub is live
+    // Forward scrub: p=0 plane, p=1 product settle (matches CapCut edit order)
 
     function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
     function lerp(a, b, t) { return a + (b - a) * t; }
@@ -1187,30 +1194,51 @@
     function loadImage(src) {
       return new Promise(function (resolve) {
         var img = new Image();
+        img.decoding = 'async';
         img.onload = function () { resolve(img); };
         img.onerror = function () { resolve(null); };
         img.src = src;
       });
     }
 
-    async function preload() {
-      frames = new Array(TOTAL);
+    function loadOne(idx) {
+      return loadImage(PATH(idx + 1)).then(function (img) {
+        frames[idx] = img;
+        return img;
+      });
+    }
+
+    async function loadEager() {
       var loaded = 0;
-      for (var i = 0; i < TOTAL; i += BATCH) {
+      for (var i = 0; i < EAGER; i += BATCH) {
         var batch = [];
-        var end = Math.min(i + BATCH, TOTAL);
+        var end = Math.min(i + BATCH, EAGER);
         for (var j = i; j < end; j++) {
           (function (idx) {
-            batch.push(loadImage(PATH(idx + 1)).then(function (img) {
-              frames[idx] = img;
+            batch.push(loadOne(idx).then(function () {
               loaded++;
-              setLoader((loaded / TOTAL) * 100);
+              setLoader((loaded / EAGER) * 100);
             }));
           })(j);
         }
         await Promise.all(batch);
       }
-      return frames.filter(Boolean).length > TOTAL * 0.8;
+      return frames.slice(0, EAGER).filter(Boolean).length >= EAGER * 0.9;
+    }
+
+    function loadRestInBackground() {
+      var i = EAGER;
+      function pump() {
+        if (i >= TOTAL) return;
+        var batch = [];
+        for (var n = 0; n < 8 && i < TOTAL; n++, i++) {
+          batch.push(loadOne(i));
+        }
+        Promise.all(batch).then(function () {
+          requestAnimationFrame(pump);
+        });
+      }
+      pump();
     }
 
     function drawCover(img) {
@@ -1254,27 +1282,26 @@
 
     function apply(p) {
       if (ready && frames.length) {
-        // Reverse scrub: start at plane (last frame), end at desk (first frame)
-        var forward = Math.min(Math.floor(p * (TOTAL - 1)), TOTAL - 1);
-        currentFrame = nearest((TOTAL - 1) - forward);
+        // Forward scrub — matches CapCut timeline
+        var idx = Math.min(Math.floor(p * (TOTAL - 1)), TOTAL - 1);
+        currentFrame = nearest(idx);
       }
       if (hudFill) hudFill.style.width = (p * 100).toFixed(2) + '%';
       if (hudHint) hudHint.style.opacity = p > 0.03 ? '0' : '1';
 
-      // Opening: callsign on the plane
+      // Opening: project title + subtitle (no airline callsign stack)
       if (product) {
-        var openOn = p < 0.14;
+        var openOn = p < 0.16;
         product.classList.toggle('is-visible', openOn);
         product.setAttribute('aria-hidden', openOn ? 'false' : 'true');
       }
 
-      // Closing: reverse scrub ends on desk frame — invite into case study
       if (contEl) {
         var contOn = p >= 0.9;
         contEl.classList.toggle('is-visible', contOn);
         contEl.setAttribute('aria-hidden', contOn ? 'false' : 'true');
       }
-      if (poster) poster.classList.toggle('is-hidden', ready && p > 0.015);
+      if (poster) poster.classList.toggle('is-hidden', ready && p > 0.01);
       if (canvas) canvas.style.opacity = '1';
     }
 
@@ -1298,19 +1325,17 @@
       }
       resizeCanvas();
       window.addEventListener('resize', function () { resizeCanvas(); onScroll(); });
-      ready = await preload();
-      // Start on last frame (plane side / end of original render)
-      var startIdx = TOTAL - 1;
-      if (ready && frames[startIdx]) {
-        drawCover(frames[startIdx]);
-        drawnFrame = startIdx;
-        currentFrame = startIdx;
-      } else if (ready && frames[0]) {
+
+      ready = await loadEager();
+      if (ready && frames[0]) {
         drawCover(frames[0]);
         drawnFrame = 0;
+        currentFrame = 0;
       }
       setLoader(100);
       hideLoader();
+      loadRestInBackground();
+
       window.addEventListener('scroll', onScroll, { passive: true });
       targetP = readProgress();
       smoothP = targetP;
