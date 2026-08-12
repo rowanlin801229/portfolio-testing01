@@ -1565,6 +1565,14 @@
     }
     .work-item:hover .wi-num { color: var(--accent); }
 
+    .wi-copy {
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+      min-width: 0;
+    }
     .wi-name {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
@@ -1573,12 +1581,20 @@
       letter-spacing: -0.02em;
       line-height: 1;
       transition: letter-spacing 0.4s cubic-bezier(0.16,1,0.3,1);
-      z-index: 1;
     }
     html[lang="zh-Hant"] .wi-name {
       font-size: clamp(1.35rem, 2.85vw, 2.45rem);
     }
     .work-item:hover .wi-name { letter-spacing: 0.01em; }
+    .wi-sub {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 1.25rem;
+      letter-spacing: 0.02em;
+      line-height: 1.35;
+      color: var(--muted);
+    }
 
     .wi-right {
       display: flex;
@@ -1714,7 +1730,7 @@
       flex: 1 1 auto;
       min-height: 0;
       display: grid;
-      grid-template-columns: minmax(12rem, 1fr) var(--work-card-w, 300px) minmax(12rem, 1fr);
+      grid-template-columns: minmax(12rem, 1fr) var(--work-card-w, 330px) minmax(12rem, 1fr);
       column-gap: clamp(2rem, 5vw, 4.5rem);
       align-items: center;
       width: 100%;
@@ -1743,11 +1759,9 @@
       will-change: transform;
     }
     .wp-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: 1.35rem;
-      line-height: 1.45;
+      display: flex;
+      flex-direction: row;
+      align-items: baseline;
       color: var(--muted);
       opacity: 0.38;
       /* no font-size transition — keeps mid-line lock accurate */
@@ -1756,21 +1770,60 @@
       cursor: none;
     }
     .wp-name .num {
-      font-size: 0.85em;
+      flex-shrink: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1.35rem;
+      line-height: 1.45;
       margin-right: 0.5rem;
     }
+    .wp-name-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 0;
+    }
+    .wp-name-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1.35rem;
+      line-height: 1.45;
+    }
     .wp-name.is-focus {
-      font-size: clamp(1.95rem, 3.1vw, 2.55rem);
       color: var(--fg);
       opacity: 1;
     }
+    .wp-name.is-focus .num,
+    .wp-name.is-focus .wp-name-text {
+      font-size: clamp(1.95rem, 3.1vw, 2.55rem);
+    }
     .wp-name.is-focus .num { color: var(--accent); }
-    html[lang="zh-Hant"] .wp-name.is-focus {
+    html[lang="zh-Hant"] .wp-name.is-focus .num,
+    html[lang="zh-Hant"] .wp-name.is-focus .wp-name-text {
       font-size: clamp(1.45rem, 2.6vw, 2rem);
+    }
+    .wp-sub {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 1.25rem;
+      letter-spacing: 0.02em;
+      line-height: 1.35;
+      color: var(--muted);
+      margin-top: 0.4rem;
+      min-height: 1.5em;
+      opacity: 0;
+      visibility: hidden;
+    }
+    .wp-name.is-focus .wp-sub {
+      opacity: 0.72;
+      visibility: visible;
     }
     .wp-rail {
       position: relative;
-      width: var(--work-card-w, 300px);
+      width: var(--work-card-w, 330px);
       height: 100%;
       justify-self: center;
       overflow: hidden; /* secondary clip for absolute cards */
@@ -1779,8 +1832,8 @@
     .wp-card {
       position: absolute;
       left: 0;
-      width: var(--work-card-w, 300px);
-      height: var(--work-card-h, 184px);
+      width: var(--work-card-w, 330px);
+      height: var(--work-card-h, 202px);
       transform-origin: 50% 50%;
       will-change: top, transform;
       cursor: none;
@@ -1863,8 +1916,8 @@
 
     @media (min-width: 901px) {
       #work {
-        --work-card-w: 300px;
-        --work-card-h: 184px;
+        --work-card-w: 330px;
+        --work-card-h: 202px;
         --work-card-gap: 52px;
         /* Tight bottom — pin runway already hands off to About */
         padding: 4vh 5vw 4vh;
@@ -3285,7 +3338,10 @@
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">01</span>
-            <span class="wi-name" data-i18n="work.faintv.name">FainTV</span>
+            <div class="wi-copy">
+              <span class="wi-name" data-i18n="work.faintv.name">FainTV</span>
+              <span class="wi-sub" data-i18n="work.faintv.sub">End-to-end product design</span>
+            </div>
             <div class="wi-right">
               <span class="wi-type" data-i18n="work.faintv.type" data-i18n-work-type="work.faintv.type">Cross-screen · Mobile · Tablet · Web · TV</span>
               <span class="wi-arrow">→</span>
@@ -3296,7 +3352,10 @@
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">02</span>
-            <span class="wi-name" data-i18n="work.vcue.name">Visual Cues Study</span>
+            <div class="wi-copy">
+              <span class="wi-name" data-i18n="work.vcue.name">Visual Cues Study</span>
+              <span class="wi-sub" data-i18n="work.vcue.sub">Research study</span>
+            </div>
             <div class="wi-right">
               <span class="wi-type" data-i18n="work.vcue.type" data-i18n-work-type="work.vcue.type">UX Research · Mixed Methods</span>
               <span class="wi-arrow">→</span>
@@ -3307,7 +3366,10 @@
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">03</span>
-            <span class="wi-name" data-i18n="work.genebook.name">Health GeneTech</span>
+            <div class="wi-copy">
+              <span class="wi-name" data-i18n="work.genebook.name">Health GeneTech</span>
+              <span class="wi-sub" data-i18n="work.genebook.sub">Brand & website</span>
+            </div>
             <div class="wi-right">
               <span class="wi-type" data-i18n="work.genebook.type" data-i18n-work-type="work.genebook.type">Responsive Web · Branding</span>
               <span class="wi-arrow">→</span>
@@ -3318,13 +3380,18 @@
           <div class="wi-bg"></div>
           <div class="work-inner">
             <span class="wi-num">04</span>
-            <span class="wi-name" data-i18n="work.tfl.name">Training for Life</span>
+            <div class="wi-copy">
+              <span class="wi-name" data-i18n="work.tfl.name">Training for Life</span>
+              <span class="wi-sub" data-i18n="work.tfl.sub">App + wearable</span>
+            </div>
             <div class="wi-right">
               <span class="wi-type" data-i18n="work.tfl.type" data-i18n-work-type="work.tfl.type">Mobile · Wearable</span>
               <span class="wi-arrow">→</span>
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg')"></div></li>
+        <!-- Hidden 2026-08-12: Ai Cun Cell + Marilyn (pages kept; restore by uncommenting) -->
+        <!--
         <li class="work-item reveal in" data-project="aicuncell" data-name="Ai Cun Cell" data-type="Mobile · Healthcare" style="transition-delay: 0s;" onclick="location.href='aicuncell.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
@@ -3347,11 +3414,15 @@
             </div>
           </div>
         <div class="wi-cover" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a7f85fc8-9e9d-48cc-8b65-d1ea109acdd0/banner.png')"></div></li>
+        -->
         <li class="work-item reveal in" data-project="overheadflights" data-name="Overhead Flights" data-type="macOS Screen Saver · AI-Assisted Product" style="transition-delay: 0s;" onclick="location.href='overheadflights.html'">
           <div class="wi-bg"></div>
           <div class="work-inner">
-            <span class="wi-num">07</span>
-            <span class="wi-name" data-i18n="work.overheadflights.name">Overhead Flights</span>
+            <span class="wi-num">05</span>
+            <div class="wi-copy">
+              <span class="wi-name" data-i18n="work.overheadflights.name">Overhead Flights</span>
+              <span class="wi-sub" data-i18n="work.overheadflights.sub">Ambient design</span>
+            </div>
             <div class="wi-right">
               <span class="wi-type" data-i18n="work.overheadflights.type" data-i18n-work-type="work.overheadflights.type">macOS Screen Saver · AI-Assisted Product</span>
               <span class="wi-arrow">→</span>
@@ -6321,7 +6392,7 @@
       if (!wrap || !stage || !list || !rail || !typeEl || !workList) return;
 
       const mqDesktop = window.matchMedia('(min-width: 901px)');
-      const CARD_H = 184;
+      const CARD_H = 202;
       const CARD_GAP = 52;
       const STEP = CARD_H + CARD_GAP;
       /*
@@ -6363,8 +6434,10 @@
             const slug = item.dataset.project || '';
             const nameEl = item.querySelector('.wi-name');
             const typeNode = item.querySelector('.wi-type');
+            const subNode = item.querySelector('.wi-sub');
             const nameKey = slug ? 'work.' + slug + '.name' : '';
             const typeKey = slug ? 'work.' + slug + '.type' : '';
+            const subKey = slug ? 'work.' + slug + '.sub' : '';
             /* Prefer live translated DOM; then tPortfolio; then data-* fallbacks */
             let name = nameEl ? nameEl.textContent.trim() : '';
             if ((!name || name === item.getAttribute('data-name')) && nameKey && typeof window.tPortfolio === 'function') {
@@ -6379,11 +6452,18 @@
               if (tr && tr !== typeKey) typeRaw = tr;
             }
             const typeHtml = typeRaw.replace(/\s*·\s*/g, '<br>');
+            let sub = subNode ? subNode.textContent.trim() : '';
+            if (subKey && typeof window.tPortfolio === 'function') {
+              const tr = window.tPortfolio(subKey);
+              if (tr && tr !== subKey) sub = tr;
+            }
             return {
               slug: slug,
               nameKey: nameKey,
               typeKey: typeKey,
+              subKey: subKey,
               name: name,
+              sub: sub,
               type: typeHtml || typeRaw,
               typePlain: typeRaw,
               img: parseBgUrl(item.querySelector('.wi-cover')),
@@ -6409,11 +6489,14 @@
         const nameEl = document.createElement('div');
         nameEl.className = 'wp-name';
         nameEl.innerHTML =
-          '<span class="num">' + String(i + 1).padStart(2, '0') + '</span><span class="wp-name-text"></span>';
+          '<span class="num">' + String(i + 1).padStart(2, '0') + '</span><div class="wp-name-copy"><span class="wp-name-text"></span><span class="wp-sub"></span></div>';
         const textEl = nameEl.querySelector('.wp-name-text');
+        const subEl = nameEl.querySelector('.wp-sub');
         textEl.textContent = p.name;
+        if (subEl) subEl.textContent = p.sub || '';
         /* Let i18n.js update pin labels the same way as the classic list */
         if (p.nameKey) textEl.setAttribute('data-i18n', p.nameKey);
+        if (p.subKey && subEl) subEl.setAttribute('data-i18n', p.subKey);
         if (p.slug) nameEl.setAttribute('data-project', p.slug);
         nameEl.addEventListener('click', function () {
           location.href = p.href;
@@ -6440,9 +6523,14 @@
         projects.forEach(function (p, i) {
           if (!names[i] || !cards[i]) return;
           const textEl = names[i].querySelector('.wp-name-text');
+          const subEl = names[i].querySelector('.wp-sub');
           if (textEl) {
             if (p.nameKey) textEl.setAttribute('data-i18n', p.nameKey);
             textEl.textContent = p.name;
+          }
+          if (subEl) {
+            if (p.subKey) subEl.setAttribute('data-i18n', p.subKey);
+            subEl.textContent = p.sub || '';
           }
           const img = cards[i].querySelector('img');
           if (img) img.alt = p.name;
@@ -6606,7 +6694,8 @@
         list.style.transform = 'none';
         void list.offsetHeight;
         const focusName = names[idx];
-        const nameRect = focusName.getBoundingClientRect();
+        const focusLine = focusName.querySelector('.wp-name-text') || focusName;
+        const nameRect = focusLine.getBoundingClientRect();
         const nameCenter = nameRect.top + nameRect.height * 0.5;
         list.style.transform = 'translateY(' + (midY - nameCenter) + 'px)';
 

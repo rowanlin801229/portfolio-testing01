@@ -12,12 +12,16 @@
     "work.aicuncell.name": "Ai Cun Cell",
     "work.marilyn.name": "Marilyn",
     "work.faintv.type": "Cross-screen · Mobile · Tablet · Web · TV",
+    "work.faintv.sub": "End-to-end product design",
     "work.genebook.type": "Responsive Web · Branding",
+    "work.genebook.sub": "Brand & website",
     "work.tfl.type": "Mobile · Wearable",
+    "work.tfl.sub": "App + wearable",
     "work.aicuncell.type": "Mobile · Healthcare",
     "work.marilyn.type": "Responsive Web · Campaign",
     "work.vcue.name": "Visual Cues Study",
     "work.vcue.type": "UX Research · Mixed Methods",
+    "work.vcue.sub": "Research study",
     "work.preview.project": "Project",
     "work.preview.type": "Type",
     "about.bio": "UI/UX and Product Designer based in London, with 5+ years across <em>mobile, web, wearable, and TV</em> platforms.",
@@ -67,7 +71,8 @@
     "contact.cv": "Download CV",
     "footer.copyright": "© 2026 Yu-Hsien \"Rowan\" Lin",
     "work.overheadflights.name": "Overhead Flights",
-    "work.overheadflights.type": "macOS Screen Saver · AI-Assisted Product"
+    "work.overheadflights.type": "macOS Screen Saver · AI-Assisted Product",
+    "work.overheadflights.sub": "Ambient design"
   },
   "zh": {
     "meta.title": "林昱嫻 Rowan Lin — UI/UX 設計師",
@@ -82,12 +87,16 @@
     "work.aicuncell.name": "愛存細胞",
     "work.marilyn.name": "瑪麗蓮",
     "work.faintv.type": "跨螢幕 · 手機 · 平板 · 網頁 · 電視",
+    "work.faintv.sub": "端到端產品設計",
     "work.genebook.type": "響應式網頁 · 品牌識別",
+    "work.genebook.sub": "品牌與網站",
     "work.tfl.type": "手機 · 穿戴裝置",
+    "work.tfl.sub": "App 與穿戴",
     "work.aicuncell.type": "手機 · 醫療健康",
     "work.marilyn.type": "響應式網頁 · 行銷活動",
     "work.vcue.name": "視覺提示研究",
     "work.vcue.type": "UX 研究 · 混合方法",
+    "work.vcue.sub": "研究專案",
     "work.preview.project": "專案",
     "work.preview.type": "類型",
     "about.bio": "現居倫敦的 UI/UX 與產品設計師，擁有 5 年以上 <em>手機、網頁、穿戴裝置與電視</em> 跨平台設計經驗。",
@@ -137,6 +146,7 @@
     "contact.cv": "下載履歷",
     "footer.copyright": "© 2026 林昱嫻 Rowan Lin",
     "work.overheadflights.name": "頭頂航班",
-    "work.overheadflights.type": "macOS 螢幕保護程式 · AI 協作"
+    "work.overheadflights.type": "macOS 螢幕保護程式 · AI 協作",
+    "work.overheadflights.sub": "環境式設計"
   }
 }
