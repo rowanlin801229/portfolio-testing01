@@ -94,7 +94,14 @@
     currentLang = lang;
 
     document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : 'en';
-    document.title = dict['meta.title'] || t('en', 'meta.title');
+
+    var titleEl = document.querySelector('title[data-i18n]');
+    if (titleEl) {
+      var titleKey = titleEl.getAttribute('data-i18n');
+      if (titleKey && dict[titleKey] != null) document.title = dict[titleKey];
+    } else if (dict['meta.title'] != null) {
+      document.title = dict['meta.title'];
+    }
 
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');

@@ -11,7 +11,11 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Overhead Flights — Rowan Lin</title>
+  <title data-i18n="case.overheadflights.meta.title">Overhead Flights — Rowan Lin</title>
+  <script src="i18n.js" defer></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
   <meta name="description" content="Overhead Flights: real flight data, quietly displayed on a macOS screen saver — showing the one plane passing overhead right now.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
@@ -35,6 +39,145 @@
       font-weight: 300;
       overflow-x: hidden;
     }
+    .nav-lang {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .nav-lang-btn {
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      color: #ffffff;
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 0.2rem 0.45rem;
+      cursor: pointer;
+      opacity: 0.3;
+      transition: color 0.3s, border-color 0.3s, opacity 0.3s;
+    }
+    .nav-lang-btn.is-active { opacity: 1; border-color: rgba(255, 255, 255, 0.28); }
+    .nav-lang-btn:hover { color: var(--accent); opacity: 1; }
+    .nav-lang-sep {
+      color: #ffffff;
+      opacity: 0.3;
+      font: inherit;
+      user-select: none;
+    }
+
+    /* ── SCROLL PROGRESS (skiper94-inspired; desktop only; draggable scrubber) ──
+       https://skiper-ui.com/v1/skiper94 — Scroll progress 002 ── */
+    .scroll-progress {
+      position: fixed;
+      left: max(0.6rem, 1.3vw);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 150;
+      height: 15rem;
+      width: 1.25rem;
+      cursor: pointer;
+      touch-action: none;
+    }
+    .scroll-progress__track {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 0.375rem;
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(74, 74, 72, 0.14);
+      overflow: visible;
+      pointer-events: none;
+      transition: background 0.2s ease;
+    }
+    .scroll-progress:hover .scroll-progress__track,
+    .scroll-progress.is-dragging .scroll-progress__track {
+      background: rgba(74, 74, 72, 0.26);
+    }
+    .scroll-progress__fill {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: var(--accent);
+      clip-path: inset(0 0 100% 0);
+      will-change: clip-path;
+    }
+    .scroll-progress__marker {
+      position: absolute;
+      left: 50%;
+      top: 0%;
+      width: 1rem;
+      height: 1px;
+      background: var(--accent);
+      transform: translate(-50%, 0);
+      will-change: top;
+      pointer-events: auto;
+    }
+    .scroll-progress__marker::after {
+      content: '';
+      position: absolute;
+      left: -0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 11rem;
+      height: 2.75rem;
+    }
+    .scroll-progress:hover .scroll-progress__marker,
+    .scroll-progress.is-dragging .scroll-progress__marker {
+      height: 2px;
+    }
+    .scroll-progress.is-dragging {
+      cursor: grabbing;
+    }
+    .scroll-progress__pct {
+      position: absolute;
+      left: calc(100% + 0.45rem);
+      top: 50%;
+      transform: translateY(-50%) translateX(-0.2rem);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      line-height: 1;
+      color: var(--accent);
+      white-space: nowrap;
+      pointer-events: auto;
+      user-select: none;
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .scroll-progress.is-label-on .scroll-progress__pct,
+    .scroll-progress:hover .scroll-progress__pct,
+    .scroll-progress.is-dragging .scroll-progress__pct,
+    .scroll-progress:focus-visible .scroll-progress__pct {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+    .scroll-progress:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 999px;
+    }
+    @media (max-width: 767px) {
+      .scroll-progress {
+        display: none !important;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-progress__fill,
+      .scroll-progress__marker,
+      .scroll-progress__pct {
+        transition: none;
+      }
+    }
+
     .display { font-family: 'Cormorant Garamond', Georgia, serif; }
     a { color: var(--fg); transition: color 0.3s; }
     a:hover { color: var(--accent); }
@@ -74,6 +217,7 @@
       filter: blur(4px);
       animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
     }
+    html[lang="zh-Hant"] .cs-title { font-size: clamp(2.5rem, 6vw, 5.5rem); }
     .cs-subtitle {
       font-size: clamp(1rem, 1.4vw, 1.2rem);
       line-height: 1.8;
@@ -475,6 +619,7 @@
     @media (max-width: 767px) {
       .cs-hero-copy { padding: 96px 4vw 2rem; }
       .cs-title { font-size: clamp(2.8rem, 14vw, 4.5rem); }
+      html[lang="zh-Hant"] .cs-title { font-size: clamp(2.1rem, 10vw, 3.2rem); }
       .cs-hero-banner .cs-img { max-height: 52vh; }
       .cs-meta { grid-template-columns: 1fr 1fr; gap: 1.25rem; padding: 1.5rem 4vw 6vh; }
       .cs-section { padding: 7vh 4vw; }
@@ -501,10 +646,10 @@
     #cur-dot{position:fixed;width:4px;height:4px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;top:0;left:0;will-change:transform}
     #cur-ring.expanded{width:60px;height:60px;border-color:var(--accent);background:rgba(184,69,69,0.06)}
     nav{position:fixed;inset:0 0 auto;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:2rem 5vw;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(14,14,13,0.86);backdrop-filter:blur(12px)}
-    .nav-back{display:flex;align-items:center;gap:.7rem;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(210,210,205,0.88);text-decoration:none;transition:color .3s}
-    .nav-back:hover{color:var(--fg)}
-    .nav-back-arrow{transition:transform .3s cubic-bezier(.16,1,.3,1)}
-    .nav-back:hover .nav-back-arrow{transform:translateX(-4px)}
+    .nav-logo{color:#ffffff;text-decoration:none;display:inline-flex;align-items:center;transition:opacity .3s ease}
+    .nav-logo svg{height:34px;width:auto;display:block}
+    .nav-logo .cls-1{fill:#ffffff;transition:fill .3s ease}
+    .nav-logo:hover{opacity:.72}
     .nav-right{display:flex;align-items:center;gap:2rem}
     .nav-index{font-size:1rem;letter-spacing:.15em;color:rgba(210,210,205,0.72)}
     .nav-prev{display:flex;align-items:center;gap:.6rem;font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(210,210,205,0.88);text-decoration:none;transition:color .3s}
@@ -630,6 +775,7 @@
       margin: 0 0 1.1rem;
       max-width: 14ch;
     }
+    html[lang="zh-Hant"] .ofj-open-title { font-size: clamp(1.85rem, 5vw, 3.6rem); }
     .ofj-open-sub {
       font-family: 'Space Grotesk', system-ui, sans-serif;
       font-weight: 300;
@@ -671,12 +817,23 @@
   </style>
 </head>
 <body>
+  <!-- Scroll progress 002 style — inspired by Skiper UI skiper94 (https://skiper-ui.com/v1/skiper94). Desktop only. Draggable scrubber: click or drag to jump to a scroll position. -->
+  <div class="scroll-progress" id="scroll-progress" role="slider" tabindex="0"
+       aria-label="Page scroll position" data-i18n-aria="case.overheadflights.progress.aria" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="scroll-progress__track">
+      <div class="scroll-progress__fill" id="scroll-progress-fill"></div>
+      <div class="scroll-progress__marker" id="scroll-progress-marker">
+        <span class="scroll-progress__pct" id="scroll-progress-pct" data-i18n="case.overheadflights.progress.journey">Journey</span>
+      </div>
+    </div>
+  </div>
+
   <div id="cur-ring"></div>
   <div id="cur-dot"></div>
 
   <!-- ═══ ACT 1: cinematic scroll (no film-script captions) ═══ -->
   <div class="ofj-loader" id="ofjLoader" aria-live="polite" aria-busy="true">
-    <div class="ofj-loader-mark">Overhead Flights</div>
+    <div class="ofj-loader-mark" data-i18n="case.overheadflights.loader.mark">Overhead Flights</div>
     <div class="ofj-loader-bar"><div class="ofj-loader-fill" id="ofjLoaderFill"></div></div>
     <div class="ofj-loader-pct" id="ofjLoaderPct">0%</div>
   </div>
@@ -690,13 +847,13 @@
       <div class="ofj-vignette" aria-hidden="true"></div>
       <!-- Opening: project identity (not airline promo) -->
       <div class="ofj-product" id="ofjProduct" aria-hidden="true">
-        <h1 class="ofj-open-title">Overhead Flights</h1>
-        <p class="ofj-open-sub">Overhead Flights: real flight data, quietly displayed on a macOS screen saver — showing the one plane passing overhead right now.</p>
+        <h1 class="ofj-open-title" data-i18n="case.overheadflights.journey.title">Overhead Flights</h1>
+        <p class="ofj-open-sub" data-i18n="case.overheadflights.journey.subtitle">Overhead Flights: real flight data, quietly displayed on a macOS screen saver — showing the one plane passing overhead right now.</p>
       </div>
-      <div class="ofj-continue" id="ofjContinue" aria-hidden="true">Continue ↓</div>
+      <div class="ofj-continue" id="ofjContinue" aria-hidden="true" data-i18n="case.overheadflights.journey.continue">Continue ↓</div>
       <div class="ofj-hud" aria-hidden="true">
         <div class="ofj-hud-track"><div class="ofj-hud-fill" id="ofjHudFill"></div></div>
-        <span class="ofj-hud-hint" id="ofjHudHint">Scroll</span>
+        <span class="ofj-hud-hint" id="ofjHudHint" data-i18n="case.overheadflights.journey.scroll">Scroll</span>
       </div>
     </div>
   </section>
@@ -704,40 +861,55 @@
   <!-- ═══ ACT 2: full case study (existing content) ═══ -->
   <div class="of-case-study" id="case-study">
   <nav>
-    <a class="nav-back" href="index.html"><span class="nav-back-arrow">←</span> All Projects</a>
+    <a class="nav-logo" href="index.html" aria-label="Rowan Lin — Back to home">
+      <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.63 35.01" role="img">
+        <g>
+          <g>
+            <path class="cls-1" d="M25.38,14.31h-15.02c-1.17,0-2.34.2-3.45.59C2.79,16.37,0,20.29,0,24.66v10.35l6.39-4.02v-6.33s0-.02,0-.04c.02-2.16,1.79-3.92,3.96-3.92h13.15s4.71.1,6.68-1.01c1.97-1.11,3.17-2.44,4.19-4.25.47-.83.82-1.71,1.05-2.63h-6.96c-.73.91-1.84,1.5-3.09,1.5Z"/>
+            <path class="cls-1" d="M28.83.59c-1.11-.39-2.28-.59-3.45-.59H5.81S0,6.39,0,6.39h25.38c1.69,0,3.14,1.07,3.7,2.57h6.55c-.52-3.8-3.13-7.06-6.81-8.37Z"/>
+          </g>
+          <path class="cls-1" d="M34.44,35.01l-6-3.71v-8.23h3.08c1.61,0,2.92,1.31,2.92,2.92v9.01Z"/>
+        </g>
+      </svg>
+    </a>
     <div class="nav-right">
+      <div class="nav-lang" role="group" aria-label="Language">
+        <button type="button" class="nav-lang-btn is-active" data-lang="en" aria-pressed="true">EN</button>
+        <span class="nav-lang-sep" aria-hidden="true">|</span>
+        <button type="button" class="nav-lang-btn" data-lang="zh" aria-pressed="false">中文</button>
+      </div>
+      <a class="nav-prev" href="tfl.html">←</a>
       <span class="nav-index">05 / 05</span>
-      <a class="nav-prev" href="tfl.html">← Training for Life</a>
     </div>
   </nav>
 
 
 
   <!-- HERO -->
-  <header class="cs-hero">
+  <header class="cs-hero" id="hero">
 <div class="cs-hero-copy">
-      <span class="cs-label">Case Study · Independent Project</span>
-      <h1 class="cs-title">Overhead Flights</h1>
-      <p class="cs-subtitle">Overhead Flights: real flight data, quietly displayed on a macOS screen saver — showing the one plane passing overhead right now.</p>
+      <span class="cs-label" data-i18n="case.overheadflights.hero.eyebrow">Case Study · Independent Project</span>
+      <h1 class="cs-title" data-i18n="case.overheadflights.hero.title">Overhead Flights</h1>
+      <p class="cs-subtitle" data-i18n="case.overheadflights.hero.subtitle">Overhead Flights: real flight data, quietly displayed on a macOS screen saver — showing the one plane passing overhead right now.</p>
     </div>
     <figure class="cs-hero-banner">
       <img class="cs-img" src="images/overheadflights/export.jpg" alt="MacBook on a desk at night showing Overhead Flights screensaver with callsign BAW118; city skyline and distant aircraft through floor-to-ceiling windows." width="1920" height="1080">
     </figure>
     <div class="cs-meta">
       <div>
-        <span class="cs-meta-label">Role</span>
-        <span class="cs-meta-val">UI/UX &amp; Product Designer</span>
+        <span class="cs-meta-label" data-i18n="case.overheadflights.hero.role.label">Role</span>
+        <span class="cs-meta-val" data-i18n="case.overheadflights.hero.role.value">UI/UX &amp; Product Designer</span>
       </div>
       <div>
-        <span class="cs-meta-label">Focus</span>
-        <span class="cs-meta-val">Research · AI workflow · Integration</span>
+        <span class="cs-meta-label" data-i18n="case.overheadflights.hero.focus.label">Focus</span>
+        <span class="cs-meta-val" data-i18n="case.overheadflights.hero.focus.value">Research · AI workflow · Integration</span>
       </div>
       <div>
-        <span class="cs-meta-label">Platform</span>
-        <span class="cs-meta-val">macOS Screen Saver</span>
+        <span class="cs-meta-label" data-i18n="case.overheadflights.hero.platform.label">Platform</span>
+        <span class="cs-meta-val" data-i18n="case.overheadflights.hero.platform.value">macOS Screen Saver</span>
       </div>
       <div>
-        <span class="cs-meta-label">Year</span>
+        <span class="cs-meta-label" data-i18n="case.overheadflights.hero.year.label">Year</span>
         <span class="cs-meta-val">2026</span>
       </div>
     </div>
@@ -747,43 +919,43 @@
   <!-- DEMO VIDEO removed for now (file still at videos/overhead-flights-demo.mp4) -->
 
   <!-- S1 MARKET -->
-  <section class="cs-section reveal">
+  <section class="cs-section reveal" id="situation">
     <div class="cs-sec-header">
-      <span class="cs-sec-label">Situation</span>
-      <h2 class="cs-sec-headline">Mainstream apps all require you to actively open and search; the passive, single-device direction has already been done in hardware.</h2>
+      <span class="cs-sec-label" data-i18n="case.overheadflights.situation.label">Situation</span>
+      <h2 class="cs-sec-headline" data-i18n="case.overheadflights.situation.title">Mainstream apps all require you to actively open and search; the passive, single-device direction has already been done in hardware.</h2>
     </div>
     <div class="cs-text-grid">
-      <span class="cs-text-label">Market landscape</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.situation.market.label">Market landscape</span>
       <div class="cs-text-body">
-        <p>Most people spend the majority of their day glued to a phone or a laptop. This product starts from that observation: it connects a screen saver with real flight information, using the lowest possible amount of disruption to let someone feel a faint sense of connection to another person.</p>
-        <p>There's no shortage of plane-tracking tools — FlightRadar24, Plane Finder, FlightAware all lay the whole sky out as a map, a list, an alert feed. They require you to <strong>actively open</strong> the app to check; at their core, they're dashboards. The maker community has also built hardware for this: <strong>Airframe</strong> (a Raspberry Pi + e-paper display) quietly shows the nearest plane overhead — a gift its creator built for a friend who lived under a flight path. The idea itself is not something I thought of first.</p>
+        <p data-i18n="case.overheadflights.situation.market.p1">Most people spend the majority of their day glued to a phone or a laptop. This product starts from that observation: it connects a screen saver with real flight information, using the lowest possible amount of disruption to let someone feel a faint sense of connection to another person.</p>
+        <p data-i18n-html="case.overheadflights.situation.market.p2">There's no shortage of plane-tracking tools — FlightRadar24, Plane Finder, FlightAware all lay the whole sky out as a map, a list, an alert feed. They require you to <strong>actively open</strong> the app to check; at their core, they're dashboards. The maker community has also built hardware for this: <strong>Airframe</strong> (a Raspberry Pi + e-paper display) quietly shows the nearest plane overhead — a gift its creator built for a friend who lived under a flight path. The idea itself is not something I thought of first.</p>
         <table class="findings-table">
           <thead>
             <tr>
-              <th>Type</th>
-              <th>Example</th>
-              <th>Behavior</th>
-              <th>Limitation</th>
+              <th data-i18n="case.overheadflights.situation.table.type">Type</th>
+              <th data-i18n="case.overheadflights.situation.table.example">Example</th>
+              <th data-i18n="case.overheadflights.situation.table.behavior">Behavior</th>
+              <th data-i18n="case.overheadflights.situation.table.limitation">Limitation</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="cue-name">Mainstream apps</td>
-              <td>FlightRadar24, etc.</td>
-              <td>Active search, multi-plane map</td>
-              <td>Requires opening, high information density</td>
+              <td class="cue-name" data-i18n="case.overheadflights.situation.row1.type">Mainstream apps</td>
+              <td data-i18n="case.overheadflights.situation.row1.example">FlightRadar24, etc.</td>
+              <td data-i18n="case.overheadflights.situation.row1.behavior">Active search, multi-plane map</td>
+              <td data-i18n="case.overheadflights.situation.row1.limitation">Requires opening, high information density</td>
             </tr>
             <tr>
-              <td class="cue-name">Maker hardware</td>
-              <td>Airframe, etc.</td>
-              <td>Passive, single device</td>
-              <td>Requires buying parts, assembly, takes up physical space</td>
+              <td class="cue-name" data-i18n="case.overheadflights.situation.row2.type">Maker hardware</td>
+              <td data-i18n="case.overheadflights.situation.row2.example">Airframe, etc.</td>
+              <td data-i18n="case.overheadflights.situation.row2.behavior">Passive, single device</td>
+              <td data-i18n="case.overheadflights.situation.row2.limitation">Requires buying parts, assembly, takes up physical space</td>
             </tr>
             <tr>
-              <td class="cue-name">Ambient screen savers</td>
-              <td>Fliqlo, Aerial</td>
-              <td>Passive, atmospheric</td>
-              <td>No flight information, or unrelated to flight</td>
+              <td class="cue-name" data-i18n="case.overheadflights.situation.row3.type">Ambient screen savers</td>
+              <td data-i18n="case.overheadflights.situation.row3.example">Fliqlo, Aerial</td>
+              <td data-i18n="case.overheadflights.situation.row3.behavior">Passive, atmospheric</td>
+              <td data-i18n="case.overheadflights.situation.row3.limitation">No flight information, or unrelated to flight</td>
             </tr>
           </tbody>
         </table>
@@ -792,42 +964,42 @@
   </section>
 
   <!-- S2 POSITIONING -->
-  <section class="cs-section reveal">
+  <section class="cs-section reveal" id="positioning">
     <div class="cs-sec-header">
-      <span class="cs-sec-label">Positioning</span>
-      <h2 class="cs-sec-headline">The gap isn't the idea of "a plane overhead" — it's the intersection: a macOS screen saver.</h2>
+      <span class="cs-sec-label" data-i18n="case.overheadflights.positioning.label">Positioning</span>
+      <h2 class="cs-sec-headline" data-i18n="case.overheadflights.positioning.title">The gap isn't the idea of "a plane overhead" — it's the intersection: a macOS screen saver.</h2>
     </div>
     <div class="cs-text-grid">
-      <span class="cs-text-label">Two axes</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.positioning.axes.label">Two axes</span>
       <div class="cs-text-body">
-        <p>After checking, the actual gap isn't the concept of "a plane overhead" — it's the intersection: <strong>a macOS screen saver × real flight data × editorial typography</strong>. Mainstream apps' business models don't encourage a passive screen saver; Airframe proves the passive, single-device direction works, but it adds a physical device. There's no direct precedent for a software screen saver doing this — the argument has to address Airframe head-on, not pretend the market is empty.</p>
+        <p data-i18n-html="case.overheadflights.positioning.body">After checking, the actual gap isn't the concept of "a plane overhead" — it's the intersection: <strong>a macOS screen saver × real flight data × editorial typography</strong>. Mainstream apps' business models don't encourage a passive screen saver; Airframe proves the passive, single-device direction works, but it adds a physical device. There's no direct precedent for a software screen saver doing this — the argument has to address Airframe head-on, not pretend the market is empty.</p>
         <div class="pos-map" aria-label="Positioning map: passive appearance × ambient experience">
           <div class="pos-map-canvas">
             <div class="pos-axis-x"></div>
             <div class="pos-axis-y"></div>
-            <span class="pos-label top">Ambient experience</span>
-            <span class="pos-label bottom">Functional tool</span>
-            <span class="pos-label left">Active search</span>
-            <span class="pos-label right">Passive appearance</span>
+            <span class="pos-label top" data-i18n="case.overheadflights.positioning.map.top">Ambient experience</span>
+            <span class="pos-label bottom" data-i18n="case.overheadflights.positioning.map.bottom">Functional tool</span>
+            <span class="pos-label left" data-i18n="case.overheadflights.positioning.map.left">Active search</span>
+            <span class="pos-label right" data-i18n="case.overheadflights.positioning.map.right">Passive appearance</span>
             <div class="pos-dot of star">
               <div class="mark"></div>
-              <strong>★ Overhead Flights</strong>
-              <span>macOS screen saver</span>
+              <strong data-i18n="case.overheadflights.positioning.map.of.name">★ Overhead Flights</strong>
+              <span data-i18n="case.overheadflights.positioning.map.of.sub">macOS screen saver</span>
             </div>
             <div class="pos-dot airframe">
               <div class="mark"></div>
               <strong>Airframe</strong>
-              <span>Hardware device</span>
+              <span data-i18n="case.overheadflights.positioning.map.airframe.sub">Hardware device</span>
             </div>
             <div class="pos-dot fr">
               <div class="mark"></div>
-              <strong>FlightRadar, etc.</strong>
-              <span>Active tools</span>
+              <strong data-i18n="case.overheadflights.positioning.map.fr.name">FlightRadar, etc.</strong>
+              <span data-i18n="case.overheadflights.positioning.map.fr.sub">Active tools</span>
             </div>
             <div class="pos-dot fliqlo">
               <div class="mark"></div>
               <strong>Fliqlo / Aerial</strong>
-              <span>Pure ambience</span>
+              <span data-i18n="case.overheadflights.positioning.map.fliqlo.sub">Pure ambience</span>
             </div>
           </div>
         </div>
@@ -836,80 +1008,80 @@
   </section>
 
   <aside class="cs-insight reveal">
-    <span class="cs-insight-label">Data integrity</span>
-    <p class="cs-insight-text">A portfolio mockup can look beautiful, but if the claim is "a plane overhead," the data has to be live ADS-B — not a faked callsign animation. The data source's terms of use (non-commercial / educational / personal) also had to be checked before writing them into the README.</p>
+    <span class="cs-insight-label" data-i18n="case.overheadflights.integrity.label">Data integrity</span>
+    <p class="cs-insight-text" data-i18n="case.overheadflights.integrity.body">A portfolio mockup can look beautiful, but if the claim is "a plane overhead," the data has to be live ADS-B — not a faked callsign animation. The data source's terms of use (non-commercial / educational / personal) also had to be checked before writing them into the README.</p>
   </aside>
 
   <!-- T -->
-  <section class="cs-section reveal">
+  <section class="cs-section reveal" id="task">
     <div class="cs-sec-header">
-      <span class="cs-sec-label">Task</span>
-      <h2 class="cs-sec-headline">Take the real-time data that used to live only inside tracking apps, and move it into the screen saver that was already idle.</h2>
+      <span class="cs-sec-label" data-i18n="case.overheadflights.task.label">Task</span>
+      <h2 class="cs-sec-headline" data-i18n="case.overheadflights.task.title">Take the real-time data that used to live only inside tracking apps, and move it into the screen saver that was already idle.</h2>
     </div>
     <div class="cs-text-grid">
-      <span class="cs-text-label">Goal</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.task.goal.label">Goal</span>
       <div class="cs-text-body">
-        <p>Move real-time data — the plane currently flying overhead, information that used to live only inside tracking apps — into the screen saver a computer is already running. No new app, no new device, no active searching: just replace what the screen saver shows, so a person can feel a faint human connection while being almost entirely undisturbed.</p>
-        <p style="margin-top:1.25rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;line-height:1.7;color:var(--muted)">“I decided to build a screensaver that quietly shows flight information, so people feel connected without any effort.”</p>
-        <p style="margin-top:1.75rem"><strong>Role</strong>: independently conceived and decided on direction, visuals, trade-offs, and risk. AI collaborated on research synthesis, drafting, and implementation — rules described below.</p>
+        <p data-i18n="case.overheadflights.task.goal.body">Move real-time data — the plane currently flying overhead, information that used to live only inside tracking apps — into the screen saver a computer is already running. No new app, no new device, no active searching: just replace what the screen saver shows, so a person can feel a faint human connection while being almost entirely undisturbed.</p>
+        <p style="margin-top:1.25rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;line-height:1.7;color:var(--muted)" data-i18n="case.overheadflights.task.quote">“I decided to build a screensaver that quietly shows flight information, so people feel connected without any effort.”</p>
+        <p style="margin-top:1.75rem" data-i18n-html="case.overheadflights.task.role"><strong>Role</strong>: independently conceived and decided on direction, visuals, trade-offs, and risk. AI collaborated on research synthesis, drafting, and implementation — rules described below.</p>
       </div>
     </div>
   </section>
 
   <!-- A0 AI -->
-  <section class="cs-section reveal">
+  <section class="cs-section reveal" id="action-ai">
     <div class="cs-sec-header">
-      <span class="cs-sec-label">Action · AI</span>
-      <h2 class="cs-sec-headline">Four tools, each with its own job — I'm the gatekeeper at every step.</h2>
+      <span class="cs-sec-label" data-i18n="case.overheadflights.ai.label">Action · AI</span>
+      <h2 class="cs-sec-headline" data-i18n="case.overheadflights.ai.title">Four tools, each with its own job — I'm the gatekeeper at every step.</h2>
     </div>
     <div class="cs-text-grid">
-      <span class="cs-text-label">Collaboration</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.ai.collab.label">Collaboration</span>
       <div class="cs-text-body">
-        <p>This wasn't throwing one prompt at a tool and waiting for a result. Four tools, each with a distinct job, and I'm the gatekeeper at every step:</p>
+        <p data-i18n="case.overheadflights.ai.collab.intro">This wasn't throwing one prompt at a tool and waiting for a result. Four tools, each with a distinct job, and I'm the gatekeeper at every step:</p>
         <table class="findings-table">
           <thead>
             <tr>
-              <th>Tool</th>
-              <th>Responsibility</th>
+              <th data-i18n="case.overheadflights.ai.table.tool">Tool</th>
+              <th data-i18n="case.overheadflights.ai.table.responsibility">Responsibility</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td class="cue-name">Claude</td>
-              <td>First-pass thinking: breaking down the problem, synthesizing market research, drafting the spec, early technical trade-offs</td>
+              <td data-i18n="case.overheadflights.ai.claude.role">First-pass thinking: breaking down the problem, synthesizing market research, drafting the spec, early technical trade-offs</td>
             </tr>
             <tr>
               <td class="cue-name">Perplexity</td>
-              <td>Verifying claims: finding primary documents and research to check whether claims in the market research and design rationale actually hold up</td>
+              <td data-i18n="case.overheadflights.ai.perplexity.role">Verifying claims: finding primary documents and research to check whether claims in the market research and design rationale actually hold up</td>
             </tr>
             <tr>
               <td class="cue-name">Grok</td>
-              <td>Only catches errors: doesn't redo the thinking; reviews facts, assumptions, risks</td>
+              <td data-i18n="case.overheadflights.ai.grok.role">Only catches errors: doesn't redo the thinking; reviews facts, assumptions, risks</td>
             </tr>
             <tr>
               <td class="cue-name">Cursor</td>
-              <td>Only executes task packages that have already passed review; doesn't improvise before review</td>
+              <td data-i18n="case.overheadflights.ai.cursor.role">Only executes task packages that have already passed review; doesn't improvise before review</td>
             </tr>
           </tbody>
         </table>
-        <p style="margin-top:1.75rem">The reason for choosing Perplexity is straightforward: general-purpose AI answers can occasionally sound authoritative while having no real source behind them. Perplexity attaches sources to its answers, which lets me go back and verify instead of taking it at face value. That matters for a portfolio argument that will actually be scrutinized — claims about "where the gap is" in the market research, and the research cited in the design rationale, both need to trace back to real documents, not just "the AI said so."</p>
-        <p style="margin-top:2rem"><strong>Gatekeeping examples</strong> (this isn't a process demo — it's the judgment itself)</p>
+        <p style="margin-top:1.75rem" data-i18n="case.overheadflights.ai.perplexity.why">The reason for choosing Perplexity is straightforward: general-purpose AI answers can occasionally sound authoritative while having no real source behind them. Perplexity attaches sources to its answers, which lets me go back and verify instead of taking it at face value. That matters for a portfolio argument that will actually be scrutinized — claims about "where the gap is" in the market research, and the research cited in the design rationale, both need to trace back to real documents, not just "the AI said so."</p>
+        <p style="margin-top:2rem" data-i18n-html="case.overheadflights.ai.gatekeeping.title"><strong>Gatekeeping examples</strong> (this isn't a process demo — it's the judgment itself)</p>
         <ol class="cs-process-steps" style="list-style:none;margin-top:0.5rem">
           <li class="cs-proc-step">
             <span class="cs-proc-num">01</span>
-            <p class="cs-proc-desc"><strong>Perplexity's MCP tool kept returning 404 errors.</strong> I didn't wait for the tool to get fixed, and I didn't fill the gap with an AI's unverified memory — I opened a browser myself and manually verified the research instead. The judgment call: when a tool fails, there's a choice between "get something down now, verify later" and "just do it manually." I chose the latter, because this market research ultimately has to support the claim that "this gap is real" — it can't afford to rest on unverified information.</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.ai.gate.1"><strong>Perplexity's MCP tool kept returning 404 errors.</strong> I didn't wait for the tool to get fixed, and I didn't fill the gap with an AI's unverified memory — I opened a browser myself and manually verified the research instead. The judgment call: when a tool fails, there's a choice between "get something down now, verify later" and "just do it manually." I chose the latter, because this market research ultimately has to support the claim that "this gap is real" — it can't afford to rest on unverified information.</p>
           </li>
           <li class="cs-proc-step">
             <span class="cs-proc-num">02</span>
-            <p class="cs-proc-desc"><strong>A draft wanted to state adsbdb's rate limit as a specific number.</strong> That number had never been verified against a primary source — it was just a plausible-sounding guess from the AI. I required that "no number goes in without primary-source verification," and changed it to conservative, verifiable language instead (phrasing like "well below the public 1 req/s limit" — checkable, but not overstated). The judgment call: a portfolio gets scrutinized, and an unsourced number is worse for credibility than no number at all.</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.ai.gate.2"><strong>A draft wanted to state adsbdb's rate limit as a specific number.</strong> That number had never been verified against a primary source — it was just a plausible-sounding guess from the AI. I required that "no number goes in without primary-source verification," and changed it to conservative, verifiable language instead (phrasing like "well below the public 1 req/s limit" — checkable, but not overstated). The judgment call: a portfolio gets scrutinized, and an unsourced number is worse for credibility than no number at all.</p>
           </li>
           <li class="cs-proc-step">
             <span class="cs-proc-num">03</span>
-            <p class="cs-proc-desc"><strong>The AI surfaced an unfavorable precedent: Airframe.</strong> The safer move would have been to avoid mentioning it and let readers assume the idea was original. I chose to address it directly instead: acknowledging that Airframe had already done the "nearest plane overhead" concept earlier, and narrowing the difference down to "form factor (screen saver vs. hardware) + execution (editorial typography vs. e-paper)." The judgment call: not finding a competitor doesn't mean you've won. Being willing to face the competitor you did find head-on is what actually demonstrates product judgment — not how thorough the market research was.</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.ai.gate.3"><strong>The AI surfaced an unfavorable precedent: Airframe.</strong> The safer move would have been to avoid mentioning it and let readers assume the idea was original. I chose to address it directly instead: acknowledging that Airframe had already done the "nearest plane overhead" concept earlier, and narrowing the difference down to "form factor (screen saver vs. hardware) + execution (editorial typography vs. e-paper)." The judgment call: not finding a competitor doesn't mean you've won. Being willing to face the competitor you did find head-on is what actually demonstrates product judgment — not how thorough the market research was.</p>
           </li>
           <li class="cs-proc-step">
             <span class="cs-proc-num">04</span>
-            <p class="cs-proc-desc"><strong>Once the visual design was finalized, I marked it frozen in the documentation.</strong> I told the AI explicitly: "the text size and layout are already right — don't touch them unless I say so" — and confined its remaining freedom to the data layer and background effects. The judgment call: AI has no built-in sense of "good enough, stop here" — left alone, it tends to keep micro-adjusting past the point of visible difference. Freezing the design was a line I drew deliberately; it wasn't something the AI converged on by itself.</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.ai.gate.4"><strong>Once the visual design was finalized, I marked it frozen in the documentation.</strong> I told the AI explicitly: "the text size and layout are already right — don't touch them unless I say so" — and confined its remaining freedom to the data layer and background effects. The judgment call: AI has no built-in sense of "good enough, stop here" — left alone, it tends to keep micro-adjusting past the point of visible difference. Freezing the design was a line I drew deliberately; it wasn't something the AI converged on by itself.</p>
           </li>
         </ol>
       </div>
@@ -917,221 +1089,221 @@
   </section>
 
   <aside class="cs-insight reveal">
-    <span class="cs-insight-label">Principle</span>
-    <p class="cs-insight-text">AI accelerates drafts and implementation. Whether something passes is my decision.</p>
+    <span class="cs-insight-label" data-i18n="case.overheadflights.ai.principle.label">Principle</span>
+    <p class="cs-insight-text" data-i18n="case.overheadflights.ai.principle.body">AI accelerates drafts and implementation. Whether something passes is my decision.</p>
   </aside>
 
   <!-- A1 + A2 -->
-  <section class="cs-section reveal">
+  <section class="cs-section reveal" id="action-research">
     <div class="cs-sec-header">
-      <span class="cs-sec-label">Action · Research &amp; Design</span>
-      <h2 class="cs-sec-headline">First verify whether the market gap is real, then decide which frameworks actually support "quiet."</h2>
+      <span class="cs-sec-label" data-i18n="case.overheadflights.research.label">Action · Research &amp; Design</span>
+      <h2 class="cs-sec-headline" data-i18n="case.overheadflights.research.title">First verify whether the market gap is real, then decide which frameworks actually support "quiet."</h2>
     </div>
     <div class="cs-text-grid">
-      <span class="cs-text-label">Research method</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.research.method.label">Research method</span>
       <div class="cs-text-body">
         <ol class="cs-process-steps" style="list-style:none">
           <li class="cs-proc-step">
             <span class="cs-proc-num">01</span>
-            <p class="cs-proc-desc"><strong>Define the problem itself first, before rushing to research tools.</strong> Is the actual gap the feature of "tracking planes," or the experience of "being able to passively notice something without actively checking"? Get the problem definition wrong, and no amount of competitor research afterward will fix it.</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.research.step1"><strong>Define the problem itself first, before rushing to research tools.</strong> Is the actual gap the feature of "tracking planes," or the experience of "being able to passively notice something without actively checking"? Get the problem definition wrong, and no amount of competitor research afterward will fix it.</p>
           </li>
           <li class="cs-proc-step">
             <span class="cs-proc-num">02</span>
-            <p class="cs-proc-desc"><strong>Scan mainstream apps' product logic and delivery format</strong> (FlightRadar24, Plane Finder, FlightAware), and confirm their core assumption is "the user will actively open the app to check." That assumption itself is the actual limitation in the market structure — not just a descriptive word chosen at random.</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.research.step2"><strong>Scan mainstream apps' product logic and delivery format</strong> (FlightRadar24, Plane Finder, FlightAware), and confirm their core assumption is "the user will actively open the app to check." That assumption itself is the actual limitation in the market structure — not just a descriptive word chosen at random.</p>
           </li>
           <li class="cs-proc-step">
             <span class="cs-proc-num">03</span>
-            <p class="cs-proc-desc"><strong>Go further and check maker projects, articles, and GitHub</strong> (Airframe, FlightTracker, etc.), deliberately looking for precedents unfavorable to my own claim, to avoid convincing myself the market was empty. This step exists so the positioning statement in the Situation section can survive the most direct rebuttal: "hasn't someone already done this?"</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.research.step3"><strong>Go further and check maker projects, articles, and GitHub</strong> (Airframe, FlightTracker, etc.), deliberately looking for precedents unfavorable to my own claim, to avoid convincing myself the market was empty. This step exists so the positioning statement in the Situation section can survive the most direct rebuttal: "hasn't someone already done this?"</p>
           </li>
           <li class="cs-proc-step">
             <span class="cs-proc-num">04</span>
-            <p class="cs-proc-desc"><strong>Verify API terms against primary documentation</strong> (airplanes.live's rate limit, terms of use). Any number without a primary source doesn't go into a public-facing document — better to use conservative, verifiable language than a number that looks more precise but has no traceable source.</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.research.step4"><strong>Verify API terms against primary documentation</strong> (airplanes.live's rate limit, terms of use). Any number without a primary source doesn't go into a public-facing document — better to use conservative, verifiable language than a number that looks more precise but has no traceable source.</p>
           </li>
           <li class="cs-proc-step">
             <span class="cs-proc-num">05</span>
-            <p class="cs-proc-desc"><strong>Converge on a single positioning statement that can withstand challenge</strong>: acknowledge the precedent exists, and compress the actual difference down to two points — "the screen saver as the medium" + "editorial typography as the execution" — rather than vaguely claiming "nothing like this exists."</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.research.step5"><strong>Converge on a single positioning statement that can withstand challenge</strong>: acknowledge the precedent exists, and compress the actual difference down to two points — "the screen saver as the medium" + "editorial typography as the execution" — rather than vaguely claiming "nothing like this exists."</p>
           </li>
         </ol>
       </div>
     </div>
     <div class="cs-text-grid" style="margin-top:4rem">
-      <span class="cs-text-label">Design</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.research.design.label">Design</span>
       <div class="cs-text-body">
-        <p>Three frameworks, one line each, then down to the actual numbers:</p>
+        <p data-i18n="case.overheadflights.research.design.intro">Three frameworks, one line each, then down to the actual numbers:</p>
         <ul class="gioia-bullets">
-          <li><strong>Calm technology</strong> (Weiser &amp; Brown, 1995): Information stays at the periphery of attention, and only moves to the center when needed. The original paper's motivation was countering the anxiety caused by information overload — not just saving attention.</li>
-          <li><strong>Soft fascination</strong> (attention restoration, Kaplan &amp; Kaplan, 1989): Effortless, gentle stimulation (like watching clouds) lets attention rest after a long stretch of focus. That's the reason this product lives in the "idle / lock screen" moment — it's meant to serve a moment of rest, not add one more information source to process.</li>
-          <li><strong>Ambient intimacy / social snacking</strong> (Reichelt, 2007; Gardner, Pickett &amp; Knowles, 2005): Passive exposure to a symbol of another person's existence — even without any interaction — can lower feelings of isolation. A stranger's flight quietly appearing is a small signal that "someone else out there is moving through their life right now," almost like someone quietly checking in on you.</li>
+          <li data-i18n-html="case.overheadflights.research.framework1"><strong>Calm technology</strong> (Weiser &amp; Brown, 1995): Information stays at the periphery of attention, and only moves to the center when needed. The original paper's motivation was countering the anxiety caused by information overload — not just saving attention.</li>
+          <li data-i18n-html="case.overheadflights.research.framework2"><strong>Soft fascination</strong> (attention restoration, Kaplan &amp; Kaplan, 1989): Effortless, gentle stimulation (like watching clouds) lets attention rest after a long stretch of focus. That's the reason this product lives in the "idle / lock screen" moment — it's meant to serve a moment of rest, not add one more information source to process.</li>
+          <li data-i18n-html="case.overheadflights.research.framework3"><strong>Ambient intimacy / social snacking</strong> (Reichelt, 2007; Gardner, Pickett &amp; Knowles, 2005): Passive exposure to a symbol of another person's existence — even without any interaction — can lower feelings of isolation. A stranger's flight quietly appearing is a small signal that "someone else out there is moving through their life right now," almost like someone quietly checking in on you.</li>
         </ul>
-        <p style="margin-top:1.75rem"><strong>How these three frameworks became actual visual decisions:</strong></p>
+        <p style="margin-top:1.75rem" data-i18n-html="case.overheadflights.research.visual.title"><strong>How these three frameworks became actual visual decisions:</strong></p>
         <ul class="gioia-bullets">
-          <li><strong>Arousal is driven by brightness and saturation, not hue</strong> (Valdez &amp; Mehrabian, 1994) — this is the basis for the near-black background (<code>rgb(0.02, 0.02, 0.025)</code>) plus low-saturation silver-white text. There's no need to lean on the cliché of "cool colors" to create a sense of calm — lowering brightness and saturation directly is enough.</li>
-          <li><strong>The text hierarchy decays by proportional opacity, not equal steps</strong>: callsign 0.82 → airline 0.48 → meta 0.34 → monogram 0.28. This proportional decay matches the eye's non-linear perception of brightness differences (Weber-Fechner) — in a low-contrast environment, proportional steps make each level of hierarchy feel evenly spaced, instead of forcing hierarchy through harsh contrast.</li>
-          <li><strong>No cards, no borders, no icons — just a minimal stack of text</strong> (aesthetic-usability effect, Kurosu &amp; Kashimura, 1995): people read visual restraint directly as "this thing won't bother me." For a product that appears during lock screen / idle moments, that's a hard requirement — the context of use itself demands "don't disturb."</li>
-          <li><strong>Motion only serves genuine information changes</strong>: a new flight fades in over ≤0.4 seconds; an update to the same flight has no animation at all; a slow, multi-minute 4–6px anti-burn-in drift; and it respects the system's "reduce motion" setting. In a low-arousal environment, any unnecessary motion reads as disruption — so it only moves when there's actually something new to show.</li>
+          <li data-i18n-html="case.overheadflights.research.visual.1"><strong>Arousal is driven by brightness and saturation, not hue</strong> (Valdez &amp; Mehrabian, 1994) — this is the basis for the near-black background (<code>rgb(0.02, 0.02, 0.025)</code>) plus low-saturation silver-white text. There's no need to lean on the cliché of "cool colors" to create a sense of calm — lowering brightness and saturation directly is enough.</li>
+          <li data-i18n-html="case.overheadflights.research.visual.2"><strong>The text hierarchy decays by proportional opacity, not equal steps</strong>: callsign 0.82 → airline 0.48 → meta 0.34 → monogram 0.28. This proportional decay matches the eye's non-linear perception of brightness differences (Weber-Fechner) — in a low-contrast environment, proportional steps make each level of hierarchy feel evenly spaced, instead of forcing hierarchy through harsh contrast.</li>
+          <li data-i18n-html="case.overheadflights.research.visual.3"><strong>No cards, no borders, no icons — just a minimal stack of text</strong> (aesthetic-usability effect, Kurosu &amp; Kashimura, 1995): people read visual restraint directly as "this thing won't bother me." For a product that appears during lock screen / idle moments, that's a hard requirement — the context of use itself demands "don't disturb."</li>
+          <li data-i18n-html="case.overheadflights.research.visual.4"><strong>Motion only serves genuine information changes</strong>: a new flight fades in over ≤0.4 seconds; an update to the same flight has no animation at all; a slow, multi-minute 4–6px anti-burn-in drift; and it respects the system's "reduce motion" setting. In a low-arousal environment, any unnecessary motion reads as disruption — so it only moves when there's actually something new to show.</li>
         </ul>
-        <p style="margin-top:1.25rem">Hard constraint of the screen saver: <strong>any mouse movement or key press exits it immediately</strong> — there's no intermediate state like "click to reveal more." So disclosure is reduced to two honest states:</p>
+        <p style="margin-top:1.25rem" data-i18n-html="case.overheadflights.research.constraint">Hard constraint of the screen saver: <strong>any mouse movement or key press exits it immediately</strong> — there's no intermediate state like "click to reveal more." So disclosure is reduced to two honest states:</p>
         <table class="findings-table">
           <thead>
             <tr>
-              <th>State</th>
-              <th>Behavior</th>
+              <th data-i18n="case.overheadflights.research.state.th">State</th>
+              <th data-i18n="case.overheadflights.research.behavior.th">Behavior</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="cue-name">No plane</td>
-              <td>Near-total black</td>
+              <td class="cue-name" data-i18n="case.overheadflights.research.state.none">No plane</td>
+              <td data-i18n="case.overheadflights.research.state.none.behavior">Near-total black</td>
             </tr>
             <tr>
-              <td class="cue-name">Plane present</td>
-              <td>Shows callsign, airline, altitude, bearing. <strong>As long as it stays within range, it keeps displaying</strong> (updated roughly every 90 seconds); only leaving range or losing the flight returns it to black.</td>
+              <td class="cue-name" data-i18n="case.overheadflights.research.state.plane">Plane present</td>
+              <td data-i18n-html="case.overheadflights.research.state.plane.behavior">Shows callsign, airline, altitude, bearing. <strong>As long as it stays within range, it keeps displaying</strong> (updated roughly every 90 seconds); only leaving range or losing the flight returns it to black.</td>
             </tr>
           </tbody>
         </table>
-        <p style="margin-top:1.5rem">The interest comes from the rarity of the event itself (a real plane actually passing over), not from stacking interactions or animation to please. When data can't be fetched, it fails silently into black rather than showing an error — a quiet way to fail, and part of the same "don't disturb" principle.</p>
+        <p style="margin-top:1.5rem" data-i18n="case.overheadflights.research.interest">The interest comes from the rarity of the event itself (a real plane actually passing over), not from stacking interactions or animation to please. When data can't be fetched, it fails silently into black rather than showing an error — a quiet way to fail, and part of the same "don't disturb" principle.</p>
       </div>
     </div>
   </section>
 
   <!-- A3 + A4 -->
-  <section class="cs-section reveal">
+  <section class="cs-section reveal" id="action-data">
     <div class="cs-sec-header">
-      <span class="cs-sec-label">Action · Data &amp; Build</span>
-      <h2 class="cs-sec-headline">After three separate WebView failures, the whole architecture moved to native.</h2>
+      <span class="cs-sec-label" data-i18n="case.overheadflights.data.label">Action · Data &amp; Build</span>
+      <h2 class="cs-sec-headline" data-i18n="case.overheadflights.data.title">After three separate WebView failures, the whole architecture moved to native.</h2>
     </div>
     <div class="cs-text-grid">
-      <span class="cs-text-label">Data authenticity</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.data.authenticity.label">Data authenticity</span>
       <div class="cs-text-body">
         <ul class="gioia-bullets">
-          <li><strong>Source</strong>: airplanes.live (live position) + adsbdb (airline / route information).</li>
-          <li><strong>Radius 40 km, an altitude threshold, and a 90-second polling interval</strong> — these three numbers are the result of a trade-off: too small a radius means long stretches of black (which feels broken); too large a radius shows planes that clearly aren't "overhead," undermining the product's core claim. The 90-second polling interval sits well below airplanes.live's public 1 req/s limit, trading a generous safety margin for stability — not having to worry about being rate-limited — at the cost of the data not being second-by-second real-time. But this product wants "a quiet environmental fact," not a tracking dashboard; second-level real-time was never the goal.</li>
-          <li><strong>Without GPS, it falls back to a fixed location</strong> (Wembley Park, London), documented as something the user can change themselves — not a hardcoded, unchangeable assumption.</li>
-          <li><strong>Multiple real callsigns verified against the API</strong> — this is the bottom line of the entire "plane overhead" claim: if the flight data were fake, the whole point of the project would break. What this product is meant to make someone feel is "a real stranger is genuinely flying overhead right now" — that connection has to be real, or it's just decoration. A portfolio mockup can look beautiful, but faking the data would make the claim itself collapse.</li>
-          <li><strong>Classification</strong>: non-commercial, portfolio use only; any rate-limit number without primary-source verification is stated conservatively rather than as a hard figure.</li>
+          <li data-i18n-html="case.overheadflights.data.source"><strong>Source</strong>: airplanes.live (live position) + adsbdb (airline / route information).</li>
+          <li data-i18n-html="case.overheadflights.data.radius"><strong>Radius 40 km, an altitude threshold, and a 90-second polling interval</strong> — these three numbers are the result of a trade-off: too small a radius means long stretches of black (which feels broken); too large a radius shows planes that clearly aren't "overhead," undermining the product's core claim. The 90-second polling interval sits well below airplanes.live's public 1 req/s limit, trading a generous safety margin for stability — not having to worry about being rate-limited — at the cost of the data not being second-by-second real-time. But this product wants "a quiet environmental fact," not a tracking dashboard; second-level real-time was never the goal.</li>
+          <li data-i18n-html="case.overheadflights.data.gps"><strong>Without GPS, it falls back to a fixed location</strong> (Wembley Park, London), documented as something the user can change themselves — not a hardcoded, unchangeable assumption.</li>
+          <li data-i18n-html="case.overheadflights.data.callsigns"><strong>Multiple real callsigns verified against the API</strong> — this is the bottom line of the entire "plane overhead" claim: if the flight data were fake, the whole point of the project would break. What this product is meant to make someone feel is "a real stranger is genuinely flying overhead right now" — that connection has to be real, or it's just decoration. A portfolio mockup can look beautiful, but faking the data would make the claim itself collapse.</li>
+          <li data-i18n-html="case.overheadflights.data.classification"><strong>Classification</strong>: non-commercial, portfolio use only; any rate-limit number without primary-source verification is stated conservatively rather than as a hard figure.</li>
         </ul>
-        <p style="margin-top:1.5rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;line-height:1.7;color:var(--muted)">“If the flight data were fake, the whole point of the project would break — the connection has to be real, or it's just decoration.”</p>
+        <p style="margin-top:1.5rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;line-height:1.7;color:var(--muted)" data-i18n="case.overheadflights.data.quote">“If the flight data were fake, the whole point of the project would break — the connection has to be real, or it's just decoration.”</p>
       </div>
     </div>
     <div class="cs-text-grid" style="margin-top:3.5rem">
-      <span class="cs-text-label">Technical integration</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.data.integration.label">Technical integration</span>
       <div class="cs-text-body">
-        <div class="pipeline"><strong>Location</strong> (or fallback)
+        <div class="pipeline" data-i18n-html="case.overheadflights.data.pipeline"><strong>Location</strong> (or fallback)
   → <strong>airplanes.live</strong> (nearest plane, 90s polling)
   → (optional) <strong>adsbdb</strong> airline/route
   → <strong>macOS .saver</strong>
        URLSession for data · AppKit for text · Core Image for background
   → System Settings → Customize screen saver</div>
-        <p style="margin-top:1.75rem">The original approach handled everything through WebView (rendering, text, data requests), and it hit repeated failures inside the <code>legacyScreenSaver</code> environment, forcing the whole architecture to change direction:</p>
+        <p style="margin-top:1.75rem" data-i18n-html="case.overheadflights.data.webview.intro">The original approach handled everything through WebView (rendering, text, data requests), and it hit repeated failures inside the <code>legacyScreenSaver</code> environment, forcing the whole architecture to change direction:</p>
         <ol class="cs-process-steps" style="list-style:none;margin-top:0.5rem">
           <li class="cs-proc-step">
             <span class="cs-proc-num">01</span>
-            <p class="cs-proc-desc"><strong>WebView's <code>fetch</code> was unreliable</strong> — the exact same code worked fine in a regular browser, but would silently fail inside the screen saver environment, with no clear error to catch. Fix: move all data requests to native <code>NSURLSession</code>.</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.data.webview.1"><strong>WebView's <code>fetch</code> was unreliable</strong> — the exact same code worked fine in a regular browser, but would silently fail inside the screen saver environment, with no clear error to catch. Fix: move all data requests to native <code>NSURLSession</code>.</p>
           </li>
           <li class="cs-proc-step">
             <span class="cs-proc-num">02</span>
-            <p class="cs-proc-desc"><strong>WebView's text animation would freeze</strong> — <code>requestAnimationFrame</code> and opacity transitions would lock up in this environment, causing the text fade-in to simply fail. Fix: render text with native AppKit <code>NSTextField</code>, and let AppKit's own animation handle the motion.</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.data.webview.2"><strong>WebView's text animation would freeze</strong> — <code>requestAnimationFrame</code> and opacity transitions would lock up in this environment, causing the text fade-in to simply fail. Fix: render text with native AppKit <code>NSTextField</code>, and let AppKit's own animation handle the motion.</p>
           </li>
           <li class="cs-proc-step">
             <span class="cs-proc-num">03</span>
-            <p class="cs-proc-desc"><strong>WebView's background frequently failed to render at all</strong> — the whole screen would occasionally show up blank, with the background layer not painting. Fix: render the background with native Core Image (Etheral Shadow style: grayscale mask + distortion + noise).</p>
+            <p class="cs-proc-desc" data-i18n-html="case.overheadflights.data.webview.3"><strong>WebView's background frequently failed to render at all</strong> — the whole screen would occasionally show up blank, with the background layer not painting. Fix: render the background with native Core Image (Etheral Shadow style: grayscale mask + distortion + noise).</p>
           </li>
         </ol>
-        <p style="margin-top:1.5rem">The conclusion from all three failures was a dual-layer native approach: AppKit for text, Core Image for the background, URLSession for data — WebView dropped out of the main path entirely. The cost of this decision was losing the flexibility of iterating quickly with web technology; what it bought instead was genuine stability inside the screen saver environment. It only replaces the screen saver's content — it doesn't change the wait time a user sets in System Settings.</p>
+        <p style="margin-top:1.5rem" data-i18n="case.overheadflights.data.webview.conclusion">The conclusion from all three failures was a dual-layer native approach: AppKit for text, Core Image for the background, URLSession for data — WebView dropped out of the main path entirely. The cost of this decision was losing the flexibility of iterating quickly with web technology; what it bought instead was genuine stability inside the screen saver environment. It only replaces the screen saver's content — it doesn't change the wait time a user sets in System Settings.</p>
       </div>
     </div>
   </section>
 
   <!-- A5 -->
-  <section class="cs-section reveal">
+  <section class="cs-section reveal" id="action-ship">
     <div class="cs-sec-header">
-      <span class="cs-sec-label">Action · Ship</span>
-      <h2 class="cs-sec-headline">The project has to be something a friend can actually install — not something that only runs on my own Mac.</h2>
+      <span class="cs-sec-label" data-i18n="case.overheadflights.ship.label">Action · Ship</span>
+      <h2 class="cs-sec-headline" data-i18n="case.overheadflights.ship.title">The project has to be something a friend can actually install — not something that only runs on my own Mac.</h2>
     </div>
     <div class="cs-text-grid">
-      <span class="cs-text-label">Delivery</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.ship.delivery.label">Delivery</span>
       <div class="cs-text-body">
         <ul class="gioia-bullets">
-          <li><strong>GitHub public</strong>: <a href="https://github.com/rowanlin801229/overhead-flights" target="_blank" rel="noopener">rowanlin801229/overhead-flights</a> — chosen to be public rather than shared privately, because the portfolio's claim is "this data is real," and making the source public lets that claim actually be checked, rather than just asserted.</li>
-          <li><strong><code>macos/build-and-install.sh</code></strong>: a one-command build-and-install script, designed for "a friend who has Xcode but doesn't know this project's internals" — not an internal tool only I can understand.</li>
-          <li><strong>Three-step README + Gatekeeper handling</strong>: since the project isn't signed by a developer account, macOS blocks unsigned software by default, so the README has to spell out exactly how to get past the Gatekeeper warning — it can't assume the user already knows how to handle it.</li>
-          <li><strong>Portfolio assets</strong>: the main mockup image, <code>overhead-flights-demo.mp4</code> (an actual capture of BAW8RM, a flight with a fully resolved route), and a static hero image — chosen because it shows callsign, airline, origin → destination, and altitude/bearing all at once, all real data, not layout placeholders.</li>
+          <li data-i18n-html="case.overheadflights.ship.github"><strong>GitHub public</strong>: <a href="https://github.com/rowanlin801229/overhead-flights" target="_blank" rel="noopener">rowanlin801229/overhead-flights</a> — chosen to be public rather than shared privately, because the portfolio's claim is "this data is real," and making the source public lets that claim actually be checked, rather than just asserted.</li>
+          <li data-i18n-html="case.overheadflights.ship.script"><strong><code>macos/build-and-install.sh</code></strong>: a one-command build-and-install script, designed for "a friend who has Xcode but doesn't know this project's internals" — not an internal tool only I can understand.</li>
+          <li data-i18n-html="case.overheadflights.ship.readme"><strong>Three-step README + Gatekeeper handling</strong>: since the project isn't signed by a developer account, macOS blocks unsigned software by default, so the README has to spell out exactly how to get past the Gatekeeper warning — it can't assume the user already knows how to handle it.</li>
+          <li data-i18n-html="case.overheadflights.ship.assets"><strong>Portfolio assets</strong>: the main mockup image, <code>overhead-flights-demo.mp4</code> (an actual capture of BAW8RM, a flight with a fully resolved route), and a static hero image — chosen because it shows callsign, airline, origin → destination, and altitude/bearing all at once, all real data, not layout placeholders.</li>
         </ul>
       </div>
     </div>
   </section>
 
   <!-- R -->
-  <section class="cs-section reveal">
+  <section class="cs-section reveal" id="result">
     <div class="cs-sec-header">
-      <span class="cs-sec-label">Result</span>
-      <h2 class="cs-sec-headline">A quiet ambient display, not a dashboard.</h2>
+      <span class="cs-sec-label" data-i18n="case.overheadflights.result.label">Result</span>
+      <h2 class="cs-sec-headline" data-i18n="case.overheadflights.result.title">A quiet ambient display, not a dashboard.</h2>
     </div>
     <div class="cs-text-grid">
-      <span class="cs-text-label">Outcome</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.result.outcome.label">Outcome</span>
       <div class="cs-text-body">
-        <p>A quiet ambient display: it doesn't compete for attention by interrupting. When a plane is present, it gives a restrained cue; when it isn't, it's just black. It turns "there's a plane overhead" into an environmental fact that can be noticed, never forced on anyone.</p>
+        <p data-i18n="case.overheadflights.result.outcome.body">A quiet ambient display: it doesn't compete for attention by interrupting. When a plane is present, it gives a restrained cue; when it isn't, it's just black. It turns "there's a plane overhead" into an environmental fact that can be noticed, never forced on anyone.</p>
         <table class="findings-table">
           <thead>
             <tr>
-              <th>Goal</th>
-              <th>Result</th>
+              <th data-i18n="case.overheadflights.result.table.goal">Goal</th>
+              <th data-i18n="case.overheadflights.result.table.result">Result</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="cue-name">Product installs</td>
-              <td class="status-ok">✅ <code>.saver</code> installs; selectable in System Settings' "Customize"</td>
+              <td class="cue-name" data-i18n="case.overheadflights.result.row1.goal">Product installs</td>
+              <td class="status-ok" data-i18n-html="case.overheadflights.result.row1.result">✅ <code>.saver</code> installs; selectable in System Settings' "Customize"</td>
             </tr>
             <tr>
-              <td class="cue-name">Shows real flights, not simulated</td>
-              <td class="status-ok">✅ Multiple real callsigns, verifiable against airplanes.live</td>
+              <td class="cue-name" data-i18n="case.overheadflights.result.row2.goal">Shows real flights, not simulated</td>
+              <td class="status-ok" data-i18n="case.overheadflights.result.row2.result">✅ Multiple real callsigns, verifiable against airplanes.live</td>
             </tr>
             <tr>
-              <td class="cue-name">Polling respects the spirit of the public terms</td>
-              <td class="status-ok">✅ 90-second polling, below the official 1 req/s limit</td>
+              <td class="cue-name" data-i18n="case.overheadflights.result.row3.goal">Polling respects the spirit of the public terms</td>
+              <td class="status-ok" data-i18n="case.overheadflights.result.row3.result">✅ 90-second polling, below the official 1 req/s limit</td>
             </tr>
             <tr>
-              <td class="cue-name">Visuals read as editorial typography, not a tracking tool</td>
-              <td class="status-ok">✅ Near-black background + AppKit text; no map, no list, no terminal green</td>
+              <td class="cue-name" data-i18n="case.overheadflights.result.row4.goal">Visuals read as editorial typography, not a tracking tool</td>
+              <td class="status-ok" data-i18n="case.overheadflights.result.row4.result">✅ Near-black background + AppKit text; no map, no list, no terminal green</td>
             </tr>
             <tr>
-              <td class="cue-name">A third person can install it from the docs</td>
-              <td class="status-warn">⚠️ README and script are ready; no friend test-install feedback yet</td>
+              <td class="cue-name" data-i18n="case.overheadflights.result.row5.goal">A third person can install it from the docs</td>
+              <td class="status-warn" data-i18n="case.overheadflights.result.row5.result">⚠️ README and script are ready; no friend test-install feedback yet</td>
             </tr>
             <tr>
-              <td class="cue-name">Positioning holds up to challenge</td>
-              <td class="status-ok">✅ Airframe addressed directly; the difference distilled to medium + aesthetic execution</td>
+              <td class="cue-name" data-i18n="case.overheadflights.result.row6.goal">Positioning holds up to challenge</td>
+              <td class="status-ok" data-i18n="case.overheadflights.result.row6.result">✅ Airframe addressed directly; the difference distilled to medium + aesthetic execution</td>
             </tr>
           </tbody>
         </table>
-        <p style="margin-top:2rem"><strong>Limitations</strong>: Unsigned, so it triggers Gatekeeper; falls back to a fixed location without GPS; macOS only; adsbdb's exact rate limit has no primary-source number, so the wording stays conservative.</p>
-        <p style="margin-top:1.5rem"><strong>What I learned</strong></p>
+        <p style="margin-top:2rem" data-i18n-html="case.overheadflights.result.limitations"><strong>Limitations</strong>: Unsigned, so it triggers Gatekeeper; falls back to a fixed location without GPS; macOS only; adsbdb's exact rate limit has no primary-source number, so the wording stays conservative.</p>
+        <p style="margin-top:1.5rem" data-i18n-html="case.overheadflights.result.learned.label"><strong>What I learned</strong></p>
         <ul class="gioia-bullets">
-          <li>An unfamiliar runtime environment (<code>legacyScreenSaver</code>) can't be assumed to behave like a normal web stack — technical validation should happen earlier.</li>
-          <li>Not finding a direct competitor doesn't mean you've won. Finding Airframe and still being willing to address it head-on, with an argument that holds up — that's what product judgment actually looks like.</li>
+          <li data-i18n-html="case.overheadflights.result.learned.1">An unfamiliar runtime environment (<code>legacyScreenSaver</code>) can't be assumed to behave like a normal web stack — technical validation should happen earlier.</li>
+          <li data-i18n="case.overheadflights.result.learned.2">Not finding a direct competitor doesn't mean you've won. Finding Airframe and still being willing to address it head-on, with an argument that holds up — that's what product judgment actually looks like.</li>
         </ul>
       </div>
     </div>
   </section>
   <!-- META -->
-  <section class="cs-section reveal">
+  <section class="cs-section reveal" id="meta">
     <div class="cs-text-grid">
-      <span class="cs-text-label">Meta</span>
+      <span class="cs-text-label" data-i18n="case.overheadflights.meta.label">Meta</span>
       <div class="cs-text-body">
-        <p><strong>Role</strong> · UI/UX &amp; Product Designer — independently drove direction, market research, and visual/technical trade-offs</p>
-        <p style="margin-top:1rem"><strong>AI tools</strong> · Claude (ideation / research synthesis / drafting) · Perplexity (verifying primary sources and research) · Grok (review / challenging assumptions) · Cursor (executing approved task packages); switched to manual/web verification when research tools were blocked</p>
-        <p style="margin-top:1rem"><strong>Data sources</strong> · <a href="https://airplanes.live" target="_blank" rel="noopener">airplanes.live</a> · <a href="https://adsbdb.com" target="_blank" rel="noopener">adsbdb</a> (credit: PlaneBase / David J Taylor, Edinburgh)</p>
-        <p style="margin-top:1rem"><a href="https://github.com/rowanlin801229/overhead-flights" target="_blank" rel="noopener">GitHub ↗</a></p>
+        <p data-i18n-html="case.overheadflights.meta.role"><strong>Role</strong> · UI/UX &amp; Product Designer — independently drove direction, market research, and visual/technical trade-offs</p>
+        <p style="margin-top:1rem" data-i18n-html="case.overheadflights.meta.tools"><strong>AI tools</strong> · Claude (ideation / research synthesis / drafting) · Perplexity (verifying primary sources and research) · Grok (review / challenging assumptions) · Cursor (executing approved task packages); switched to manual/web verification when research tools were blocked</p>
+        <p style="margin-top:1rem" data-i18n-html="case.overheadflights.meta.sources"><strong>Data sources</strong> · <a href="https://airplanes.live" target="_blank" rel="noopener">airplanes.live</a> · <a href="https://adsbdb.com" target="_blank" rel="noopener">adsbdb</a> (credit: PlaneBase / David J Taylor, Edinburgh)</p>
+        <p style="margin-top:1rem" data-i18n-html="case.overheadflights.meta.github"><a href="https://github.com/rowanlin801229/overhead-flights" target="_blank" rel="noopener">GitHub ↗</a></p>
       </div>
     </div>
   </section>
 
   <a class="cs-back-home" href="index.html">
-    <div><span class="cs-back-label">← Back to Portfolio</span><div class="cs-back-name">All Projects</div></div>
+    <div><span class="cs-back-label" data-i18n="case.overheadflights.back.label">← Back to Portfolio</span><div class="cs-back-name" data-i18n="case.overheadflights.back.name">All Projects</div></div>
     <span class="cs-back-arrow">←</span>
   </a>
-  <footer><span>© 2026 Yu-Hsien (Rowan) Lin</span><span>Overhead Flights — 05 / 05</span></footer>
+  <footer><span>© 2026 Yu-Hsien (Rowan) Lin</span><span data-i18n="case.overheadflights.footer.project">Overhead Flights — 05 / 05</span></footer>
   </div><!-- /of-case-study -->
 
 
@@ -1344,6 +1516,193 @@
     }
     init();
   })();
+  </script>
+
+  <script>
+    /* ── SCROLL PROGRESS (skiper94-style, desktop only; draggable scrubber) ── */
+    (function () {
+      const root = document.getElementById('scroll-progress');
+      const fill = document.getElementById('scroll-progress-fill');
+      const marker = document.getElementById('scroll-progress-marker');
+      const pctEl = document.getElementById('scroll-progress-pct');
+      if (!root || !fill || !marker || !pctEl) return;
+
+      const mqDesktop = window.matchMedia('(min-width: 768px)');
+      let raf = 0;
+      let lastPct = -1;
+      let lastLabel = '';
+      let dragging = false;
+      let dragClientY = null;
+      let dragRaf = 0;
+      let hideTimer = 0;
+
+      function revealLabel() {
+        root.classList.add('is-label-on');
+        window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(function () {
+          if (dragging) return;
+          root.classList.remove('is-label-on');
+        }, 5000);
+      }
+
+      const sections = [
+        { id: 'ofjJourney', label: 'Journey', labelKey: 'case.overheadflights.progress.journey' },
+        { id: 'hero', label: 'Hero', labelKey: 'case.overheadflights.progress.hero' },
+        { id: 'situation', label: 'Situation', labelKey: 'case.overheadflights.situation.label' },
+        { id: 'positioning', label: 'Positioning', labelKey: 'case.overheadflights.positioning.label' },
+        { id: 'task', label: 'Task', labelKey: 'case.overheadflights.task.label' },
+        { id: 'action-ai', label: 'Action · AI', labelKey: 'case.overheadflights.ai.label' },
+        { id: 'action-research', label: 'Action · Research', labelKey: 'case.overheadflights.research.label' },
+        { id: 'action-data', label: 'Action · Data', labelKey: 'case.overheadflights.data.label' },
+        { id: 'action-ship', label: 'Action · Ship', labelKey: 'case.overheadflights.ship.label' },
+        { id: 'result', label: 'Result', labelKey: 'case.overheadflights.result.label' },
+        { id: 'meta', label: 'Meta', labelKey: 'case.overheadflights.meta.label' },
+      ].map(function (s) { return { id: s.id, label: s.label, labelKey: s.labelKey, el: document.getElementById(s.id) }; })
+       .filter(function (s) { return s.el; });
+
+      function scrollMax() {
+        const doc = document.documentElement;
+        return Math.max(0, doc.scrollHeight - window.innerHeight);
+      }
+
+      function progress() {
+        const max = scrollMax();
+        if (max <= 0) return 0;
+        return Math.min(1, Math.max(0, window.scrollY / max));
+      }
+
+      function sectionLabel(s) {
+        if (typeof window.tPortfolio === 'function' && s.labelKey) {
+          const translated = window.tPortfolio(s.labelKey);
+          if (translated && translated !== s.labelKey) return translated;
+        }
+        return s.label;
+      }
+
+      function currentLabel() {
+        const probe = window.scrollY + window.innerHeight * 0.4;
+        let label = sections.length ? sectionLabel(sections[0]) : '';
+        for (let i = 0; i < sections.length; i++) {
+          if (sections[i].el.offsetTop <= probe) label = sectionLabel(sections[i]);
+        }
+        return label;
+      }
+
+      function paint() {
+        raf = 0;
+        if (!mqDesktop.matches) return;
+        const p = progress();
+        const pct = Math.round(p * 100);
+        const label = currentLabel();
+        if (pct !== lastPct) {
+          lastPct = pct;
+          fill.style.clipPath = 'inset(0 0 ' + (100 - pct) + '% 0)';
+          marker.style.top = pct + '%';
+          root.setAttribute('aria-valuenow', String(pct));
+        }
+        if (label !== lastLabel) {
+          lastLabel = label;
+          pctEl.textContent = label;
+        }
+      }
+
+      function requestPaint() {
+        if (!mqDesktop.matches) return;
+        revealLabel();
+        if (raf) return;
+        raf = requestAnimationFrame(paint);
+      }
+
+      function scrollToClientY(clientY) {
+        const rect = root.getBoundingClientRect();
+        const p = rect.height > 0 ? (clientY - rect.top) / rect.height : 0;
+        const clamped = Math.min(1, Math.max(0, p));
+        window.scrollTo({ top: clamped * scrollMax(), behavior: 'auto' });
+      }
+
+      function flushDrag() {
+        dragRaf = 0;
+        if (!dragging || dragClientY === null) return;
+        scrollToClientY(dragClientY);
+      }
+
+      function requestDragFlush() {
+        if (dragRaf) return;
+        dragRaf = requestAnimationFrame(flushDrag);
+      }
+
+      const cursorRing = document.getElementById('cur-ring');
+
+      function onPointerDown(e) {
+        if (!mqDesktop.matches) return;
+        dragging = true;
+        root.classList.add('is-dragging');
+        revealLabel();
+        if (cursorRing) {
+          cursorRing.classList.add('expanded');
+          if (window.gsap) gsap.to(cursorRing, { duration: 0.4, scale: 2, overwrite: true });
+        }
+        root.setPointerCapture && e.pointerId != null && root.setPointerCapture(e.pointerId);
+        scrollToClientY(e.clientY);
+        e.preventDefault();
+      }
+      function onPointerMove(e) {
+        if (!dragging) return;
+        dragClientY = e.clientY;
+        requestDragFlush();
+      }
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        dragClientY = null;
+        root.classList.remove('is-dragging');
+        revealLabel();
+        if (cursorRing) {
+          cursorRing.classList.remove('expanded');
+          if (window.gsap) gsap.to(cursorRing, { duration: 0.4, scale: 1, overwrite: true });
+        }
+      }
+
+      root.addEventListener('pointerdown', onPointerDown);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', endDrag);
+      window.addEventListener('pointercancel', endDrag);
+
+      root.addEventListener('keydown', function (e) {
+        if (!mqDesktop.matches) return;
+        const max = scrollMax();
+        if (max <= 0) return;
+        let target = null;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          target = Math.max(0, window.scrollY - max * 0.05);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          target = Math.min(max, window.scrollY + max * 0.05);
+        } else if (e.key === 'Home') {
+          target = 0;
+        } else if (e.key === 'End') {
+          target = max;
+        }
+        if (target !== null) {
+          e.preventDefault();
+          window.scrollTo({ top: target, behavior: 'auto' });
+        }
+      });
+
+      window.addEventListener('scroll', requestPaint, { passive: true });
+      window.addEventListener('resize', function () {
+        lastPct = -1;
+        requestPaint();
+      }, { passive: true });
+      mqDesktop.addEventListener('change', function () {
+        lastPct = -1;
+        requestPaint();
+      });
+      window.addEventListener('portfolio:languagechange', function () {
+        lastLabel = '';
+        requestPaint();
+      });
+      requestPaint();
+    })();
   </script>
 
 </body>

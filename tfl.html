@@ -11,7 +11,11 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Training for Life — Rowan Lin</title>
+  <title data-i18n="case.tfl.meta.title">Training for Life — Rowan Lin</title>
+  <script src="i18n.js" defer></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -25,11 +29,150 @@
     #cur-dot{position:fixed;width:4px;height:4px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;top:0;left:0;will-change:transform}
     #cur-ring.expanded{width:60px;height:60px;border-color:var(--accent);background:rgba(184,69,69,0.06)}
     nav{position:fixed;inset:0 0 auto;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:2rem 5vw;border-bottom:1px solid rgba(255,255,255,0.08);background:rgba(14,14,13,0.86);backdrop-filter:blur(12px)}
-    .nav-back{display:flex;align-items:center;gap:.7rem;font-size: 1rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(210,210,205,0.88);text-decoration:none;transition:color .3s}
-    .nav-back:hover{color:var(--fg)}
-    .nav-back-arrow{transition:transform .3s cubic-bezier(.16,1,.3,1)}
-    .nav-back:hover .nav-back-arrow{transform:translateX(-4px)}
+    .nav-logo{color:#ffffff;text-decoration:none;display:inline-flex;align-items:center;transition:opacity .3s ease}
+    .nav-logo svg{height:34px;width:auto;display:block}
+    .nav-logo .cls-1{fill:#ffffff;transition:fill .3s ease}
+    .nav-logo:hover{opacity:.72}
     .nav-right{display:flex;align-items:center;gap:2rem}
+    .nav-lang {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .nav-lang-btn {
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      color: #ffffff;
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 0.2rem 0.45rem;
+      cursor: pointer;
+      opacity: 0.3;
+      transition: color 0.3s, border-color 0.3s, opacity 0.3s;
+    }
+    .nav-lang-btn.is-active { opacity: 1; border-color: rgba(255, 255, 255, 0.28); }
+    .nav-lang-btn:hover { color: var(--accent); opacity: 1; }
+    .nav-lang-sep {
+      color: #ffffff;
+      opacity: 0.3;
+      font: inherit;
+      user-select: none;
+    }
+
+    /* ── SCROLL PROGRESS (skiper94-inspired; desktop only; draggable scrubber) ──
+       https://skiper-ui.com/v1/skiper94 — Scroll progress 002 ── */
+    .scroll-progress {
+      position: fixed;
+      left: max(0.6rem, 1.3vw);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 150;
+      height: 15rem;
+      width: 1.25rem;
+      cursor: pointer;
+      touch-action: none;
+    }
+    .scroll-progress__track {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 0.375rem;
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(74, 74, 72, 0.14);
+      overflow: visible;
+      pointer-events: none;
+      transition: background 0.2s ease;
+    }
+    .scroll-progress:hover .scroll-progress__track,
+    .scroll-progress.is-dragging .scroll-progress__track {
+      background: rgba(74, 74, 72, 0.26);
+    }
+    .scroll-progress__fill {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: var(--accent);
+      clip-path: inset(0 0 100% 0);
+      will-change: clip-path;
+    }
+    .scroll-progress__marker {
+      position: absolute;
+      left: 50%;
+      top: 0%;
+      width: 1rem;
+      height: 1px;
+      background: var(--accent);
+      transform: translate(-50%, 0);
+      will-change: top;
+      pointer-events: auto;
+    }
+    .scroll-progress__marker::after {
+      content: '';
+      position: absolute;
+      left: -0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 11rem;
+      height: 2.75rem;
+    }
+    .scroll-progress:hover .scroll-progress__marker,
+    .scroll-progress.is-dragging .scroll-progress__marker {
+      height: 2px;
+    }
+    .scroll-progress.is-dragging {
+      cursor: grabbing;
+    }
+    .scroll-progress__pct {
+      position: absolute;
+      left: calc(100% + 0.45rem);
+      top: 50%;
+      transform: translateY(-50%) translateX(-0.2rem);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      line-height: 1;
+      color: var(--accent);
+      white-space: nowrap;
+      pointer-events: auto;
+      user-select: none;
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .scroll-progress.is-label-on .scroll-progress__pct,
+    .scroll-progress:hover .scroll-progress__pct,
+    .scroll-progress.is-dragging .scroll-progress__pct,
+    .scroll-progress:focus-visible .scroll-progress__pct {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+    .scroll-progress:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 999px;
+    }
+    @media (max-width: 767px) {
+      .scroll-progress {
+        display: none !important;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-progress__fill,
+      .scroll-progress__marker,
+      .scroll-progress__pct {
+        transition: none;
+      }
+    }
+
     .nav-index{font-size: 1rem;letter-spacing:.15em;color:rgba(210,210,205,0.72)}
     .nav-prev,.nav-next{display:flex;align-items:center;gap:.6rem;font-size: 1rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(210,210,205,0.88);text-decoration:none;transition:color .3s}
     .nav-prev:hover,.nav-next:hover{color:var(--fg)}
@@ -39,6 +182,7 @@
     .cs-hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:120px 5vw 8vh;border-bottom:1px solid var(--line)}
     .cs-label{font-size: 1rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);margin-bottom:2rem;display:block;opacity:0;transform:translateY(12px);filter:blur(4px);animation:fadeup .7s cubic-bezier(.16,1,.3,1) .2s forwards}
     .cs-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(3rem,10vw,10rem);line-height:.9;letter-spacing:-.03em;margin-bottom:2rem;opacity:0;transform:translateY(60px);filter:blur(4px);animation:fadeup .9s cubic-bezier(.16,1,.3,1) .3s forwards}
+    html[lang="zh-Hant"] .cs-title{font-size:clamp(2.5rem,6.5vw,6.25rem)}
     .cs-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;border-top:1px solid var(--line);padding-top:2.5rem;opacity:0;transform:translateY(20px);filter:blur(4px);animation:fadeup .7s cubic-bezier(.16,1,.3,1) .55s forwards}
     .cs-meta-label{font-size: 1rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.6rem}
     .cs-meta-val{font-size: 1.125rem;line-height:1.6;color:var(--fg)}
@@ -85,6 +229,7 @@
     .cs-next:hover{background:var(--surface)}
     .cs-next-label{font-size: 1rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:.8rem;display:block}
     .cs-next-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;letter-spacing:-.02em;line-height:1;color:var(--fg);transition:letter-spacing .4s cubic-bezier(.16,1,.3,1)}
+    html[lang="zh-Hant"] .cs-next-name{font-size:clamp(1.7rem,3.4vw,2.85rem)}
     .cs-next:hover .cs-next-name{letter-spacing:.01em}
     .cs-next-arrow{font-size:3rem;color:var(--accent);transition:transform .4s cubic-bezier(.16,1,.3,1)}
     .cs-next:hover .cs-next-arrow{transform:translateX(12px)}
@@ -101,6 +246,7 @@
       .nav-prev,.nav-next,.nav-back{font-size: 1rem;letter-spacing:.14em}
       .cs-hero{padding:96px 4vw 6vh}
       .cs-title{font-size:clamp(3rem,16vw,4.6rem)}
+      html[lang="zh-Hant"] .cs-title{font-size:clamp(2.25rem,11vw,3.25rem)}
       .cs-meta{grid-template-columns:1fr 1fr;gap:1rem;padding-top:1.5rem}
       .cs-section{padding:7vh 4vw}
       .cs-sec-header,.cs-text-grid,.cs-quote{grid-template-columns:1fr;gap:1.2rem}
@@ -125,29 +271,55 @@
   </style>
 </head>
 <body>
+  <!-- Scroll progress 002 style — inspired by Skiper UI skiper94 (https://skiper-ui.com/v1/skiper94). Desktop only. Draggable scrubber: click or drag to jump to a scroll position. -->
+  <div class="scroll-progress" id="scroll-progress" role="slider" tabindex="0"
+       aria-label="Page scroll position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="scroll-progress__track">
+      <div class="scroll-progress__fill" id="scroll-progress-fill"></div>
+      <div class="scroll-progress__marker" id="scroll-progress-marker">
+        <span class="scroll-progress__pct" id="scroll-progress-pct" data-i18n="case.tfl.progress.hero">Hero</span>
+      </div>
+    </div>
+  </div>
+
   <div id="cur-ring"></div>
   <div id="cur-dot"></div>
 
   <nav>
-    <a class="nav-back" href="index.html"><span class="nav-back-arrow">←</span> All Projects</a>
+    <a class="nav-logo" href="index.html" aria-label="Rowan Lin — Back to home">
+      <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.63 35.01" role="img">
+        <g>
+          <g>
+            <path class="cls-1" d="M25.38,14.31h-15.02c-1.17,0-2.34.2-3.45.59C2.79,16.37,0,20.29,0,24.66v10.35l6.39-4.02v-6.33s0-.02,0-.04c.02-2.16,1.79-3.92,3.96-3.92h13.15s4.71.1,6.68-1.01c1.97-1.11,3.17-2.44,4.19-4.25.47-.83.82-1.71,1.05-2.63h-6.96c-.73.91-1.84,1.5-3.09,1.5Z"/>
+            <path class="cls-1" d="M28.83.59c-1.11-.39-2.28-.59-3.45-.59H5.81S0,6.39,0,6.39h25.38c1.69,0,3.14,1.07,3.7,2.57h6.55c-.52-3.8-3.13-7.06-6.81-8.37Z"/>
+          </g>
+          <path class="cls-1" d="M34.44,35.01l-6-3.71v-8.23h3.08c1.61,0,2.92,1.31,2.92,2.92v9.01Z"/>
+        </g>
+      </svg>
+    </a>
     <div class="nav-right">
+      <div class="nav-lang" role="group" aria-label="Language">
+        <button type="button" class="nav-lang-btn is-active" data-lang="en" aria-pressed="true">EN</button>
+        <span class="nav-lang-sep" aria-hidden="true">|</span>
+        <button type="button" class="nav-lang-btn" data-lang="zh" aria-pressed="false">中文</button>
+      </div>
+      <a class="nav-prev" href="genebook.html">←</a>
       <span class="nav-index">04 / 05</span>
-      <a class="nav-prev" href="genebook.html">← Genebook</a>
-      <a class="nav-next" href="overheadflights.html">Next <span class="nav-next-arrow">→</span></a>
+      <a class="nav-next" href="overheadflights.html"><span class="nav-next-arrow">→</span></a>
     </div>
   </nav>
 
-  <section class="cs-hero">
-    <span class="cs-label">03 — Mobile Application · Wearable Devices · 10 Weeks</span>
-    <h1 class="cs-title">Training<br>for Life</h1>
+  <section class="cs-hero" id="hero">
+    <span class="cs-label" data-i18n="case.tfl.hero.eyebrow">03 — Mobile Application · Wearable Devices · 10 Weeks</span>
+    <h1 class="cs-title" data-i18n-html="case.tfl.hero.title">Training<br>for Life</h1>
     <div class="cs-img-full">
       <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg" alt="TFL Hero" loading="lazy">
     </div>
     <div class="cs-meta">
-      <div><span class="cs-meta-label">Role</span><span class="cs-meta-val">UI/UX Designer</span></div>
-      <div><span class="cs-meta-label">Timeline</span><span class="cs-meta-val">10 Weeks</span></div>
-      <div><span class="cs-meta-label">Scope</span><span class="cs-meta-val">End-to-End Design<br>Design System · Branding</span></div>
-      <div><span class="cs-meta-label">Tools</span><span class="cs-meta-val">Figma · Adobe Suite</span></div>
+      <div><span class="cs-meta-label" data-i18n="case.tfl.meta.role.label">Role</span><span class="cs-meta-val" data-i18n="case.tfl.meta.role.value">UI/UX Designer</span></div>
+      <div><span class="cs-meta-label" data-i18n="case.tfl.meta.timeline.label">Timeline</span><span class="cs-meta-val" data-i18n="case.tfl.meta.timeline.value">10 Weeks</span></div>
+      <div><span class="cs-meta-label" data-i18n="case.tfl.meta.scope.label">Scope</span><span class="cs-meta-val" data-i18n-html="case.tfl.meta.scope.value">End-to-End Design<br>Design System · Branding</span></div>
+      <div><span class="cs-meta-label" data-i18n="case.tfl.meta.tools.label">Tools</span><span class="cs-meta-val" data-i18n="case.tfl.meta.tools.value">Figma · Adobe Suite</span></div>
     </div>
   </section>
 
@@ -155,54 +327,54 @@
   <div class="cs-stats-row reveal">
     <div class="cs-stat">
       <span class="cs-stat-num">90<span>%</span></span>
-      <span class="cs-stat-lbl">Completion Rate</span>
+      <span class="cs-stat-lbl" data-i18n="case.tfl.stats.completion">Completion Rate</span>
     </div>
     <div class="cs-stat-divider"></div>
     <div class="cs-stat">
       <span class="cs-stat-num">4.5<span>/5</span></span>
-      <span class="cs-stat-lbl">Satisfaction Score</span>
+      <span class="cs-stat-lbl" data-i18n="case.tfl.stats.satisfaction">Satisfaction Score</span>
     </div>
     <div class="cs-stat-divider"></div>
     <div class="cs-stat">
       <span class="cs-stat-num">60<span>%</span></span>
-      <span class="cs-stat-lbl">Logging Flow Streamlined</span>
+      <span class="cs-stat-lbl" data-i18n="case.tfl.stats.logging">Logging Flow Streamlined</span>
     </div>
     <div class="cs-stat-divider"></div>
-    <p class="cs-stat-desc">From <em>5 steps to 2</em> — frictionless tracking that maintains training momentum.</p>
+    <p class="cs-stat-desc" data-i18n-html="case.tfl.stats.desc">From <em>5 steps to 2</em> — frictionless tracking that maintains training momentum.</p>
   </div>
 
   <!-- OVERVIEW -->
-  <section class="cs-section">
+  <section class="cs-section" id="overview">
     <div class="cs-text-grid reveal">
-      <span class="cs-text-label">Overview</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.tfl.overview.label">Overview</span>
+      <p class="cs-text-body" data-i18n-html="case.tfl.overview.body">
         Despite a saturated fitness app market, high churn rates persist. Most apps fail by burdening users with complex data entry during intense workouts. My goal was to design a <strong>frictionless tracking system</strong> that maintains training momentum and boosts long-term engagement — transforming the solitary nature of working out into a vibrant, human-centred experience.
       </p>
     </div>
   </section>
 
   <!-- STRATEGY -->
-  <section class="cs-section">
+  <section class="cs-section" id="strategy">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Strategy</span>
-      <h2 class="cs-sec-headline">Triple W framework — Why, How, What — to ensure every decision is user-grounded.</h2>
+      <span class="cs-sec-label" data-i18n="case.tfl.strategy.label">Strategy</span>
+      <h2 class="cs-sec-headline" data-i18n="case.tfl.strategy.headline">Triple W framework — Why, How, What — to ensure every decision is user-grounded.</h2>
     </div>
 
     <div class="cs-strategy-list reveal">
       <div class="cs-str-item">
         <span class="cs-str-num">01</span>
-        <span class="cs-str-name">Audit</span>
-        <p class="cs-str-desc">Conducted <strong>competitive analysis</strong> to identify navigation bottlenecks in top-tier fitness apps. Existing apps lack trainer follow-up and community features.</p>
+        <span class="cs-str-name" data-i18n="case.tfl.strategy.01.name">Audit</span>
+        <p class="cs-str-desc" data-i18n-html="case.tfl.strategy.01.desc">Conducted <strong>competitive analysis</strong> to identify navigation bottlenecks in top-tier fitness apps. Existing apps lack trainer follow-up and community features.</p>
       </div>
       <div class="cs-str-item">
         <span class="cs-str-num">02</span>
-        <span class="cs-str-name">Design</span>
-        <p class="cs-str-desc">Implemented <strong>gesture-based navigation</strong> and <strong>predictive data entry</strong> to minimise cognitive load during workouts. IA and Task Flows served as the blueprint for the Deliver phase.</p>
+        <span class="cs-str-name" data-i18n="case.tfl.strategy.02.name">Design</span>
+        <p class="cs-str-desc" data-i18n-html="case.tfl.strategy.02.desc">Implemented <strong>gesture-based navigation</strong> and <strong>predictive data entry</strong> to minimise cognitive load during workouts. IA and Task Flows served as the blueprint for the Deliver phase.</p>
       </div>
       <div class="cs-str-item">
         <span class="cs-str-num">03</span>
-        <span class="cs-str-name">Validate</span>
-        <p class="cs-str-desc">Executed usability testing with <strong>5 active lifters</strong> to measure task completion speed and flow satisfaction. Design Review phase synthesised post-interview feedback with engineering feasibility.</p>
+        <span class="cs-str-name" data-i18n="case.tfl.strategy.03.name">Validate</span>
+        <p class="cs-str-desc" data-i18n-html="case.tfl.strategy.03.desc">Executed usability testing with <strong>5 active lifters</strong> to measure task completion speed and flow satisfaction. Design Review phase synthesised post-interview feedback with engineering feasibility.</p>
       </div>
     </div>
   </section>
@@ -245,14 +417,14 @@
   </div>
 
   <!-- DESIGN -->
-  <section class="cs-section">
+  <section class="cs-section" id="design">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Design</span>
-      <h2 class="cs-sec-headline">Bridging expert guidance with social connectivity — beyond just tracking numbers.</h2>
+      <span class="cs-sec-label" data-i18n="case.tfl.design.label">Design</span>
+      <h2 class="cs-sec-headline" data-i18n="case.tfl.design.headline">Bridging expert guidance with social connectivity — beyond just tracking numbers.</h2>
     </div>
     <div class="cs-text-grid reveal">
-      <span class="cs-text-label">Scalability</span>
-      <p class="cs-text-body">Developed a comprehensive <strong>Design System</strong> to ensure visual consistency and <strong>2× faster developer handoff</strong>. A Design Review phase synthesised feedback from user post-interviews and technical feasibility assessments before the final Deliver stage.</p>
+      <span class="cs-text-label" data-i18n="case.tfl.design.scalability.label">Scalability</span>
+      <p class="cs-text-body" data-i18n-html="case.tfl.design.scalability.body">Developed a comprehensive <strong>Design System</strong> to ensure visual consistency and <strong>2× faster developer handoff</strong>. A Design Review phase synthesised feedback from user post-interviews and technical feasibility assessments before the final Deliver stage.</p>
     </div>
   </section>
 
@@ -266,16 +438,16 @@
 
   <!-- CONCLUSION -->
   <div class="cs-quote reveal">
-    <span class="cs-quote-label">Conclusion</span>
-    <p class="cs-quote-text">"Beyond Tracking: Elevating the Fitness Journey through <em>Connection and Insight</em>."</p>
+    <span class="cs-quote-label" data-i18n="case.tfl.conclusion.label">Conclusion</span>
+    <p class="cs-quote-text" data-i18n-html="case.tfl.conclusion.body">"Beyond Tracking: Elevating the Fitness Journey through <em>Connection and Insight</em>."</p>
   </div>
 
   <a class="cs-next" href="overheadflights.html">
-    <div><span class="cs-next-label">Next Project</span><div class="cs-next-name">Overhead Flights</div></div>
+    <div><span class="cs-next-label" data-i18n="case.common.next">Next Project</span><div class="cs-next-name" data-i18n="work.overheadflights.name">Overhead Flights</div></div>
     <span class="cs-next-arrow">→</span>
   </a>
 
-  <footer><span>© 2026 Yu-Hsien (Rowan) Lin</span><span>Training for Life — 04 / 05</span></footer>
+  <footer><span>© 2026 Yu-Hsien (Rowan) Lin</span><span data-i18n="case.tfl.footer.project">Training for Life — 04 / 05</span></footer>
 
   <script>
     const ring=document.getElementById('cur-ring'),dot=document.getElementById('cur-dot');
@@ -285,6 +457,184 @@
     document.querySelectorAll('a').forEach(el=>{el.addEventListener('mouseenter',()=>ring.classList.add('expanded'));el.addEventListener('mouseleave',()=>ring.classList.remove('expanded'))});
     const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    /* ── SCROLL PROGRESS (skiper94-style, desktop only; draggable scrubber) ── */
+    (function () {
+      const root = document.getElementById('scroll-progress');
+      const fill = document.getElementById('scroll-progress-fill');
+      const marker = document.getElementById('scroll-progress-marker');
+      const pctEl = document.getElementById('scroll-progress-pct');
+      if (!root || !fill || !marker || !pctEl) return;
+
+      const mqDesktop = window.matchMedia('(min-width: 768px)');
+      let raf = 0;
+      let lastPct = -1;
+      let lastLabel = '';
+      let dragging = false;
+      let dragClientY = null;
+      let dragRaf = 0;
+      let hideTimer = 0;
+
+      function revealLabel() {
+        root.classList.add('is-label-on');
+        window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(function () {
+          if (dragging) return;
+          root.classList.remove('is-label-on');
+        }, 5000);
+      }
+
+      const sections = [
+        { id: 'hero', label: 'Hero', labelKey: 'case.tfl.progress.hero' },
+        { id: 'overview', label: 'Overview', labelKey: 'case.tfl.overview.label' },
+        { id: 'strategy', label: 'Strategy', labelKey: 'case.tfl.strategy.label' },
+        { id: 'design', label: 'Design', labelKey: 'case.tfl.design.label' },
+      ].map(function (s) { return { id: s.id, label: s.label, labelKey: s.labelKey, el: document.getElementById(s.id) }; })
+       .filter(function (s) { return s.el; });
+
+      function scrollMax() {
+        const doc = document.documentElement;
+        return Math.max(0, doc.scrollHeight - window.innerHeight);
+      }
+
+      function progress() {
+        const max = scrollMax();
+        if (max <= 0) return 0;
+        return Math.min(1, Math.max(0, window.scrollY / max));
+      }
+
+      function sectionLabel(s) {
+        if (typeof window.tPortfolio === 'function' && s.labelKey) {
+          const translated = window.tPortfolio(s.labelKey);
+          if (translated && translated !== s.labelKey) return translated;
+        }
+        return s.label;
+      }
+
+      function currentLabel() {
+        const probe = window.scrollY + window.innerHeight * 0.4;
+        let label = sections.length ? sectionLabel(sections[0]) : '';
+        for (let i = 0; i < sections.length; i++) {
+          if (sections[i].el.offsetTop <= probe) label = sectionLabel(sections[i]);
+        }
+        return label;
+      }
+
+      function paint() {
+        raf = 0;
+        if (!mqDesktop.matches) return;
+        const p = progress();
+        const pct = Math.round(p * 100);
+        const label = currentLabel();
+        if (pct !== lastPct) {
+          lastPct = pct;
+          fill.style.clipPath = 'inset(0 0 ' + (100 - pct) + '% 0)';
+          marker.style.top = pct + '%';
+          root.setAttribute('aria-valuenow', String(pct));
+        }
+        if (label !== lastLabel) {
+          lastLabel = label;
+          pctEl.textContent = label;
+        }
+      }
+
+      function requestPaint() {
+        if (!mqDesktop.matches) return;
+        revealLabel();
+        if (raf) return;
+        raf = requestAnimationFrame(paint);
+      }
+
+      function scrollToClientY(clientY) {
+        const rect = root.getBoundingClientRect();
+        const p = rect.height > 0 ? (clientY - rect.top) / rect.height : 0;
+        const clamped = Math.min(1, Math.max(0, p));
+        window.scrollTo({ top: clamped * scrollMax(), behavior: 'auto' });
+      }
+
+      function flushDrag() {
+        dragRaf = 0;
+        if (!dragging || dragClientY === null) return;
+        scrollToClientY(dragClientY);
+      }
+
+      function requestDragFlush() {
+        if (dragRaf) return;
+        dragRaf = requestAnimationFrame(flushDrag);
+      }
+
+      const cursorRing = document.getElementById('cur-ring');
+
+      function onPointerDown(e) {
+        if (!mqDesktop.matches) return;
+        dragging = true;
+        root.classList.add('is-dragging');
+        revealLabel();
+        if (cursorRing) {
+          cursorRing.classList.add('expanded');
+          if (window.gsap) gsap.to(cursorRing, { duration: 0.4, scale: 2, overwrite: true });
+        }
+        root.setPointerCapture && e.pointerId != null && root.setPointerCapture(e.pointerId);
+        scrollToClientY(e.clientY);
+        e.preventDefault();
+      }
+      function onPointerMove(e) {
+        if (!dragging) return;
+        dragClientY = e.clientY;
+        requestDragFlush();
+      }
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        dragClientY = null;
+        root.classList.remove('is-dragging');
+        revealLabel();
+        if (cursorRing) {
+          cursorRing.classList.remove('expanded');
+          if (window.gsap) gsap.to(cursorRing, { duration: 0.4, scale: 1, overwrite: true });
+        }
+      }
+
+      root.addEventListener('pointerdown', onPointerDown);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', endDrag);
+      window.addEventListener('pointercancel', endDrag);
+
+      root.addEventListener('keydown', function (e) {
+        if (!mqDesktop.matches) return;
+        const max = scrollMax();
+        if (max <= 0) return;
+        let target = null;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          target = Math.max(0, window.scrollY - max * 0.05);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          target = Math.min(max, window.scrollY + max * 0.05);
+        } else if (e.key === 'Home') {
+          target = 0;
+        } else if (e.key === 'End') {
+          target = max;
+        }
+        if (target !== null) {
+          e.preventDefault();
+          window.scrollTo({ top: target, behavior: 'auto' });
+        }
+      });
+
+      window.addEventListener('scroll', requestPaint, { passive: true });
+      window.addEventListener('resize', function () {
+        lastPct = -1;
+        requestPaint();
+      }, { passive: true });
+      mqDesktop.addEventListener('change', function () {
+        lastPct = -1;
+        requestPaint();
+      });
+      window.addEventListener('portfolio:languagechange', function () {
+        lastLabel = '';
+        requestPaint();
+      });
+      requestPaint();
+    })();
   </script>
 </body>
 </html>

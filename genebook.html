@@ -11,7 +11,11 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Genebook — Rowan Lin</title>
+  <title data-i18n="case.genebook.meta.title">Genebook — Rowan Lin</title>
+  <script src="i18n.js" defer></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -34,11 +38,150 @@
     #cur-ring.expanded { width: 60px; height: 60px; border-color: var(--accent); background: rgba(184,69,69,0.06); }
 
     nav { position: fixed; inset: 0 0 auto; z-index: 200; display: flex; justify-content: space-between; align-items: center; padding: 2rem 5vw; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(14,14,13,0.86); backdrop-filter: blur(12px); }
-    .nav-back { display: flex; align-items: center; gap: 0.7rem; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(210,210,205,0.88); text-decoration: none; transition: color 0.3s; }
-    .nav-back:hover { color: var(--fg); }
-    .nav-back-arrow { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); }
-    .nav-back:hover .nav-back-arrow { transform: translateX(-4px); }
+    .nav-logo { color: #ffffff; text-decoration: none; display: inline-flex; align-items: center; transition: opacity 0.3s ease; }
+    .nav-logo svg { height: 34px; width: auto; display: block; }
+    .nav-logo .cls-1 { fill: #ffffff; transition: fill 0.3s ease; }
+    .nav-logo:hover { opacity: 0.72; }
     .nav-right { display: flex; align-items: center; gap: 2rem; }
+    .nav-lang {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .nav-lang-btn {
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      color: #ffffff;
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 0.2rem 0.45rem;
+      cursor: pointer;
+      opacity: 0.3;
+      transition: color 0.3s, border-color 0.3s, opacity 0.3s;
+    }
+    .nav-lang-btn.is-active { opacity: 1; border-color: rgba(255, 255, 255, 0.28); }
+    .nav-lang-btn:hover { color: var(--accent); opacity: 1; }
+    .nav-lang-sep {
+      color: #ffffff;
+      opacity: 0.3;
+      font: inherit;
+      user-select: none;
+    }
+
+    /* ── SCROLL PROGRESS (skiper94-inspired; desktop only; draggable scrubber) ──
+       https://skiper-ui.com/v1/skiper94 — Scroll progress 002 ── */
+    .scroll-progress {
+      position: fixed;
+      left: max(0.6rem, 1.3vw);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 150;
+      height: 15rem;
+      width: 1.25rem;
+      cursor: pointer;
+      touch-action: none;
+    }
+    .scroll-progress__track {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 0.375rem;
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(74, 74, 72, 0.14);
+      overflow: visible;
+      pointer-events: none;
+      transition: background 0.2s ease;
+    }
+    .scroll-progress:hover .scroll-progress__track,
+    .scroll-progress.is-dragging .scroll-progress__track {
+      background: rgba(74, 74, 72, 0.26);
+    }
+    .scroll-progress__fill {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: var(--accent);
+      clip-path: inset(0 0 100% 0);
+      will-change: clip-path;
+    }
+    .scroll-progress__marker {
+      position: absolute;
+      left: 50%;
+      top: 0%;
+      width: 1rem;
+      height: 1px;
+      background: var(--accent);
+      transform: translate(-50%, 0);
+      will-change: top;
+      pointer-events: auto;
+    }
+    .scroll-progress__marker::after {
+      content: '';
+      position: absolute;
+      left: -0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 11rem;
+      height: 2.75rem;
+    }
+    .scroll-progress:hover .scroll-progress__marker,
+    .scroll-progress.is-dragging .scroll-progress__marker {
+      height: 2px;
+    }
+    .scroll-progress.is-dragging {
+      cursor: grabbing;
+    }
+    .scroll-progress__pct {
+      position: absolute;
+      left: calc(100% + 0.45rem);
+      top: 50%;
+      transform: translateY(-50%) translateX(-0.2rem);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      line-height: 1;
+      color: var(--accent);
+      white-space: nowrap;
+      pointer-events: auto;
+      user-select: none;
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .scroll-progress.is-label-on .scroll-progress__pct,
+    .scroll-progress:hover .scroll-progress__pct,
+    .scroll-progress.is-dragging .scroll-progress__pct,
+    .scroll-progress:focus-visible .scroll-progress__pct {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+    .scroll-progress:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 999px;
+    }
+    @media (max-width: 767px) {
+      .scroll-progress {
+        display: none !important;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-progress__fill,
+      .scroll-progress__marker,
+      .scroll-progress__pct {
+        transition: none;
+      }
+    }
+
     .nav-index { font-size: 1rem; letter-spacing: 0.15em; color: rgba(210,210,205,0.72); }
     .nav-prev, .nav-next { display: flex; align-items: center; gap: 0.6rem; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(210,210,205,0.88); text-decoration: none; transition: color 0.3s; }
     .nav-prev:hover, .nav-next:hover { color: var(--fg); }
@@ -48,6 +191,7 @@
     .cs-hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 120px 5vw 8vh; border-bottom: 1px solid var(--line); }
     .cs-label { font-size: 1rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 2rem; display: block; opacity: 0; transform: translateY(12px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards; }
     .cs-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(4rem, 11vw, 11rem); line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 2rem; opacity: 0; transform: translateY(60px); filter: blur(4px); animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
+    html[lang="zh-Hant"] .cs-title { font-size: clamp(2.75rem, 7.2vw, 6.75rem); }
     .cs-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; border-top: 1px solid var(--line); padding-top: 2.5rem; opacity: 0; transform: translateY(20px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s forwards; }
     .cs-meta-label { font-size: 1rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.6rem; }
     .cs-meta-val { font-size: 1.125rem; line-height: 1.6; color: var(--fg); }
@@ -108,6 +252,7 @@
     .cs-next:hover { background: var(--surface); }
     .cs-next-label { font-size: 1rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem; display: block; }
     .cs-next-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 300; letter-spacing: -0.02em; line-height: 1; color: var(--fg); transition: letter-spacing 0.4s cubic-bezier(0.16,1,0.3,1); }
+    html[lang="zh-Hant"] .cs-next-name { font-size: clamp(1.7rem, 3.4vw, 2.85rem); }
     .cs-next:hover .cs-next-name { letter-spacing: 0.01em; }
     .cs-next-arrow { font-size: 3rem; color: var(--accent); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
     .cs-next:hover .cs-next-arrow { transform: translateX(12px); }
@@ -125,6 +270,7 @@
       .nav-prev,.nav-next,.nav-back{font-size: 1rem;letter-spacing:.14em}
       .cs-hero{padding:96px 4vw 6vh}
       .cs-title{font-size:clamp(3rem,16vw,5rem)}
+      html[lang="zh-Hant"] .cs-title { font-size: clamp(2.25rem, 11vw, 3.5rem); }
       .cs-meta{grid-template-columns:1fr 1fr;gap:1rem;padding-top:1.5rem}
       .cs-section{padding:7vh 4vw}
       .cs-sec-header,.cs-text-grid,.cs-insight{grid-template-columns:1fr;gap:1.2rem}
@@ -151,64 +297,90 @@
 </head>
 <body>
 
+  <!-- Scroll progress 002 style — inspired by Skiper UI skiper94 (https://skiper-ui.com/v1/skiper94). Desktop only. Draggable scrubber: click or drag to jump to a scroll position. -->
+  <div class="scroll-progress" id="scroll-progress" role="slider" tabindex="0"
+       aria-label="Page scroll position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="scroll-progress__track">
+      <div class="scroll-progress__fill" id="scroll-progress-fill"></div>
+      <div class="scroll-progress__marker" id="scroll-progress-marker">
+        <span class="scroll-progress__pct" id="scroll-progress-pct" data-i18n="case.genebook.progress.hero">Hero</span>
+      </div>
+    </div>
+  </div>
+
   <div id="cur-ring"></div>
   <div id="cur-dot"></div>
 
   <nav>
-    <a class="nav-back" href="index.html"><span class="nav-back-arrow">←</span> All Projects</a>
+    <a class="nav-logo" href="index.html" aria-label="Rowan Lin — Back to home">
+      <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.63 35.01" role="img">
+        <g>
+          <g>
+            <path class="cls-1" d="M25.38,14.31h-15.02c-1.17,0-2.34.2-3.45.59C2.79,16.37,0,20.29,0,24.66v10.35l6.39-4.02v-6.33s0-.02,0-.04c.02-2.16,1.79-3.92,3.96-3.92h13.15s4.71.1,6.68-1.01c1.97-1.11,3.17-2.44,4.19-4.25.47-.83.82-1.71,1.05-2.63h-6.96c-.73.91-1.84,1.5-3.09,1.5Z"/>
+            <path class="cls-1" d="M28.83.59c-1.11-.39-2.28-.59-3.45-.59H5.81S0,6.39,0,6.39h25.38c1.69,0,3.14,1.07,3.7,2.57h6.55c-.52-3.8-3.13-7.06-6.81-8.37Z"/>
+          </g>
+          <path class="cls-1" d="M34.44,35.01l-6-3.71v-8.23h3.08c1.61,0,2.92,1.31,2.92,2.92v9.01Z"/>
+        </g>
+      </svg>
+    </a>
     <div class="nav-right">
+      <div class="nav-lang" role="group" aria-label="Language">
+        <button type="button" class="nav-lang-btn is-active" data-lang="en" aria-pressed="true">EN</button>
+        <span class="nav-lang-sep" aria-hidden="true">|</span>
+        <button type="button" class="nav-lang-btn" data-lang="zh" aria-pressed="false">中文</button>
+      </div>
+      <a class="nav-prev" href="vcue.html">←</a>
       <span class="nav-index">03 / 05</span>
-      <a class="nav-prev" href="vcue.html">← Visual Cues Study</a>
-      <a class="nav-next" href="tfl.html">Next <span class="nav-next-arrow">→</span></a>
+      <a class="nav-next" href="tfl.html"><span class="nav-next-arrow">→</span></a>
     </div>
   </nav>
 
   <!-- HERO -->
-  <section class="cs-hero">
-    <span class="cs-label">02 — Website · Branding Design · 4 Months</span>
-    <h1 class="cs-title">Genebook</h1>
+  <section class="cs-hero" id="hero">
+    <span class="cs-label" data-i18n="case.genebook.hero.eyebrow">02 — Website · Branding Design · 4 Months</span>
+    <h1 class="cs-title" data-i18n="case.genebook.hero.title">Genebook</h1>
     <div class="cs-img-full">
       <img class="cs-img reveal" src="https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg" alt="Genebook Hero" loading="lazy">
     </div>
     <div class="cs-meta">
       <div>
-        <span class="cs-meta-label">Role</span>
-        <span class="cs-meta-val">Lead UI/UX &<br>Product Designer</span>
+        <span class="cs-meta-label" data-i18n="case.genebook.meta.role.label">Role</span>
+        <span class="cs-meta-val" data-i18n-html="case.genebook.meta.role.value">Lead UI/UX &amp;<br>Product Designer</span>
       </div>
       <div>
-        <span class="cs-meta-label">Duration</span>
-        <span class="cs-meta-val">4 Months</span>
+        <span class="cs-meta-label" data-i18n="case.genebook.meta.duration.label">Duration</span>
+        <span class="cs-meta-val" data-i18n="case.genebook.meta.duration.value">4 Months</span>
       </div>
       <div>
-        <span class="cs-meta-label">Deliverables</span>
-        <span class="cs-meta-val">Brand Identity (CI)<br>Responsive Web</span>
+        <span class="cs-meta-label" data-i18n="case.genebook.meta.deliverables.label">Deliverables</span>
+        <span class="cs-meta-val" data-i18n-html="case.genebook.meta.deliverables.value">Brand Identity (CI)<br>Responsive Web</span>
       </div>
       <div>
-        <span class="cs-meta-label">Client</span>
-        <span class="cs-meta-val">Health GeneTech Corp.<br>Biotechnology, Taiwan</span>
+        <span class="cs-meta-label" data-i18n="case.genebook.meta.client.label">Client</span>
+        <span class="cs-meta-val" data-i18n-html="case.genebook.meta.client.value">Health GeneTech Corp.<br>Biotechnology, Taiwan</span>
       </div>
     </div>
   </section>
 
   <!-- OVERVIEW -->
-  <section class="cs-section">
+  <section class="cs-section" id="overview">
     <div class="cs-text-grid reveal">
-      <span class="cs-text-label">Overview</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.genebook.overview.label">Overview</span>
+      <p class="cs-text-body" data-i18n-html="case.genebook.overview.body">
         Marking the <strong>10th anniversary</strong> of Health GeneTech Corp., a leader in Taiwan's biotechnology sector, I led a comprehensive 4-month rebranding initiative. As Lead Product Designer, I managed the end-to-end transformation of the Corporate Identity (CI) and official website — shifting the brand from a traditional "B2B lab" image to a professional yet vibrant <strong>"human-centric health partner"</strong>.
       </p>
     </div>
   </section>
 
   <!-- PROBLEM -->
-  <section class="cs-section">
+  <section class="cs-section" id="problem">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Problem</span>
-      <h2 class="cs-sec-headline">A 10-year-old brand stuck in "B2B lab" territory, inaccessible to the modern health-conscious consumer.</h2>
+      <span class="cs-sec-label" data-i18n="case.genebook.problem.label">Problem</span>
+      <h2 class="cs-sec-headline" data-i18n="case.genebook.problem.headline">A 10-year-old brand stuck in "B2B lab" territory, inaccessible to the modern health-conscious consumer.</h2>
     </div>
     <div class="cs-text-grid reveal">
-      <span class="cs-text-label">Brand Challenge</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.genebook.problem.challenge.label">Brand Challenge</span>
+      <p class="cs-text-body" data-i18n-html="case.genebook.problem.challenge.body">
         Health GeneTech's existing identity relied on cold, clinical visuals that resonated with lab partners but alienated the general public. The brand needed to communicate <strong>trust, modernity, and accessibility</strong> simultaneously — without losing scientific credibility. Additionally, professional medical terminology (e.g., "NGS") was intimidating and meaningless to everyday users.
       </p>
     </div>
@@ -216,39 +388,39 @@
 
   <!-- INSIGHT HIGHLIGHT -->
   <div class="cs-insight reveal">
-    <span class="cs-insight-label">Key Strategic Insight</span>
-    <p class="cs-insight-text">
+    <span class="cs-insight-label" data-i18n="case.genebook.insight.label">Key Strategic Insight</span>
+    <p class="cs-insight-text" data-i18n-html="case.genebook.insight.body">
       During external testing, I discovered that translating <em>"high-tech"</em> into <em>"high-value"</em> — by highlighting the market value and premium pricing of equipment — immediately built user trust, even for those with no medical background.
     </p>
   </div>
 
   <!-- PROCESS -->
-  <section class="cs-section">
+  <section class="cs-section" id="process">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Process</span>
-      <h2 class="cs-sec-headline">Discovery → Architecture → Validation → Strategic Refinement.</h2>
+      <span class="cs-sec-label" data-i18n="case.genebook.process.label">Process</span>
+      <h2 class="cs-sec-headline" data-i18n="case.genebook.process.headline">Discovery → Architecture → Validation → Strategic Refinement.</h2>
     </div>
 
     <div class="cs-process-steps reveal">
       <div class="cs-proc-step">
         <span class="cs-proc-num">01</span>
-        <span class="cs-proc-name">Discovery</span>
-        <p class="cs-proc-desc"><strong>Stakeholder interviews</strong> to define the "Why" behind the rebrand. Competitive analysis to identify market gaps and differentiation opportunities.</p>
+        <span class="cs-proc-name" data-i18n="case.genebook.process.01.name">Discovery</span>
+        <p class="cs-proc-desc" data-i18n-html="case.genebook.process.01.desc"><strong>Stakeholder interviews</strong> to define the "Why" behind the rebrand. Competitive analysis to identify market gaps and differentiation opportunities.</p>
       </div>
       <div class="cs-proc-step">
         <span class="cs-proc-num">02</span>
-        <span class="cs-proc-name">Architecture</span>
-        <p class="cs-proc-desc">Established a clear <strong>Information Architecture</strong> to simplify complex genomic services. Internal usability testing refined the navigation bar and simplified "Instructional Steps".</p>
+        <span class="cs-proc-name" data-i18n="case.genebook.process.02.name">Architecture</span>
+        <p class="cs-proc-desc" data-i18n-html="case.genebook.process.02.desc">Established a clear <strong>Information Architecture</strong> to simplify complex genomic services. Internal usability testing refined the navigation bar and simplified "Instructional Steps".</p>
       </div>
       <div class="cs-proc-step">
         <span class="cs-proc-num">03</span>
-        <span class="cs-proc-name">Hi-Fi Design</span>
-        <p class="cs-proc-desc">Integrated the new CI into a <strong>high-fidelity web interface</strong>. External usability testing with potential users validated the interface and surfaced the key trust insight.</p>
+        <span class="cs-proc-name" data-i18n="case.genebook.process.03.name">Hi-Fi Design</span>
+        <p class="cs-proc-desc" data-i18n-html="case.genebook.process.03.desc">Integrated the new CI into a <strong>high-fidelity web interface</strong>. External usability testing with potential users validated the interface and surfaced the key trust insight.</p>
       </div>
       <div class="cs-proc-step">
         <span class="cs-proc-num">04</span>
-        <span class="cs-proc-name">Strategic Refinement</span>
-        <p class="cs-proc-desc">Moved beyond technical jargon to <strong>strategically highlight market value</strong> — translating complex science into perceived quality and building immediate user trust.</p>
+        <span class="cs-proc-name" data-i18n="case.genebook.process.04.name">Strategic Refinement</span>
+        <p class="cs-proc-desc" data-i18n-html="case.genebook.process.04.desc">Moved beyond technical jargon to <strong>strategically highlight market value</strong> — translating complex science into perceived quality and building immediate user trust.</p>
       </div>
     </div>
   </section>
@@ -259,20 +431,20 @@
   </div>
 
   <!-- SOLUTION -->
-  <section class="cs-section">
+  <section class="cs-section" id="solution">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Solution</span>
-      <h2 class="cs-sec-headline">Morse Code as DNA metaphor — repositioning the brand as a "Biotechnological Decryptor".</h2>
+      <span class="cs-sec-label" data-i18n="case.genebook.solution.label">Solution</span>
+      <h2 class="cs-sec-headline" data-i18n="case.genebook.solution.headline">Morse Code as DNA metaphor — repositioning the brand as a "Biotechnological Decryptor".</h2>
     </div>
     <div class="cs-text-grid reveal">
-      <span class="cs-text-label">Brand Identity</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.genebook.solution.identity.label">Brand Identity</span>
+      <p class="cs-text-body" data-i18n-html="case.genebook.solution.identity.body">
         I replaced the outdated human-shaped trademark with a sophisticated logo inspired by <strong>Morse Code</strong> — symbolising that while DNA is the "source code" of life, Health GeneTech acts as the expert "decoder." I departed from conventional biotech blues and greens, selecting <strong>Vibrant Orange</strong> and <strong>Professional Red</strong> as the primary palette, injecting energy and approachability into the brand.
       </p>
     </div>
     <div class="cs-text-grid reveal" style="margin-top:3rem;">
-      <span class="cs-text-label">Systemisation</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.genebook.solution.system.label">Systemisation</span>
+      <p class="cs-text-body" data-i18n-html="case.genebook.solution.system.body">
         To ensure long-term scalability, I delivered a complete <strong>CI Brand Manual</strong> covering logotype standards, a 12-column grid system, and unified design components — making the system handoff-ready from day one.
       </p>
     </div>
@@ -296,36 +468,36 @@
   <div class="cs-impact reveal">
     <div class="cs-impact-stat">
       <span class="cs-impact-num">80<span>%</span></span>
-      <span class="cs-impact-lbl">of users value quality content over price</span>
+      <span class="cs-impact-lbl" data-i18n="case.genebook.impact.label">of users value quality content over price</span>
     </div>
     <div class="cs-impact-divider"></div>
-    <p class="cs-impact-desc">
+    <p class="cs-impact-desc" data-i18n-html="case.genebook.impact.desc">
       Qualitative research confirmed that <em>clear diagrams presenting the testing process</em> were the most effective trust-building mechanism — guiding the final information hierarchy.
     </p>
   </div>
 
   <!-- TAKEAWAYS -->
-  <section class="cs-section">
+  <section class="cs-section" id="outcome">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Outcome</span>
-      <h2 class="cs-sec-headline">A holistic brand transformation — scientific rigour meets human warmth.</h2>
+      <span class="cs-sec-label" data-i18n="case.genebook.outcome.label">Outcome</span>
+      <h2 class="cs-sec-headline" data-i18n="case.genebook.outcome.headline">A holistic brand transformation — scientific rigour meets human warmth.</h2>
     </div>
     <div class="cs-takeaways reveal">
       <div class="cs-take-item">
-        <span class="cs-take-title">Strategic Design & Branding</span>
+        <span class="cs-take-title" data-i18n="case.genebook.outcome.strategic.title">Strategic Design &amp; Branding</span>
         <ul class="cs-take-list">
-          <li><strong>Holistic Transformation:</strong> Successfully integrated graphic design, UI design, and CI to revitalise a premier Taiwanese biotechnology company.</li>
-          <li><strong>Narrative Identity:</strong> Morse code repositioned the brand as a "Biotechnological Decryptor."</li>
-          <li><strong>Emotional Connectivity:</strong> Transitioned from cold clinical tones to a vibrant, youthful palette.</li>
-          <li><strong>Systemic Scalability:</strong> Delivered a rigorous CI manual with logotypes, 12-column grid, and typography standards.</li>
+          <li data-i18n-html="case.genebook.outcome.strategic.1"><strong>Holistic Transformation:</strong> Successfully integrated graphic design, UI design, and CI to revitalise a premier Taiwanese biotechnology company.</li>
+          <li data-i18n-html="case.genebook.outcome.strategic.2"><strong>Narrative Identity:</strong> Morse code repositioned the brand as a "Biotechnological Decryptor."</li>
+          <li data-i18n-html="case.genebook.outcome.strategic.3"><strong>Emotional Connectivity:</strong> Transitioned from cold clinical tones to a vibrant, youthful palette.</li>
+          <li data-i18n-html="case.genebook.outcome.strategic.4"><strong>Systemic Scalability:</strong> Delivered a rigorous CI manual with logotypes, 12-column grid, and typography standards.</li>
         </ul>
       </div>
       <div class="cs-take-item">
-        <span class="cs-take-title">User-Centric UX Insights</span>
+        <span class="cs-take-title" data-i18n="case.genebook.outcome.ux.title">User-Centric UX Insights</span>
         <ul class="cs-take-list">
-          <li><strong>Trust Through Transparency:</strong> Highlighting equipment market value bridged the knowledge gap for laypeople.</li>
-          <li><strong>Intuitive IA:</strong> Refined navigation bar and simplified instructional steps for complex genomic information.</li>
-          <li><strong>Actionable Data:</strong> 80% of users value high-quality content over price — reinforcing the need for clear process diagrams.</li>
+          <li data-i18n-html="case.genebook.outcome.ux.1"><strong>Trust Through Transparency:</strong> Highlighting equipment market value bridged the knowledge gap for laypeople.</li>
+          <li data-i18n-html="case.genebook.outcome.ux.2"><strong>Intuitive IA:</strong> Refined navigation bar and simplified instructional steps for complex genomic information.</li>
+          <li data-i18n-html="case.genebook.outcome.ux.3"><strong>Actionable Data:</strong> 80% of users value high-quality content over price — reinforcing the need for clear process diagrams.</li>
         </ul>
       </div>
     </div>
@@ -334,15 +506,15 @@
   <!-- NEXT PROJECT -->
   <a class="cs-next" href="tfl.html">
     <div>
-      <span class="cs-next-label">Next Project</span>
-      <div class="cs-next-name">Training for Life</div>
+      <span class="cs-next-label" data-i18n="case.common.next">Next Project</span>
+      <div class="cs-next-name" data-i18n="work.tfl.name">Training for Life</div>
     </div>
     <span class="cs-next-arrow">→</span>
   </a>
 
   <footer>
     <span>© 2026 Yu-Hsien (Rowan) Lin</span>
-    <span>Genebook — 03 / 05</span>
+    <span data-i18n="case.genebook.footer.project">Genebook — 03 / 05</span>
   </footer>
 
   <script>
@@ -366,6 +538,186 @@
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { threshold: 0.08 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    /* ── SCROLL PROGRESS (skiper94-style, desktop only; draggable scrubber) ── */
+    (function () {
+      const root = document.getElementById('scroll-progress');
+      const fill = document.getElementById('scroll-progress-fill');
+      const marker = document.getElementById('scroll-progress-marker');
+      const pctEl = document.getElementById('scroll-progress-pct');
+      if (!root || !fill || !marker || !pctEl) return;
+
+      const mqDesktop = window.matchMedia('(min-width: 768px)');
+      let raf = 0;
+      let lastPct = -1;
+      let lastLabel = '';
+      let dragging = false;
+      let dragClientY = null;
+      let dragRaf = 0;
+      let hideTimer = 0;
+
+      function revealLabel() {
+        root.classList.add('is-label-on');
+        window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(function () {
+          if (dragging) return;
+          root.classList.remove('is-label-on');
+        }, 5000);
+      }
+
+      const sections = [
+        { id: 'hero', label: 'Hero', labelKey: 'case.genebook.progress.hero' },
+        { id: 'overview', label: 'Overview', labelKey: 'case.genebook.overview.label' },
+        { id: 'problem', label: 'Problem', labelKey: 'case.genebook.problem.label' },
+        { id: 'process', label: 'Process', labelKey: 'case.genebook.process.label' },
+        { id: 'solution', label: 'Solution', labelKey: 'case.genebook.solution.label' },
+        { id: 'outcome', label: 'Outcome', labelKey: 'case.genebook.outcome.label' },
+      ].map(function (s) { return { id: s.id, label: s.label, labelKey: s.labelKey, el: document.getElementById(s.id) }; })
+       .filter(function (s) { return s.el; });
+
+      function scrollMax() {
+        const doc = document.documentElement;
+        return Math.max(0, doc.scrollHeight - window.innerHeight);
+      }
+
+      function progress() {
+        const max = scrollMax();
+        if (max <= 0) return 0;
+        return Math.min(1, Math.max(0, window.scrollY / max));
+      }
+
+      function sectionLabel(s) {
+        if (typeof window.tPortfolio === 'function' && s.labelKey) {
+          const translated = window.tPortfolio(s.labelKey);
+          if (translated && translated !== s.labelKey) return translated;
+        }
+        return s.label;
+      }
+
+      function currentLabel() {
+        const probe = window.scrollY + window.innerHeight * 0.4;
+        let label = sections.length ? sectionLabel(sections[0]) : '';
+        for (let i = 0; i < sections.length; i++) {
+          if (sections[i].el.offsetTop <= probe) label = sectionLabel(sections[i]);
+        }
+        return label;
+      }
+
+      function paint() {
+        raf = 0;
+        if (!mqDesktop.matches) return;
+        const p = progress();
+        const pct = Math.round(p * 100);
+        const label = currentLabel();
+        if (pct !== lastPct) {
+          lastPct = pct;
+          fill.style.clipPath = 'inset(0 0 ' + (100 - pct) + '% 0)';
+          marker.style.top = pct + '%';
+          root.setAttribute('aria-valuenow', String(pct));
+        }
+        if (label !== lastLabel) {
+          lastLabel = label;
+          pctEl.textContent = label;
+        }
+      }
+
+      function requestPaint() {
+        if (!mqDesktop.matches) return;
+        revealLabel();
+        if (raf) return;
+        raf = requestAnimationFrame(paint);
+      }
+
+      function scrollToClientY(clientY) {
+        const rect = root.getBoundingClientRect();
+        const p = rect.height > 0 ? (clientY - rect.top) / rect.height : 0;
+        const clamped = Math.min(1, Math.max(0, p));
+        window.scrollTo({ top: clamped * scrollMax(), behavior: 'auto' });
+      }
+
+      function flushDrag() {
+        dragRaf = 0;
+        if (!dragging || dragClientY === null) return;
+        scrollToClientY(dragClientY);
+      }
+
+      function requestDragFlush() {
+        if (dragRaf) return;
+        dragRaf = requestAnimationFrame(flushDrag);
+      }
+
+      const cursorRing = document.getElementById('cur-ring');
+
+      function onPointerDown(e) {
+        if (!mqDesktop.matches) return;
+        dragging = true;
+        root.classList.add('is-dragging');
+        revealLabel();
+        if (cursorRing) {
+          cursorRing.classList.add('expanded');
+          if (window.gsap) gsap.to(cursorRing, { duration: 0.4, scale: 2, overwrite: true });
+        }
+        root.setPointerCapture && e.pointerId != null && root.setPointerCapture(e.pointerId);
+        scrollToClientY(e.clientY);
+        e.preventDefault();
+      }
+      function onPointerMove(e) {
+        if (!dragging) return;
+        dragClientY = e.clientY;
+        requestDragFlush();
+      }
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        dragClientY = null;
+        root.classList.remove('is-dragging');
+        revealLabel();
+        if (cursorRing) {
+          cursorRing.classList.remove('expanded');
+          if (window.gsap) gsap.to(cursorRing, { duration: 0.4, scale: 1, overwrite: true });
+        }
+      }
+
+      root.addEventListener('pointerdown', onPointerDown);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', endDrag);
+      window.addEventListener('pointercancel', endDrag);
+
+      root.addEventListener('keydown', function (e) {
+        if (!mqDesktop.matches) return;
+        const max = scrollMax();
+        if (max <= 0) return;
+        let target = null;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          target = Math.max(0, window.scrollY - max * 0.05);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          target = Math.min(max, window.scrollY + max * 0.05);
+        } else if (e.key === 'Home') {
+          target = 0;
+        } else if (e.key === 'End') {
+          target = max;
+        }
+        if (target !== null) {
+          e.preventDefault();
+          window.scrollTo({ top: target, behavior: 'auto' });
+        }
+      });
+
+      window.addEventListener('scroll', requestPaint, { passive: true });
+      window.addEventListener('resize', function () {
+        lastPct = -1;
+        requestPaint();
+      }, { passive: true });
+      mqDesktop.addEventListener('change', function () {
+        lastPct = -1;
+        requestPaint();
+      });
+      window.addEventListener('portfolio:languagechange', function () {
+        lastLabel = '';
+        requestPaint();
+      });
+      requestPaint();
+    })();
   </script>
 </body>
 </html>

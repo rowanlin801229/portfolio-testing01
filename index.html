@@ -3021,25 +3021,36 @@
       }
     }
 
-    /* ── SCROLL PROGRESS (skiper94-inspired; desktop only) ──
+    /* ── SCROLL PROGRESS (skiper94-inspired; desktop only; draggable scrubber) ──
        https://skiper-ui.com/v1/skiper94 — Scroll progress 002 ── */
     .scroll-progress {
       position: fixed;
-      left: max(1.1rem, 1.8vw);
+      left: max(0.6rem, 1.3vw);
       top: 50%;
       transform: translateY(-50%);
       z-index: 150;
       height: 15rem;
-      width: 0.375rem;
-      pointer-events: none;
+      /* wider than the visible track so it's easy to grab/click */
+      width: 1.25rem;
+      cursor: pointer;
+      touch-action: none;
     }
     .scroll-progress__track {
-      position: relative;
-      width: 100%;
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 0.375rem;
       height: 100%;
       border-radius: 999px;
       background: rgba(74, 74, 72, 0.14);
       overflow: visible;
+      pointer-events: none;
+      transition: background 0.2s ease;
+    }
+    .scroll-progress:hover .scroll-progress__track,
+    .scroll-progress.is-dragging .scroll-progress__track {
+      background: rgba(74, 74, 72, 0.26);
     }
     /* On dark hero, track stays readable */
     .scroll-progress__fill {
@@ -3059,19 +3070,53 @@
       background: var(--accent);
       transform: translate(-50%, 0);
       will-change: top;
+      pointer-events: auto;
+    }
+    .scroll-progress__marker::after {
+      content: '';
+      position: absolute;
+      left: -0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 11rem;
+      height: 2.75rem;
+    }
+    .scroll-progress:hover .scroll-progress__marker,
+    .scroll-progress.is-dragging .scroll-progress__marker {
+      height: 2px;
+    }
+    .scroll-progress.is-dragging {
+      cursor: grabbing;
     }
     .scroll-progress__pct {
       position: absolute;
       left: calc(100% + 0.45rem);
       top: 50%;
-      transform: translateY(-50%);
-      font-size: 0.8rem;
+      transform: translateY(-50%) translateX(-0.2rem);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
       font-weight: 500;
-      letter-spacing: -0.02em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
       line-height: 1;
       color: var(--accent);
-      font-variant-numeric: tabular-nums;
       white-space: nowrap;
+      pointer-events: auto;
+      user-select: none;
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .scroll-progress.is-label-on .scroll-progress__pct,
+    .scroll-progress:hover .scroll-progress__pct,
+    .scroll-progress.is-dragging .scroll-progress__pct,
+    .scroll-progress:focus-visible .scroll-progress__pct {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+    .scroll-progress:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 999px;
     }
     @media (max-width: 767px) {
       .scroll-progress {
@@ -3080,7 +3125,8 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .scroll-progress__fill,
-      .scroll-progress__marker {
+      .scroll-progress__marker,
+      .scroll-progress__pct {
         transition: none;
       }
     }
@@ -3089,12 +3135,13 @@
 </head>
 <body>
 
-  <!-- Scroll progress 002 style — inspired by Skiper UI skiper94 (https://skiper-ui.com/v1/skiper94). Desktop only. -->
-  <div class="scroll-progress" id="scroll-progress" aria-hidden="true">
+  <!-- Scroll progress 002 style — inspired by Skiper UI skiper94 (https://skiper-ui.com/v1/skiper94). Desktop only. Draggable scrubber: click or drag to jump to a scroll position. -->
+  <div class="scroll-progress" id="scroll-progress" role="slider" tabindex="0"
+       aria-label="Page scroll position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
     <div class="scroll-progress__track">
       <div class="scroll-progress__fill" id="scroll-progress-fill"></div>
       <div class="scroll-progress__marker" id="scroll-progress-marker">
-        <span class="scroll-progress__pct" id="scroll-progress-pct">0</span>
+        <span class="scroll-progress__pct" id="scroll-progress-pct">Home</span>
       </div>
     </div>
   </div>
@@ -3139,8 +3186,6 @@
       <ul class="nav-links" style="font-weight: 400">
         <li><a href="#work">Projects</a></li>
         <li><a href="#about">About</a></li>
-        <li><a href="#impact">Impact</a></li>
-        <li><a href="#experience">Selected Work</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
       <div class="nav-lang" role="group" aria-label="Language">
@@ -3553,10 +3598,10 @@
     <section id="experience" data-exp-axis>
       <div class="exp-pin">
         <header class="exp-header">
-          <h2 class="sec-label">Selected Work</h2>
+          <h2 class="sec-label">Work Experience</h2>
         </header>
 
-        <ol class="exp-axis-list" aria-label="Selected work">
+        <ol class="exp-axis-list" aria-label="Work experience">
           <li class="exp-axis-item is-active" data-exp-item>
             <span class="exp-active-rail" aria-hidden="true"></span>
             <div class="exp-col exp-col--left">
@@ -6292,7 +6337,7 @@
       });
     })();
 
-    /* ── SCROLL PROGRESS (skiper94-style, desktop only) ── */
+    /* ── SCROLL PROGRESS (skiper94-style, desktop only; draggable scrubber) ── */
     (function () {
       const root = document.getElementById('scroll-progress');
       const fill = document.getElementById('scroll-progress-fill');
@@ -6303,12 +6348,50 @@
       const mqDesktop = window.matchMedia('(min-width: 768px)');
       let raf = 0;
       let lastPct = -1;
+      let lastLabel = '';
+      let dragging = false;
+      let dragClientY = null;
+      let dragRaf = 0;
+      let hideTimer = 0;
+
+      function revealLabel() {
+        root.classList.add('is-label-on');
+        window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(function () {
+          if (dragging) return;
+          root.classList.remove('is-label-on');
+        }, 5000);
+      }
+
+      // Same sections as the nav — each gets its own label on the progress marker.
+      const sections = [
+        { id: 'hero', label: 'Home' },
+        { id: 'work', label: 'Projects' },
+        { id: 'about', label: 'About' },
+        { id: 'impact', label: 'Impact' },
+        { id: 'experience', label: 'Work Experience' },
+        { id: 'contact', label: 'Contact' },
+      ].map(function (s) { return { id: s.id, label: s.label, el: document.getElementById(s.id) }; })
+       .filter(function (s) { return s.el; });
+
+      function scrollMax() {
+        const doc = document.documentElement;
+        return Math.max(0, doc.scrollHeight - window.innerHeight);
+      }
 
       function progress() {
-        const doc = document.documentElement;
-        const max = Math.max(0, doc.scrollHeight - window.innerHeight);
+        const max = scrollMax();
         if (max <= 0) return 0;
         return Math.min(1, Math.max(0, window.scrollY / max));
+      }
+
+      function currentLabel() {
+        const probe = window.scrollY + window.innerHeight * 0.4;
+        let label = sections.length ? sections[0].label : '';
+        for (let i = 0; i < sections.length; i++) {
+          if (sections[i].el.offsetTop <= probe) label = sections[i].label;
+        }
+        return label;
       }
 
       function paint() {
@@ -6316,19 +6399,108 @@
         if (!mqDesktop.matches) return;
         const p = progress();
         const pct = Math.round(p * 100);
-        if (pct === lastPct) return;
-        lastPct = pct;
-        // clip-path bottom inset: 100% empty → 0% full (fill grows top → bottom)
-        fill.style.clipPath = 'inset(0 0 ' + (100 - pct) + '% 0)';
-        marker.style.top = pct + '%';
-        pctEl.textContent = String(pct);
+        const label = currentLabel();
+        if (pct !== lastPct) {
+          lastPct = pct;
+          // clip-path bottom inset: 100% empty → 0% full (fill grows top → bottom)
+          fill.style.clipPath = 'inset(0 0 ' + (100 - pct) + '% 0)';
+          marker.style.top = pct + '%';
+          root.setAttribute('aria-valuenow', String(pct));
+        }
+        if (label !== lastLabel) {
+          lastLabel = label;
+          pctEl.textContent = label;
+        }
       }
 
       function requestPaint() {
         if (!mqDesktop.matches) return;
+        revealLabel();
         if (raf) return;
         raf = requestAnimationFrame(paint);
       }
+
+      // ── Drag-to-scrub: click or drag the bar to jump to that scroll position ──
+      function scrollToClientY(clientY) {
+        const rect = root.getBoundingClientRect();
+        const p = rect.height > 0 ? (clientY - rect.top) / rect.height : 0;
+        const clamped = Math.min(1, Math.max(0, p));
+        // behavior:'auto' overrides the page's CSS scroll-behavior:smooth so the
+        // scrubber tracks the pointer 1:1 instead of chasing a smooth-scroll animation.
+        window.scrollTo({ top: clamped * scrollMax(), behavior: 'auto' });
+      }
+
+      function flushDrag() {
+        dragRaf = 0;
+        if (!dragging || dragClientY === null) return;
+        scrollToClientY(dragClientY);
+      }
+
+      function requestDragFlush() {
+        if (dragRaf) return;
+        dragRaf = requestAnimationFrame(flushDrag);
+      }
+
+      // Site hides the native cursor (cursor: none) and draws a custom ring instead —
+      // keep that ring expanded for the whole drag, even if the pointer strays off
+      // this thin 0.375rem track mid-drag.
+      const cursorRing = document.getElementById('cur-ring');
+
+      function onPointerDown(e) {
+        if (!mqDesktop.matches) return;
+        dragging = true;
+        root.classList.add('is-dragging');
+        revealLabel();
+        if (cursorRing) {
+          cursorRing.classList.add('expanded');
+          if (window.gsap) gsap.to(cursorRing, { duration: 0.4, scale: 2, overwrite: true });
+        }
+        root.setPointerCapture && e.pointerId != null && root.setPointerCapture(e.pointerId);
+        scrollToClientY(e.clientY);
+        e.preventDefault();
+      }
+      function onPointerMove(e) {
+        if (!dragging) return;
+        dragClientY = e.clientY;
+        requestDragFlush();
+      }
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        dragClientY = null;
+        root.classList.remove('is-dragging');
+        revealLabel();
+        if (cursorRing) {
+          cursorRing.classList.remove('expanded');
+          if (window.gsap) gsap.to(cursorRing, { duration: 0.4, scale: 1, overwrite: true });
+        }
+      }
+
+      root.addEventListener('pointerdown', onPointerDown);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', endDrag);
+      window.addEventListener('pointercancel', endDrag);
+
+      // ── Keyboard: focus the bar, then arrows / Home / End to move ──
+      root.addEventListener('keydown', function (e) {
+        if (!mqDesktop.matches) return;
+        const max = scrollMax();
+        if (max <= 0) return;
+        let target = null;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          target = Math.max(0, window.scrollY - max * 0.05);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          target = Math.min(max, window.scrollY + max * 0.05);
+        } else if (e.key === 'Home') {
+          target = 0;
+        } else if (e.key === 'End') {
+          target = max;
+        }
+        if (target !== null) {
+          e.preventDefault();
+          window.scrollTo({ top: target, behavior: 'auto' });
+        }
+      });
 
       window.addEventListener('scroll', requestPaint, { passive: true });
       window.addEventListener('resize', function () {
@@ -6931,7 +7103,7 @@
         gsap.set(ring, { x: -100, y: -100, scale: 1 });
       }
 
-      document.querySelectorAll('a, button, .work-item').forEach(el => {
+      document.querySelectorAll('a, button, .work-item, #scroll-progress').forEach(el => {
         el.addEventListener('mouseenter', () => {
           ring.classList.add('expanded');
           if (window.gsap) gsap.to(ring, { duration: 0.4, scale: 2, overwrite: true });

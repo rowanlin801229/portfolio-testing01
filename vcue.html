@@ -11,7 +11,11 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visual Cues Study — Rowan Lin</title>
+  <title data-i18n="case.vcue.meta.title">Visual Cues Study — Rowan Lin</title>
+  <script src="i18n.js" defer></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -24,6 +28,150 @@
       --line: rgba(138,138,134,0.13);
       --surface: #141413;
     }
+    .nav-lang {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .nav-lang-btn {
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      color: #ffffff;
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 0.2rem 0.45rem;
+      cursor: pointer;
+      opacity: 0.3;
+      transition: color 0.3s, border-color 0.3s, opacity 0.3s;
+    }
+    .nav-lang-btn.is-active {
+      opacity: 1;
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+    .nav-lang-btn:hover {
+      color: var(--accent);
+      opacity: 1;
+    }
+    .nav-lang-sep {
+      color: #ffffff;
+      opacity: 0.3;
+      font: inherit;
+      user-select: none;
+    }
+
+    /* ── SCROLL PROGRESS (skiper94-inspired; desktop only; draggable scrubber) ──
+       https://skiper-ui.com/v1/skiper94 — Scroll progress 002 ── */
+    .scroll-progress {
+      position: fixed;
+      left: max(0.6rem, 1.3vw);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 150;
+      height: 15rem;
+      width: 1.25rem;
+      cursor: pointer;
+      touch-action: none;
+    }
+    .scroll-progress__track {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 0.375rem;
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(74, 74, 72, 0.14);
+      overflow: visible;
+      pointer-events: none;
+      transition: background 0.2s ease;
+    }
+    .scroll-progress:hover .scroll-progress__track,
+    .scroll-progress.is-dragging .scroll-progress__track {
+      background: rgba(74, 74, 72, 0.26);
+    }
+    .scroll-progress__fill {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: var(--accent);
+      clip-path: inset(0 0 100% 0);
+      will-change: clip-path;
+    }
+    .scroll-progress__marker {
+      position: absolute;
+      left: 50%;
+      top: 0%;
+      width: 1rem;
+      height: 1px;
+      background: var(--accent);
+      transform: translate(-50%, 0);
+      will-change: top;
+      pointer-events: auto;
+    }
+    .scroll-progress__marker::after {
+      content: '';
+      position: absolute;
+      left: -0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 11rem;
+      height: 2.75rem;
+    }
+    .scroll-progress:hover .scroll-progress__marker,
+    .scroll-progress.is-dragging .scroll-progress__marker {
+      height: 2px;
+    }
+    .scroll-progress.is-dragging {
+      cursor: grabbing;
+    }
+    .scroll-progress__pct {
+      position: absolute;
+      left: calc(100% + 0.45rem);
+      top: 50%;
+      transform: translateY(-50%) translateX(-0.2rem);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      line-height: 1;
+      color: var(--accent);
+      white-space: nowrap;
+      pointer-events: auto;
+      user-select: none;
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .scroll-progress.is-label-on .scroll-progress__pct,
+    .scroll-progress:hover .scroll-progress__pct,
+    .scroll-progress.is-dragging .scroll-progress__pct,
+    .scroll-progress:focus-visible .scroll-progress__pct {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+    .scroll-progress:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 999px;
+    }
+    @media (max-width: 767px) {
+      .scroll-progress {
+        display: none !important;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-progress__fill,
+      .scroll-progress__marker,
+      .scroll-progress__pct {
+        transition: none;
+      }
+    }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--fg); font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 300; cursor: none; overflow-x: hidden; }
@@ -34,10 +182,10 @@
     #cur-ring.expanded { width: 60px; height: 60px; border-color: var(--accent); background: rgba(184,69,69,0.06); }
 
     nav { position: fixed; inset: 0 0 auto; z-index: 200; display: flex; justify-content: space-between; align-items: center; padding: 2rem 5vw; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(14,14,13,0.86); backdrop-filter: blur(12px); }
-    .nav-back { display: flex; align-items: center; gap: 0.7rem; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(210,210,205,0.88); text-decoration: none; transition: color 0.3s; }
-    .nav-back:hover { color: var(--fg); }
-    .nav-back-arrow { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); }
-    .nav-back:hover .nav-back-arrow { transform: translateX(-4px); }
+    .nav-logo { color: #ffffff; text-decoration: none; display: inline-flex; align-items: center; transition: opacity 0.3s ease; }
+    .nav-logo svg { height: 34px; width: auto; display: block; }
+    .nav-logo .cls-1 { fill: #ffffff; transition: fill 0.3s ease; }
+    .nav-logo:hover { opacity: 0.72; }
     .nav-right { display: flex; align-items: center; gap: 2rem; }
     .nav-index { font-size: 1rem; letter-spacing: 0.15em; color: rgba(210,210,205,0.72); }
     .nav-prev, .nav-next { display: flex; align-items: center; gap: 0.6rem; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(210,210,205,0.88); text-decoration: none; transition: color 0.3s; }
@@ -49,6 +197,7 @@
     .cs-hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 120px 5vw 8vh; border-bottom: 1px solid var(--line); }
     .cs-label { font-size: 1rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 2rem; display: block; opacity: 0; transform: translateY(12px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards; }
     .cs-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(4rem, 11vw, 11rem); line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 1.5rem; opacity: 0; transform: translateY(60px); filter: blur(4px); animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
+    html[lang="zh-Hant"] .cs-title { font-size: clamp(2.75rem, 7.2vw, 6.75rem); }
     .cs-subtitle { font-size: clamp(1rem, 1.4vw, 1.2rem); line-height: 1.8; color: var(--muted); max-width: 58ch; margin-bottom: 3rem; opacity: 0; transform: translateY(20px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.45s forwards; }
     .cs-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; border-top: 1px solid var(--line); padding-top: 2.5rem; opacity: 0; transform: translateY(20px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.6s forwards; }
     .cs-meta-label { font-size: 1rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.6rem; }
@@ -215,6 +364,7 @@
     .cs-next:hover { background: var(--surface); }
     .cs-next-label { font-size: 1rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem; display: block; }
     .cs-next-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 300; letter-spacing: -0.02em; line-height: 1; color: var(--fg); transition: letter-spacing 0.4s cubic-bezier(0.16,1,0.3,1); }
+    html[lang="zh-Hant"] .cs-next-name { font-size: clamp(1.7rem, 3.4vw, 2.85rem); }
     .cs-next:hover .cs-next-name { letter-spacing: 0.01em; }
     .cs-next-arrow { font-size: 3rem; color: var(--accent); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); }
     .cs-next:hover .cs-next-arrow { transform: translateX(12px); }
@@ -232,6 +382,7 @@
       .nav-prev, .nav-next, .nav-back { font-size: 1rem; letter-spacing: .14em; }
       .cs-hero { padding: 96px 4vw 6vh; }
       .cs-title { font-size: clamp(3rem,16vw,5rem); }
+      html[lang="zh-Hant"] .cs-title { font-size: clamp(2.25rem, 11vw, 3.5rem); }
       .cs-meta { grid-template-columns: 1fr 1fr; gap: 1rem; padding-top: 1.5rem; }
       .stats-bar { grid-template-columns: 1fr 1fr; }
       .stat-item { border-right: none; border-bottom: 1px solid var(--line); }
@@ -271,39 +422,64 @@
 </head>
 <body>
 
+  <div class="scroll-progress" id="scroll-progress" role="slider" tabindex="0"
+       aria-label="Page scroll position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="scroll-progress__track">
+      <div class="scroll-progress__fill" id="scroll-progress-fill"></div>
+      <div class="scroll-progress__marker" id="scroll-progress-marker">
+        <span class="scroll-progress__pct" id="scroll-progress-pct">Hero</span>
+      </div>
+    </div>
+  </div>
+
   <div id="cur-ring"></div>
   <div id="cur-dot"></div>
 
   <nav>
-    <a class="nav-back" href="index.html"><span class="nav-back-arrow">←</span> All Projects</a>
+    <a class="nav-logo" href="index.html" aria-label="Rowan Lin — Back to home">
+      <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.63 35.01" role="img">
+        <g>
+          <g>
+            <path class="cls-1" d="M25.38,14.31h-15.02c-1.17,0-2.34.2-3.45.59C2.79,16.37,0,20.29,0,24.66v10.35l6.39-4.02v-6.33s0-.02,0-.04c.02-2.16,1.79-3.92,3.96-3.92h13.15s4.71.1,6.68-1.01c1.97-1.11,3.17-2.44,4.19-4.25.47-.83.82-1.71,1.05-2.63h-6.96c-.73.91-1.84,1.5-3.09,1.5Z"/>
+            <path class="cls-1" d="M28.83.59c-1.11-.39-2.28-.59-3.45-.59H5.81S0,6.39,0,6.39h25.38c1.69,0,3.14,1.07,3.7,2.57h6.55c-.52-3.8-3.13-7.06-6.81-8.37Z"/>
+          </g>
+          <path class="cls-1" d="M34.44,35.01l-6-3.71v-8.23h3.08c1.61,0,2.92,1.31,2.92,2.92v9.01Z"/>
+        </g>
+      </svg>
+    </a>
     <div class="nav-right">
+      <div class="nav-lang" role="group" aria-label="Language">
+        <button type="button" class="nav-lang-btn is-active" data-lang="en" aria-pressed="true">EN</button>
+        <span class="nav-lang-sep" aria-hidden="true">|</span>
+        <button type="button" class="nav-lang-btn" data-lang="zh" aria-pressed="false">中文</button>
+      </div>
+      <a class="nav-prev" href="faintv.html">←</a>
       <span class="nav-index">02 / 05</span>
-      <a class="nav-prev" href="faintv.html">← FainTV</a>
-      <a class="nav-next" href="genebook.html">Next <span class="nav-next-arrow">→</span></a>
+      <a class="nav-next" href="genebook.html"><span class="nav-next-arrow">→</span></a>
     </div>
   </nav>
 
   <!-- HERO -->
-  <section class="cs-hero">
-    <span class="cs-label">02 — UX Research · Mixed Methods · Goldsmiths MSc · 2025</span>
-    <h1 class="cs-title">Visual Cues Study</h1>
-    <p class="cs-subtitle">How visual cues in fitness instructional videos affect beginner motor learning — a three-phase mixed-methods study producing an original design framework.</p>
+  <section class="cs-hero" id="hero">
+    <span class="cs-label" data-i18n="case.vcue.hero.eyebrow">02 — UX Research · Mixed Methods · Goldsmiths MSc · 2025</span>
+    <h1 class="cs-title" data-i18n="case.vcue.hero.title">Visual Cues Study</h1>
+    <p class="cs-subtitle" data-i18n="case.vcue.hero.subtitle">How visual cues in fitness instructional videos affect beginner motor learning — a three-phase mixed-methods study producing an original design framework.</p>
     <div class="cs-meta">
       <div>
-        <span class="cs-meta-label">Role</span>
-        <span class="cs-meta-val">Lead Researcher<br>& Designer</span>
+        <span class="cs-meta-label" data-i18n="case.vcue.meta.role.label">Role</span>
+        <span class="cs-meta-val" data-i18n-html="case.vcue.meta.role.value">Lead Researcher<br>& Designer</span>
       </div>
       <div>
-        <span class="cs-meta-label">Institution</span>
-        <span class="cs-meta-val">Goldsmiths,<br>University of London</span>
+        <span class="cs-meta-label" data-i18n="case.vcue.meta.institution.label">Institution</span>
+        <span class="cs-meta-val" data-i18n-html="case.vcue.meta.institution.value">Goldsmiths,<br>University of London</span>
       </div>
       <div>
-        <span class="cs-meta-label">Duration</span>
-        <span class="cs-meta-val">6 Months<br>MSc Dissertation</span>
+        <span class="cs-meta-label" data-i18n="case.vcue.meta.duration.label">Duration</span>
+        <span class="cs-meta-val" data-i18n-html="case.vcue.meta.duration.value">6 Months<br>MSc Dissertation</span>
       </div>
       <div>
-        <span class="cs-meta-label">Methods</span>
-        <span class="cs-meta-val">Survey · Usability Testing<br>Expert Evaluation</span>
+        <span class="cs-meta-label" data-i18n="case.vcue.meta.methods.label">Methods</span>
+        <span class="cs-meta-val" data-i18n-html="case.vcue.meta.methods.value">Survey · Usability Testing<br>Expert Evaluation</span>
       </div>
     </div>
   </section>
@@ -312,47 +488,47 @@
   <div class="stats-bar reveal">
     <div class="stat-item">
       <span class="stat-num">58</span>
-      <span class="stat-lbl">Participants · 3 Phases</span>
+      <span class="stat-lbl" data-i18n="case.vcue.stats.participants">Participants · 3 Phases</span>
     </div>
     <div class="stat-item">
       <span class="stat-num">3</span>
-      <span class="stat-lbl">Research Phases</span>
+      <span class="stat-lbl" data-i18n="case.vcue.stats.phases">Research Phases</span>
     </div>
     <div class="stat-item">
       <span class="stat-num">4</span>
-      <span class="stat-lbl">Visual Cue Types</span>
+      <span class="stat-lbl" data-i18n="case.vcue.stats.cues">Visual Cue Types</span>
     </div>
     <div class="stat-item">
       <span class="stat-num">1</span>
-      <span class="stat-lbl">Design Framework</span>
+      <span class="stat-lbl" data-i18n="case.vcue.stats.framework">Design Framework</span>
     </div>
   </div>
 
   <!-- OVERVIEW -->
-  <section class="cs-section">
+  <section class="cs-section" id="overview">
     <div class="cs-text-grid reveal">
-      <span class="cs-text-label">Overview</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.vcue.overview.label">Overview</span>
+      <p class="cs-text-body" data-i18n-html="case.vcue.overview.body">
         This study investigates <strong>how visual cues in fitness instructional videos affect beginners' motor learning</strong>. Through a three-phase approach, I evaluated four types of visual cues — directional, measurement, body highlight, and metaphor — across quantitative performance data and qualitative user insights. The study produced an original design framework: the <strong>Dynamic Balance Model of Cognitive Load and Learning Effectiveness</strong>.
       </p>
     </div>
   </section>
 
   <!-- PROBLEM -->
-  <section class="cs-section">
+  <section class="cs-section" id="research-gap">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Research Gap</span>
-      <h2 class="cs-sec-headline">86% of people use video to learn physical skills. Almost no one has studied whether those videos actually work.</h2>
+      <span class="cs-sec-label" data-i18n="case.vcue.gap.label">Research Gap</span>
+      <h2 class="cs-sec-headline" data-i18n="case.vcue.gap.headline">86% of people use video to learn physical skills. Almost no one has studied whether those videos actually work.</h2>
     </div>
     <div class="cs-text-grid reveal">
-      <span class="cs-text-label">The Problem</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.vcue.gap.problem.label">The Problem</span>
+      <p class="cs-text-body" data-i18n-html="case.vcue.gap.problem.body">
         Digital learning has fundamentally changed how beginners approach physical training. Over <strong>70% of users turn to YouTube</strong> to learn exercises like squats and stretching. Yet without professional guidance, learners routinely imitate incorrectly — leading to poor form and risk of injury. The deeper problem is systemic: the design of visual cues in existing tutorial videos is <strong>driven by intuition and aesthetic preference, not evidence</strong>. There are no established guidelines for what works.
       </p>
     </div>
     <div class="cs-text-grid reveal" style="margin-top:3rem;">
-      <span class="cs-text-label">Research Context</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.vcue.gap.context.label">Research Context</span>
+      <p class="cs-text-body" data-i18n-html="case.vcue.gap.context.body">
         Prior research has focused on VR/AR and interactive systems, leaving <strong>video-based motor learning systematically underexplored</strong>. This study addresses that gap by examining four cue types through the lens of Cognitive Load Theory and the theory of external attention.
       </p>
     </div>
@@ -360,42 +536,42 @@
 
   <!-- RESEARCH QUESTION -->
   <div class="cs-insight reveal">
-    <span class="cs-insight-label">Research Question</span>
-    <p class="cs-insight-text">
+    <span class="cs-insight-label" data-i18n="case.vcue.question.label">Research Question</span>
+    <p class="cs-insight-text" data-i18n-html="case.vcue.question.body">
       How do four types of visual cues — <em>directional, measurement, body highlighting, and metaphorical</em> — support and improve beginner motor learning in instructional videos?
     </p>
   </div>
 
   <!-- METHODOLOGY -->
-  <section class="cs-section">
+  <section class="cs-section" id="methodology">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Methodology</span>
-      <h2 class="cs-sec-headline">A three-phase mixed-methods approach — quantitative and qualitative, beginners and experts.</h2>
+      <span class="cs-sec-label" data-i18n="case.vcue.methodology.label">Methodology</span>
+      <h2 class="cs-sec-headline" data-i18n="case.vcue.methodology.headline">A three-phase mixed-methods approach — quantitative and qualitative, beginners and experts.</h2>
     </div>
 
     <div class="cs-process-steps reveal">
       <div class="cs-proc-step">
         <span class="cs-proc-num">01</span>
-        <span class="cs-proc-name">Online Survey</span>
+        <span class="cs-proc-name" data-i18n="case.vcue.methodology.survey.name">Online Survey</span>
         <div class="cs-proc-desc">
-          <span class="cs-proc-tag">38 beginners · Quantitative</span>
-          <p>Distributed to fitness beginners aged 18–40 via social media and university networks. The survey mapped <strong>learning habits, video-watching behaviour, and initial preferences</strong> for six types of visual cues — including skeletal overlays and muscle activation highlights. Participant feedback identified four cue types as the focus for subsequent testing.</p>
+          <span class="cs-proc-tag" data-i18n="case.vcue.methodology.survey.tag">38 beginners · Quantitative</span>
+          <p data-i18n-html="case.vcue.methodology.survey.body">Distributed to fitness beginners aged 18–40 via social media and university networks. The survey mapped <strong>learning habits, video-watching behaviour, and initial preferences</strong> for six types of visual cues — including skeletal overlays and muscle activation highlights. Participant feedback identified four cue types as the focus for subsequent testing.</p>
         </div>
       </div>
       <div class="cs-proc-step">
         <span class="cs-proc-num">02</span>
-        <span class="cs-proc-name">Usability Testing</span>
+        <span class="cs-proc-name" data-i18n="case.vcue.methodology.usability.name">Usability Testing</span>
         <div class="cs-proc-desc">
-          <span class="cs-proc-tag">10 beginners · Observation + Interview</span>
-          <p>Each participant watched <strong>four short squat tutorial videos</strong>, each embedding a different visual cue type. Performance was observed and recorded. Post-task interviews collected qualitative insights on clarity, helpfulness, and perceived cognitive load. A <strong>counterbalanced design</strong> controlled for order effects.</p>
+          <span class="cs-proc-tag" data-i18n="case.vcue.methodology.usability.tag">10 beginners · Observation + Interview</span>
+          <p data-i18n-html="case.vcue.methodology.usability.body">Each participant watched <strong>four short squat tutorial videos</strong>, each embedding a different visual cue type. Performance was observed and recorded. Post-task interviews collected qualitative insights on clarity, helpfulness, and perceived cognitive load. A <strong>counterbalanced design</strong> controlled for order effects.</p>
         </div>
       </div>
       <div class="cs-proc-step">
         <span class="cs-proc-num">03</span>
-        <span class="cs-proc-name">Expert Evaluation</span>
+        <span class="cs-proc-name" data-i18n="case.vcue.methodology.expert.name">Expert Evaluation</span>
         <div class="cs-proc-desc">
-          <span class="cs-proc-tag">10 coaches &amp; practitioners · Triangulation</span>
-          <p>Coaches, personal trainers, and experienced exercisers evaluated an optimised video integrating all four cue types. This phase gathered <strong>professional validation and critical perspective</strong>, allowing cross-comparison between novice and expert responses — which revealed significant differences in how cues are perceived across experience levels.</p>
+          <span class="cs-proc-tag" data-i18n="case.vcue.methodology.expert.tag">10 coaches &amp; practitioners · Triangulation</span>
+          <p data-i18n-html="case.vcue.methodology.expert.body">Coaches, personal trainers, and experienced exercisers evaluated an optimised video integrating all four cue types. This phase gathered <strong>professional validation and critical perspective</strong>, allowing cross-comparison between novice and expert responses — which revealed significant differences in how cues are perceived across experience levels.</p>
         </div>
       </div>
     </div>
@@ -403,17 +579,17 @@
 
   <!-- KEY INSIGHT -->
   <div class="cs-insight reveal">
-    <span class="cs-insight-label">Core Premise</span>
-    <p class="cs-insight-text">
+    <span class="cs-insight-label" data-i18n="case.vcue.premise.label">Core Premise</span>
+    <p class="cs-insight-text" data-i18n-html="case.vcue.premise.body">
       Most instructional video designs are built on <em>intuition and aesthetic preference</em>, not evidence. This study produced a systematic ranking of the four cue types for beginner motor learning in instructional fitness videos — grounding design decisions in observed data rather than assumption.
     </p>
   </div>
 
   <!-- THE EXPERIMENT — 4 CUE TYPES -->
-  <section class="cs-section">
+  <section class="cs-section" id="experiment">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">The Experiment</span>
-      <h2 class="cs-sec-headline">Four cue types. One squat. Measured against the same beginners, under the same conditions.</h2>
+      <span class="cs-sec-label" data-i18n="case.vcue.experiment.label">The Experiment</span>
+      <h2 class="cs-sec-headline" data-i18n="case.vcue.experiment.headline">Four cue types. One squat. Measured against the same beginners, under the same conditions.</h2>
     </div>
 
     <div class="cue-grid reveal">
@@ -422,9 +598,9 @@
           <img class="cue-card-img" src="images/vcue/vcue-01-directional.jpg" alt="Directional cue — green arrows showing downward foot pressure" loading="lazy">
         </div>
         <span class="cue-card-num">01</span>
-        <span class="cue-card-name">Directional Cues</span>
-        <p class="cue-card-def">Arrows and motion lines that indicate the direction and path of movement. Immediately communicates where the body should go, reducing ambiguity about force and trajectory.</p>
-        <span class="cue-verdict">Optimal Zone — Best for beginners</span>
+        <span class="cue-card-name" data-i18n="case.vcue.experiment.directional.name">Directional Cues</span>
+        <p class="cue-card-def" data-i18n="case.vcue.experiment.directional.def">Arrows and motion lines that indicate the direction and path of movement. Immediately communicates where the body should go, reducing ambiguity about force and trajectory.</p>
+        <span class="cue-verdict" data-i18n="case.vcue.experiment.directional.verdict">Optimal Zone — Best for beginners</span>
       </div>
 
       <div class="cue-card">
@@ -432,9 +608,9 @@
           <img class="cue-card-img" src="images/vcue/vcue-03-body-highlight.jpg" alt="Body highlight cue — anatomical muscle labels overlaid on the body" loading="lazy">
         </div>
         <span class="cue-card-num">02</span>
-        <span class="cue-card-name">Body Highlight Cues</span>
-        <p class="cue-card-def">Glow or colour emphasis on specific muscle groups or joints during movement. Draws attention to where activation should occur, supporting body awareness and proprioception.</p>
-        <span class="cue-verdict">Useful — Frequency must be controlled</span>
+        <span class="cue-card-name" data-i18n="case.vcue.experiment.highlight.name">Body Highlight Cues</span>
+        <p class="cue-card-def" data-i18n="case.vcue.experiment.highlight.def">Glow or colour emphasis on specific muscle groups or joints during movement. Draws attention to where activation should occur, supporting body awareness and proprioception.</p>
+        <span class="cue-verdict" data-i18n="case.vcue.experiment.highlight.verdict">Useful — Frequency must be controlled</span>
       </div>
 
       <div class="cue-card">
@@ -442,9 +618,9 @@
           <img class="cue-card-img" src="images/vcue/vcue-04-metaphor.jpg" alt="Metaphor cue — a virtual chair illustrating the sit-back movement" loading="lazy">
         </div>
         <span class="cue-card-num">03</span>
-        <span class="cue-card-name">Metaphor Cues</span>
-        <p class="cue-card-def">Life-like comparisons that translate abstract movement concepts into familiar imagery — e.g. "sit back into an invisible chair." Relies on prior experience to be decoded correctly.</p>
-        <span class="cue-verdict">Expert-first — Novices find harder to interpret</span>
+        <span class="cue-card-name" data-i18n="case.vcue.experiment.metaphor.name">Metaphor Cues</span>
+        <p class="cue-card-def" data-i18n="case.vcue.experiment.metaphor.def">Life-like comparisons that translate abstract movement concepts into familiar imagery — e.g. "sit back into an invisible chair." Relies on prior experience to be decoded correctly.</p>
+        <span class="cue-verdict" data-i18n="case.vcue.experiment.metaphor.verdict">Expert-first — Novices find harder to interpret</span>
       </div>
 
       <div class="cue-card">
@@ -452,108 +628,108 @@
           <img class="cue-card-img" src="images/vcue/vcue-02-measurement.jpg" alt="Measurement cue — 45-degree angle line overlaid on torso lean" loading="lazy">
         </div>
         <span class="cue-card-num">04</span>
-        <span class="cue-card-name">Measurement Cues</span>
-        <p class="cue-card-def">Angle lines, degree markers, and depth indicators overlaid on the body. Provides precise numerical reference but requires abstract interpretation that overwhelms beginners.</p>
-        <span class="cue-verdict">Confusing Zone — Precise but overloading</span>
+        <span class="cue-card-name" data-i18n="case.vcue.experiment.measurement.name">Measurement Cues</span>
+        <p class="cue-card-def" data-i18n="case.vcue.experiment.measurement.def">Angle lines, degree markers, and depth indicators overlaid on the body. Provides precise numerical reference but requires abstract interpretation that overwhelms beginners.</p>
+        <span class="cue-verdict" data-i18n="case.vcue.experiment.measurement.verdict">Confusing Zone — Precise but overloading</span>
       </div>
     </div>
   </section>
 
   <!-- GIOIA QUALITATIVE ANALYSIS -->
-  <section class="cs-section">
+  <section class="cs-section" id="qualitative">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Qualitative Findings</span>
-      <h2 class="cs-sec-headline">Gioia coding made the hierarchy visible: each cue has a different role — and a different cost for beginners.</h2>
+      <span class="cs-sec-label" data-i18n="case.vcue.qual.label">Qualitative Findings</span>
+      <h2 class="cs-sec-headline" data-i18n="case.vcue.qual.headline">Gioia coding made the hierarchy visible: each cue has a different role — and a different cost for beginners.</h2>
     </div>
 
     <!-- Block A: What the coding revealed -->
-    <p class="gioia-flow-caption reveal" style="margin-top:0; margin-bottom:1.5rem;">What the coding revealed</p>
+    <p class="gioia-flow-caption reveal" style="margin-top:0; margin-bottom:1.5rem;" data-i18n="case.vcue.qual.codingCaption">What the coding revealed</p>
 
     <div class="gioia-cue-findings reveal">
       <div class="gioia-cue-item">
-        <span class="gioia-cue-name">Directional</span>
-        <p class="gioia-cue-body">Provides real-time movement guidance and corrective feedback. Participants found it immediately clear and lowest in cognitive cost — but weak contrast, missing motion, or poor timing could make the arrow feel like UI chrome rather than instruction.</p>
+        <span class="gioia-cue-name" data-i18n="case.vcue.qual.directional.name">Directional</span>
+        <p class="gioia-cue-body" data-i18n="case.vcue.qual.directional.body">Provides real-time movement guidance and corrective feedback. Participants found it immediately clear and lowest in cognitive cost — but weak contrast, missing motion, or poor timing could make the arrow feel like UI chrome rather than instruction.</p>
       </div>
       <div class="gioia-cue-item">
-        <span class="gioia-cue-name">Body Highlight</span>
-        <p class="gioia-cue-body">Directs attention to muscle activation and postural control. Useful when timed well; pacing and overuse emerged as key qualitative risks.</p>
+        <span class="gioia-cue-name" data-i18n="case.vcue.qual.highlight.name">Body Highlight</span>
+        <p class="gioia-cue-body" data-i18n="case.vcue.qual.highlight.body">Directs attention to muscle activation and postural control. Useful when timed well; pacing and overuse emerged as key qualitative risks.</p>
       </div>
       <div class="gioia-cue-item">
-        <span class="gioia-cue-name">Metaphor</span>
-        <p class="gioia-cue-body">Conveys movement via analogy. Intuitive for participants with prior exercise experience — ambiguous and harder to embody for true beginners.</p>
+        <span class="gioia-cue-name" data-i18n="case.vcue.qual.metaphor.name">Metaphor</span>
+        <p class="gioia-cue-body" data-i18n="case.vcue.qual.metaphor.body">Conveys movement via analogy. Intuitive for participants with prior exercise experience — ambiguous and harder to embody for true beginners.</p>
       </div>
       <div class="gioia-cue-item">
-        <span class="gioia-cue-name">Measurement</span>
-        <p class="gioia-cue-body">Offers precision and standards, but abstract numbers are hard to translate into physical movement. High cognitive load with limited beginner payoff.</p>
+        <span class="gioia-cue-name" data-i18n="case.vcue.qual.measurement.name">Measurement</span>
+        <p class="gioia-cue-body" data-i18n="case.vcue.qual.measurement.body">Offers precision and standards, but abstract numbers are hard to translate into physical movement. High cognitive load with limited beginner payoff.</p>
       </div>
     </div>
 
     <div class="cs-text-grid reveal" style="margin-top:3rem;">
-      <span class="cs-text-label">Cross-cutting</span>
+      <span class="cs-text-label" data-i18n="case.vcue.qual.cross.label">Cross-cutting</span>
       <ul class="gioia-bullets">
-        <li>Cues differ in <strong>function</strong>, not only preference rank: guidance vs. attention vs. analogy vs. precision.</li>
-        <li>High precision ≠ beginner-usable: measurement's qualitative reception explains its weak quantitative standing.</li>
-        <li>Design priorities from the coding: visual clarity first; then timing and pacing; avoid stacking too many cue types simultaneously.</li>
+        <li data-i18n-html="case.vcue.qual.cross.item1">Cues differ in <strong>function</strong>, not only preference rank: guidance vs. attention vs. analogy vs. precision.</li>
+        <li data-i18n="case.vcue.qual.cross.item2">High precision ≠ beginner-usable: measurement's qualitative reception explains its weak quantitative standing.</li>
+        <li data-i18n="case.vcue.qual.cross.item3">Design priorities from the coding: visual clarity first; then timing and pacing; avoid stacking too many cue types simultaneously.</li>
       </ul>
     </div>
 
     <!-- Block B: Bridge -->
     <div class="cs-text-grid reveal" style="margin-top:3rem;">
-      <span class="cs-text-label">From coding to model</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.vcue.qual.bridge.label">From coding to model</span>
+      <p class="cs-text-body" data-i18n-html="case.vcue.qual.bridge.body">
         Comparing these roles across the four coding trees — not researcher intuition alone — underpinned the <strong>Dynamic Balance Model</strong> (learning effectiveness × cognitive load). The quantitative scores in the next section align with these qualitative roles.
       </p>
     </div>
 
     <!-- Block C: Method (short) -->
     <div class="cs-text-grid reveal" style="margin-top:3rem;">
-      <span class="cs-text-label">Method</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.vcue.qual.method.label">Method</span>
+      <p class="cs-text-body" data-i18n-html="case.vcue.qual.method.body">
         Inductive Gioia coding (1st-order concepts → 2nd-order themes → aggregate dimensions) was applied to post-task interview transcripts from beginner usability testing. The analysis ran <strong>per cue</strong>, producing four comparable coding trees. Staying in participant language before theorising ensured the framework reflected what users said, not what was assumed.
       </p>
     </div>
 
     <!-- Block D: 3-step flow (demoted) -->
-    <p class="gioia-flow-caption reveal">How conclusions were derived</p>
+    <p class="gioia-flow-caption reveal" data-i18n="case.vcue.qual.derived">How conclusions were derived</p>
     <div class="gioia-flow reveal">
       <div class="gioia-step">
         <div class="gioia-step-head">
           <span class="gioia-step-num">01</span>
-          <span class="gioia-step-title">1st Order Concepts</span>
+          <span class="gioia-step-title" data-i18n="case.vcue.qual.order1.title">1st Order Concepts</span>
         </div>
-        <p class="gioia-step-desc">Raw participant quotes tagged with emergent descriptive codes — language stays close to the informant's own words</p>
+        <p class="gioia-step-desc" data-i18n="case.vcue.qual.order1.desc">Raw participant quotes tagged with emergent descriptive codes — language stays close to the informant's own words</p>
         <div class="gioia-codes">
-          <span class="gioia-code">"more clear and intuitive"</span>
-          <span class="gioia-code">"easier to understand and implement"</span>
-          <span class="gioia-code">"helps me achieve the right posture"</span>
-          <span class="gioia-code">"specific numbers are of little help"</span>
+          <span class="gioia-code" data-i18n="case.vcue.qual.order1.q1">"more clear and intuitive"</span>
+          <span class="gioia-code" data-i18n="case.vcue.qual.order1.q2">"easier to understand and implement"</span>
+          <span class="gioia-code" data-i18n="case.vcue.qual.order1.q3">"helps me achieve the right posture"</span>
+          <span class="gioia-code" data-i18n="case.vcue.qual.order1.q4">"specific numbers are of little help"</span>
         </div>
       </div>
       <div class="gioia-arrow">→</div>
       <div class="gioia-step">
         <div class="gioia-step-head">
           <span class="gioia-step-num">02</span>
-          <span class="gioia-step-title">2nd Order Themes</span>
+          <span class="gioia-step-title" data-i18n="case.vcue.qual.order2.title">2nd Order Themes</span>
         </div>
-        <p class="gioia-step-desc">1st order codes grouped by conceptual similarity into researcher-identified theoretical categories</p>
+        <p class="gioia-step-desc" data-i18n="case.vcue.qual.order2.desc">1st order codes grouped by conceptual similarity into researcher-identified theoretical categories</p>
         <div class="gioia-codes">
-          <span class="gioia-code theme">Clarity &amp; Understanding</span>
-          <span class="gioia-code theme">Practical Application</span>
-          <span class="gioia-code theme">Feature Preference</span>
-          <span class="gioia-code theme">Personal Exercise Experience</span>
+          <span class="gioia-code theme" data-i18n="case.vcue.qual.order2.t1">Clarity &amp; Understanding</span>
+          <span class="gioia-code theme" data-i18n="case.vcue.qual.order2.t2">Practical Application</span>
+          <span class="gioia-code theme" data-i18n="case.vcue.qual.order2.t3">Feature Preference</span>
+          <span class="gioia-code theme" data-i18n="case.vcue.qual.order2.t4">Personal Exercise Experience</span>
         </div>
       </div>
       <div class="gioia-arrow">→</div>
       <div class="gioia-step">
         <div class="gioia-step-head">
           <span class="gioia-step-num">03</span>
-          <span class="gioia-step-title">Aggregate Dimensions</span>
+          <span class="gioia-step-title" data-i18n="case.vcue.qual.order3.title">Aggregate Dimensions</span>
         </div>
-        <p class="gioia-step-desc">2nd order themes consolidated into high-level theoretical constructs that explain the underlying phenomenon</p>
+        <p class="gioia-step-desc" data-i18n="case.vcue.qual.order3.desc">2nd order themes consolidated into high-level theoretical constructs that explain the underlying phenomenon</p>
         <div class="gioia-codes">
-          <span class="gioia-code dimension">Cognitive Preference</span>
-          <span class="gioia-code dimension">Embodied Experience</span>
-          <span class="gioia-code dimension">Instructional Value</span>
+          <span class="gioia-code dimension" data-i18n="case.vcue.qual.order3.d1">Cognitive Preference</span>
+          <span class="gioia-code dimension" data-i18n="case.vcue.qual.order3.d2">Embodied Experience</span>
+          <span class="gioia-code dimension" data-i18n="case.vcue.qual.order3.d3">Instructional Value</span>
         </div>
       </div>
     </div>
@@ -561,7 +737,7 @@
 
   <!-- GIOIA CODING SHEETS — horizontal scroll -->
   <div class="gioia-scroll-hint">
-    <span>Scroll to explore coding evidence</span>
+    <span data-i18n="case.vcue.gioia.scrollHint">Scroll to explore coding evidence</span>
     <span>→</span>
   </div>
   <div class="gioia-scroll-wrap">
@@ -571,8 +747,8 @@
           <img class="cs-img" src="images/vcue/gioia-directional.jpg" alt="Gioia Coding Analysis — Directional Cues" loading="lazy">
         </div>
         <div class="gioia-scroll-label">
-          <span class="gioia-scroll-title">01 — Directional Cues</span>
-          <span class="gioia-scroll-insight">Clear real-time guidance — but can be misread as UI chrome</span>
+          <span class="gioia-scroll-title" data-i18n="case.vcue.gioia.dir.title">01 — Directional Cues</span>
+          <span class="gioia-scroll-insight" data-i18n="case.vcue.gioia.dir.insight">Clear real-time guidance — but can be misread as UI chrome</span>
         </div>
       </div>
       <div class="gioia-scroll-item">
@@ -580,8 +756,8 @@
           <img class="cs-img" src="images/vcue/gioia-body-highlight.jpg" alt="Gioia Coding Analysis — Body Highlight Cues" loading="lazy">
         </div>
         <div class="gioia-scroll-label">
-          <span class="gioia-scroll-title">02 — Body Highlight Cues</span>
-          <span class="gioia-scroll-insight">Focuses attention on form — pacing can overload</span>
+          <span class="gioia-scroll-title" data-i18n="case.vcue.gioia.hl.title">02 — Body Highlight Cues</span>
+          <span class="gioia-scroll-insight" data-i18n="case.vcue.gioia.hl.insight">Focuses attention on form — pacing can overload</span>
         </div>
       </div>
       <div class="gioia-scroll-item">
@@ -589,8 +765,8 @@
           <img class="cs-img" src="images/vcue/gioia-metaphor.jpg" alt="Gioia Coding Analysis — Metaphor Cues" loading="lazy">
         </div>
         <div class="gioia-scroll-label">
-          <span class="gioia-scroll-title">03 — Metaphor Cues</span>
-          <span class="gioia-scroll-insight">Relatable for some — ambiguous for true beginners</span>
+          <span class="gioia-scroll-title" data-i18n="case.vcue.gioia.met.title">03 — Metaphor Cues</span>
+          <span class="gioia-scroll-insight" data-i18n="case.vcue.gioia.met.insight">Relatable for some — ambiguous for true beginners</span>
         </div>
       </div>
       <div class="gioia-scroll-item">
@@ -598,23 +774,23 @@
           <img class="cs-img" src="images/vcue/gioia-measurement.jpg" alt="Gioia Coding Analysis — Measurement Cues" loading="lazy">
         </div>
         <div class="gioia-scroll-label">
-          <span class="gioia-scroll-title">04 — Measurement Cues</span>
-          <span class="gioia-scroll-insight">Precise on paper — hard to embody; high load</span>
+          <span class="gioia-scroll-title" data-i18n="case.vcue.gioia.meas.title">04 — Measurement Cues</span>
+          <span class="gioia-scroll-insight" data-i18n="case.vcue.gioia.meas.insight">Precise on paper — hard to embody; high load</span>
         </div>
       </div>
     </div>
   </div>
 
   <!-- FINDINGS TABLE -->
-  <section class="cs-section">
+  <section class="cs-section" id="findings">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Findings</span>
-      <h2 class="cs-sec-headline">A clear hierarchy emerged. Not all visual cues help beginners equally.</h2>
+      <span class="cs-sec-label" data-i18n="case.vcue.findings.label">Findings</span>
+      <h2 class="cs-sec-headline" data-i18n="case.vcue.findings.headline">A clear hierarchy emerged. Not all visual cues help beginners equally.</h2>
     </div>
 
     <div class="cs-text-grid reveal" style="margin-bottom:2.5rem;">
-      <span class="cs-text-label">Data Source</span>
-      <p class="cs-text-body" style="font-size:1rem; line-height:1.8;">
+      <span class="cs-text-label" data-i18n="case.vcue.findings.source.label">Data Source</span>
+      <p class="cs-text-body" style="font-size:1rem; line-height:1.8;" data-i18n-html="case.vcue.findings.source.body">
         These scores align with the qualitative roles above. Scores are Likert mean ratings from post-condition self-report questionnaires (n=10 beginners, Iteration 01 usability testing). Each participant watched all four cue videos in counterbalanced order and rated each immediately after. <strong>Effectiveness</strong> summarises the Preference dimension from dissertation Table 2; <strong>Cognitive Load</strong> summarises the self-reported Mental Effort dimension. Full six-dimension data (Usefulness, Clarity, Distraction, Mental Effort, Engagement, Preference) with standard deviations are reported in dissertation Table 2.
       </p>
     </div>
@@ -622,62 +798,62 @@
     <table class="findings-table reveal">
       <thead>
         <tr>
-          <th>Visual Cue</th>
-          <th>Effectiveness (M)</th>
-          <th>Cognitive Load (M)</th>
-          <th>Zone</th>
+          <th data-i18n="case.vcue.findings.th.cue">Visual Cue</th>
+          <th data-i18n="case.vcue.findings.th.effectiveness">Effectiveness (M)</th>
+          <th data-i18n="case.vcue.findings.th.load">Cognitive Load (M)</th>
+          <th data-i18n="case.vcue.findings.th.zone">Zone</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td class="cue-name">Directional Cues</td>
+          <td class="cue-name" data-i18n="case.vcue.findings.row1.name">Directional Cues</td>
           <td><span class="num-high">6.5</span></td>
           <td><span class="num-low">1.5</span></td>
-          <td><span class="zone-badge zone-optimal">Optimal</span></td>
+          <td><span class="zone-badge zone-optimal" data-i18n="case.vcue.findings.row1.zone">Optimal</span></td>
         </tr>
         <tr>
-          <td class="cue-name">Body Highlight Cues</td>
+          <td class="cue-name" data-i18n="case.vcue.findings.row2.name">Body Highlight Cues</td>
           <td><span class="num-high">4.7</span></td>
           <td><span class="num-low">4.2</span></td>
-          <td><span class="zone-badge zone-useful">Useful</span></td>
+          <td><span class="zone-badge zone-useful" data-i18n="case.vcue.findings.row2.zone">Useful</span></td>
         </tr>
         <tr>
-          <td class="cue-name">Metaphor Cues</td>
+          <td class="cue-name" data-i18n="case.vcue.findings.row3.name">Metaphor Cues</td>
           <td><span class="num-low">4.4</span></td>
           <td><span class="num-low">3.6</span></td>
-          <td><span class="zone-badge zone-expert">Expert-first</span></td>
+          <td><span class="zone-badge zone-expert" data-i18n="case.vcue.findings.row3.zone">Expert-first</span></td>
         </tr>
         <tr>
-          <td class="cue-name">Measurement Cues</td>
+          <td class="cue-name" data-i18n="case.vcue.findings.row4.name">Measurement Cues</td>
           <td><span class="num-low">3.1</span></td>
           <td><span class="num-high">4.8</span></td>
-          <td><span class="zone-badge zone-confusing">Confusing</span></td>
+          <td><span class="zone-badge zone-confusing" data-i18n="case.vcue.findings.row4.zone">Confusing</span></td>
         </tr>
       </tbody>
     </table>
   </section>
 
   <!-- BEGINNERS VS EXPERTS -->
-  <section class="cs-section">
+  <section class="cs-section" id="beginners-experts">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Beginners vs Experts</span>
-      <h2 class="cs-sec-headline">Experience changes everything. The same cue lands completely differently depending on who is watching.</h2>
+      <span class="cs-sec-label" data-i18n="case.vcue.vs.label">Beginners vs Experts</span>
+      <h2 class="cs-sec-headline" data-i18n="case.vcue.vs.headline">Experience changes everything. The same cue lands completely differently depending on who is watching.</h2>
     </div>
     <div class="cs-text-grid reveal">
-      <span class="cs-text-label">Key Divergence</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.vcue.vs.divergence.label">Key Divergence</span>
+      <p class="cs-text-body" data-i18n-html="case.vcue.vs.divergence.body">
         Expert evaluators rated <strong>metaphor cues significantly higher</strong> than beginners — because they already possess the conceptual framework to decode abstract comparisons. For beginners, the same cue created confusion. Measurement cues showed the opposite pattern: experts valued precision, but beginners were overwhelmed by numbers they couldn't contextualise into physical movement. This divergence confirms that <strong>visual cue design cannot be one-size-fits-all</strong>.
       </p>
     </div>
 
     <div class="bve-comparison reveal">
       <div class="bve-head">
-        <span>Visual Cue</span>
-        <span>Beginners — Effectiveness (M, usability testing, n=10)</span>
-        <span>Experts — Perceived Reception (qualitative, n=10)</span>
+        <span data-i18n="case.vcue.vs.th.cue">Visual Cue</span>
+        <span data-i18n="case.vcue.vs.th.beginners">Beginners — Effectiveness (M, usability testing, n=10)</span>
+        <span data-i18n="case.vcue.vs.th.experts">Experts — Perceived Reception (qualitative, n=10)</span>
       </div>
       <div class="bve-row">
-        <span class="bve-cue-n">Directional</span>
+        <span class="bve-cue-n" data-i18n="case.vcue.vs.dir.name">Directional</span>
         <div class="bve-bar-group">
           <div class="bve-bar-row">
             <div class="bve-track"><div class="bve-fill" style="width:93%;"></div></div>
@@ -685,12 +861,12 @@
           </div>
         </div>
         <div class="bve-expert-cell">
-          <span class="bve-expert-badge aligned">Strongly positive</span>
-          <span class="bve-expert-note">Agreement across groups — unanimously the clearest cue</span>
+          <span class="bve-expert-badge aligned" data-i18n="case.vcue.vs.dir.badge">Strongly positive</span>
+          <span class="bve-expert-note" data-i18n="case.vcue.vs.dir.note">Agreement across groups — unanimously the clearest cue</span>
         </div>
       </div>
       <div class="bve-row">
-        <span class="bve-cue-n">Body Highlight</span>
+        <span class="bve-cue-n" data-i18n="case.vcue.vs.hl.name">Body Highlight</span>
         <div class="bve-bar-group">
           <div class="bve-bar-row">
             <div class="bve-track"><div class="bve-fill" style="width:67%;"></div></div>
@@ -698,12 +874,12 @@
           </div>
         </div>
         <div class="bve-expert-cell">
-          <span class="bve-expert-badge aligned">Moderately positive</span>
-          <span class="bve-expert-note">Experts more precise in feedback — noted timing and overuse risks</span>
+          <span class="bve-expert-badge aligned" data-i18n="case.vcue.vs.hl.badge">Moderately positive</span>
+          <span class="bve-expert-note" data-i18n="case.vcue.vs.hl.note">Experts more precise in feedback — noted timing and overuse risks</span>
         </div>
       </div>
       <div class="bve-row">
-        <span class="bve-cue-n">Metaphor</span>
+        <span class="bve-cue-n" data-i18n="case.vcue.vs.met.name">Metaphor</span>
         <div class="bve-bar-group">
           <div class="bve-bar-row">
             <div class="bve-track"><div class="bve-fill" style="width:63%;"></div></div>
@@ -711,12 +887,12 @@
           </div>
         </div>
         <div class="bve-expert-cell">
-          <span class="bve-expert-badge divergent">Expert preferred ↑↑</span>
-          <span class="bve-expert-note">Experts found it intuitive and memorable; beginners found it ambiguous without context</span>
+          <span class="bve-expert-badge divergent" data-i18n="case.vcue.vs.met.badge">Expert preferred ↑↑</span>
+          <span class="bve-expert-note" data-i18n="case.vcue.vs.met.note">Experts found it intuitive and memorable; beginners found it ambiguous without context</span>
         </div>
       </div>
       <div class="bve-row">
-        <span class="bve-cue-n">Measurement</span>
+        <span class="bve-cue-n" data-i18n="case.vcue.vs.meas.name">Measurement</span>
         <div class="bve-bar-group">
           <div class="bve-bar-row">
             <div class="bve-track"><div class="bve-fill" style="width:44%;"></div></div>
@@ -724,22 +900,22 @@
           </div>
         </div>
         <div class="bve-expert-cell">
-          <span class="bve-expert-badge tolerated">Tolerated by experts</span>
-          <span class="bve-expert-note">Experts valued precision; beginners were overwhelmed by numbers without physical reference</span>
+          <span class="bve-expert-badge tolerated" data-i18n="case.vcue.vs.meas.badge">Tolerated by experts</span>
+          <span class="bve-expert-note" data-i18n="case.vcue.vs.meas.note">Experts valued precision; beginners were overwhelmed by numbers without physical reference</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- DYNAMIC BALANCE MODEL -->
-  <section class="cs-section">
+  <section class="cs-section" id="framework">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Original Framework</span>
-      <h2 class="cs-sec-headline">The Dynamic Balance Model — plotting visual cues against the tension between learning effectiveness and cognitive cost.</h2>
+      <span class="cs-sec-label" data-i18n="case.vcue.model.label">Original Framework</span>
+      <h2 class="cs-sec-headline" data-i18n="case.vcue.model.headline">The Dynamic Balance Model — plotting visual cues against the tension between learning effectiveness and cognitive cost.</h2>
     </div>
     <div class="cs-text-grid reveal">
-      <span class="cs-text-label">The Model</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.vcue.model.theModel.label">The Model</span>
+      <p class="cs-text-body" data-i18n-html="case.vcue.model.theModel.body">
         This study's primary contribution is a two-axis framework for evaluating instructional visual cues. By mapping <strong>Learning Effectiveness</strong> against <strong>Cognitive Load</strong>, the model creates four zones — Optimal, Overload, Ineffective, and Confusing — that provide actionable guidance for video designers. The model also identifies the <strong>Double-Edged Sword Effect</strong>: integrating multiple cues simultaneously increases perceived professionalism but raises cognitive load, potentially undermining learning efficiency.
       </p>
     </div>
@@ -749,110 +925,110 @@
         <div class="balance-quad-grid">
           <!-- Top-left: Optimal (High effectiveness, Low load) -->
           <div class="balance-quad bq-optimal" style="position:relative;">
-            <div class="bq-zone accent">Optimal Zone</div>
-            <div class="bq-desc">High effectiveness,<br>low cognitive load</div>
+            <div class="bq-zone accent" data-i18n="case.vcue.model.optimal.zone">Optimal Zone</div>
+            <div class="bq-desc" data-i18n-html="case.vcue.model.optimal.desc">High effectiveness,<br>low cognitive load</div>
             <!-- Directional cue point -->
             <div class="bq-point" style="top:30%; left:25%;">
               <div class="bq-dot"></div>
-              <span class="bq-point-label" style="color:var(--accent);">Directional</span>
+              <span class="bq-point-label" style="color:var(--accent);" data-i18n="case.vcue.model.point.directional">Directional</span>
             </div>
           </div>
           <!-- Top-right: Overload (High effectiveness, High load) -->
           <div class="balance-quad bq-overload" style="position:relative;">
-            <div class="bq-zone">Overload Zone</div>
-            <div class="bq-desc">High effectiveness but<br>costly for learners</div>
+            <div class="bq-zone" data-i18n="case.vcue.model.overload.zone">Overload Zone</div>
+            <div class="bq-desc" data-i18n-html="case.vcue.model.overload.desc">High effectiveness but<br>costly for learners</div>
           </div>
           <!-- Bottom-left: Ineffective (Low effectiveness, Low load) -->
           <div class="balance-quad bq-ineffective" style="position:relative;">
-            <div class="bq-zone">Ineffective Zone</div>
-            <div class="bq-desc">Insufficient to<br>support learning</div>
+            <div class="bq-zone" data-i18n="case.vcue.model.ineffective.zone">Ineffective Zone</div>
+            <div class="bq-desc" data-i18n-html="case.vcue.model.ineffective.desc">Insufficient to<br>support learning</div>
           </div>
           <!-- Bottom-right: Confusing (Low effectiveness, High load) -->
           <div class="balance-quad bq-confusing" style="position:relative;">
-            <div class="bq-zone">Confusing Zone</div>
-            <div class="bq-desc">Low effectiveness,<br>high cognitive cost</div>
+            <div class="bq-zone" data-i18n="case.vcue.model.confusing.zone">Confusing Zone</div>
+            <div class="bq-desc" data-i18n-html="case.vcue.model.confusing.desc">Low effectiveness,<br>high cognitive cost</div>
             <!-- Measurement cue point -->
             <div class="bq-point" style="bottom:35%; right:20%;">
               <div class="bq-dot dim"></div>
-              <span class="bq-point-label">Measurement</span>
+              <span class="bq-point-label" data-i18n="case.vcue.model.point.measurement">Measurement</span>
             </div>
           </div>
         </div>
         <!-- Body Highlight + Metaphor points positioned at boundaries -->
         <div class="bq-point" style="position:absolute; top:42%; left:48%; transform:translate(-50%,-50%);">
           <div class="bq-dot dim"></div>
-          <span class="bq-point-label">Body Highlight</span>
+          <span class="bq-point-label" data-i18n="case.vcue.model.point.highlight">Body Highlight</span>
         </div>
         <div class="bq-point" style="position:absolute; top:52%; left:58%; transform:translate(-50%,-50%);">
           <div class="bq-dot dim"></div>
-          <span class="bq-point-label">Metaphor</span>
+          <span class="bq-point-label" data-i18n="case.vcue.model.point.metaphor">Metaphor</span>
         </div>
       </div>
       <div class="balance-axis-x">
-        <span class="axis-label">Low</span>
-        <span class="axis-label">High</span>
+        <span class="axis-label" data-i18n="case.vcue.model.axis.low">Low</span>
+        <span class="axis-label" data-i18n="case.vcue.model.axis.high">High</span>
       </div>
-      <div class="axis-title-x">Cognitive Load →</div>
+      <div class="axis-title-x" data-i18n="case.vcue.model.axis.x">Cognitive Load →</div>
     </div>
   </section>
 
   <!-- DOUBLE EDGED SWORD -->
   <div class="cs-insight reveal">
-    <span class="cs-insight-label">Key Finding</span>
-    <p class="cs-insight-text">
+    <span class="cs-insight-label" data-i18n="case.vcue.sword.label">Key Finding</span>
+    <p class="cs-insight-text" data-i18n-html="case.vcue.sword.body">
       The <em>Double-Edged Sword Effect</em>: integrating multiple visual cues simultaneously enhances professionalism and trust — but raises cognitive load and may fragment focus, ultimately reducing overall learning efficiency.
     </p>
   </div>
 
   <!-- DESIGN PRINCIPLES -->
-  <section class="cs-section">
+  <section class="cs-section" id="principles">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Design Principles</span>
-      <h2 class="cs-sec-headline">Eight evidence-based guidelines for instructional video creators.</h2>
+      <span class="cs-sec-label" data-i18n="case.vcue.principles.label">Design Principles</span>
+      <h2 class="cs-sec-headline" data-i18n="case.vcue.principles.headline">Eight evidence-based guidelines for instructional video creators.</h2>
     </div>
     <div class="cs-takeaways reveal">
       <div class="cs-take-item">
-        <span class="cs-take-title">Cue Selection</span>
+        <span class="cs-take-title" data-i18n="case.vcue.principles.selection.title">Cue Selection</span>
         <ul class="cs-take-list">
-          <li><strong>Prioritise directional cues</strong> for clear and immediate movement guidance.</li>
-          <li><strong>Use body highlighting</strong> to focus on key body parts — but avoid overuse.</li>
-          <li><strong>Be cautious with measurement cues;</strong> numbers may confuse beginners.</li>
-          <li><strong>Apply metaphorical cues contextually</strong> — they work better for experienced learners.</li>
+          <li data-i18n-html="case.vcue.principles.selection.item1"><strong>Prioritise directional cues</strong> for clear and immediate movement guidance.</li>
+          <li data-i18n-html="case.vcue.principles.selection.item2"><strong>Use body highlighting</strong> to focus on key body parts — but avoid overuse.</li>
+          <li data-i18n-html="case.vcue.principles.selection.item3"><strong>Be cautious with measurement cues;</strong> numbers may confuse beginners.</li>
+          <li data-i18n-html="case.vcue.principles.selection.item4"><strong>Apply metaphorical cues contextually</strong> — they work better for experienced learners.</li>
         </ul>
       </div>
       <div class="cs-take-item">
-        <span class="cs-take-title">Delivery & Structure</span>
+        <span class="cs-take-title" data-i18n="case.vcue.principles.delivery.title">Delivery &amp; Structure</span>
         <ul class="cs-take-list">
-          <li><strong>Ensure timely appearance</strong> of cues at critical movement moments.</li>
-          <li><strong>Keep videos short</strong> (~90 seconds) to match beginner attention and preference.</li>
-          <li><strong>Do not display more than two cue types</strong> simultaneously — cognitive overload risk.</li>
-          <li><strong>Incorporate multiple camera angles</strong> to reduce blind spots and support diverse learner needs.</li>
+          <li data-i18n-html="case.vcue.principles.delivery.item1"><strong>Ensure timely appearance</strong> of cues at critical movement moments.</li>
+          <li data-i18n-html="case.vcue.principles.delivery.item2"><strong>Keep videos short</strong> (~90 seconds) to match beginner attention and preference.</li>
+          <li data-i18n-html="case.vcue.principles.delivery.item3"><strong>Do not display more than two cue types</strong> simultaneously — cognitive overload risk.</li>
+          <li data-i18n-html="case.vcue.principles.delivery.item4"><strong>Incorporate multiple camera angles</strong> to reduce blind spots and support diverse learner needs.</li>
         </ul>
       </div>
     </div>
   </section>
 
   <!-- REFLECTION -->
-  <section class="cs-section">
+  <section class="cs-section" id="reflection">
     <div class="cs-sec-header reveal">
-      <span class="cs-sec-label">Reflection</span>
-      <h2 class="cs-sec-headline">What it means to design with evidence, not assumption.</h2>
+      <span class="cs-sec-label" data-i18n="case.vcue.reflection.label">Reflection</span>
+      <h2 class="cs-sec-headline" data-i18n="case.vcue.reflection.headline">What it means to design with evidence, not assumption.</h2>
     </div>
     <div class="cs-text-grid reveal">
-      <span class="cs-text-label">As a Researcher</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.vcue.reflection.researcher.label">As a Researcher</span>
+      <p class="cs-text-body" data-i18n-html="case.vcue.reflection.researcher.body">
         This project deepened my conviction that <strong>design decisions must be grounded in evidence</strong>. The multi-phase methodology — survey to usability testing to expert evaluation — showed me how much a single method misses, and how triangulation builds credibility. The Gioia coding process transformed raw participant quotes into a structured framework, revealing patterns invisible to intuition.
       </p>
     </div>
     <div class="cs-text-grid reveal" style="margin-top:3rem;">
-      <span class="cs-text-label">As a Designer</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.vcue.reflection.designer.label">As a Designer</span>
+      <p class="cs-text-body" data-i18n-html="case.vcue.reflection.designer.body">
         The most surprising finding was the <strong>experience gap</strong>: cues that experts found intuitive were actively confusing to beginners. This reinforced a principle I now carry into every design project — that your own familiarity with a system is the least reliable measure of its usability. Designing for someone who doesn't yet know what you know requires deliberate research, not empathy alone.
       </p>
     </div>
     <div class="cs-text-grid reveal" style="margin-top:3rem;">
-      <span class="cs-text-label">Limitations</span>
-      <p class="cs-text-body">
+      <span class="cs-text-label" data-i18n="case.vcue.reflection.limitations.label">Limitations</span>
+      <p class="cs-text-body" data-i18n-html="case.vcue.reflection.limitations.body">
         The study has inherent constraints worth acknowledging. The sample sizes were small — 10 beginners for usability testing, 10 experts for evaluation — limiting statistical generalisability. The findings are based on a <strong>single movement (the squat)</strong>, and may not transfer directly to other exercises or motor skill domains. Cognitive load was measured through <strong>self-report scales</strong> rather than physiological methods, introducing subjective bias. Additionally, the controlled research setting differs from real-world video consumption conditions. These constraints are common to early-stage exploratory research and point to productive directions for future work.
       </p>
     </div>
@@ -861,8 +1037,8 @@
   <!-- NEXT PROJECT -->
   <a class="cs-next" href="genebook.html">
     <div>
-      <span class="cs-next-label">Next Project</span>
-      <div class="cs-next-name">Health GeneTech</div>
+      <span class="cs-next-label" data-i18n="case.common.next">Next Project</span>
+      <div class="cs-next-name" data-i18n="work.genebook.name">Health GeneTech</div>
     </div>
     <span class="cs-next-arrow">→</span>
   </a>
@@ -902,6 +1078,191 @@
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { threshold: 0.08 });
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    /* ── SCROLL PROGRESS (skiper94-style, desktop only; draggable scrubber) ── */
+    (function () {
+      const root = document.getElementById('scroll-progress');
+      const fill = document.getElementById('scroll-progress-fill');
+      const marker = document.getElementById('scroll-progress-marker');
+      const pctEl = document.getElementById('scroll-progress-pct');
+      if (!root || !fill || !marker || !pctEl) return;
+
+      const mqDesktop = window.matchMedia('(min-width: 768px)');
+      let raf = 0;
+      let lastPct = -1;
+      let lastLabel = '';
+      let dragging = false;
+      let dragClientY = null;
+      let dragRaf = 0;
+      let hideTimer = 0;
+
+      function revealLabel() {
+        root.classList.add('is-label-on');
+        window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(function () {
+          if (dragging) return;
+          root.classList.remove('is-label-on');
+        }, 5000);
+      }
+
+      const sections = [
+        { id: 'hero', label: 'Hero', labelKey: 'case.vcue.progress.hero' },
+        { id: 'overview', label: 'Overview', labelKey: 'case.vcue.overview.label' },
+        { id: 'research-gap', label: 'Research Gap', labelKey: 'case.vcue.gap.label' },
+        { id: 'methodology', label: 'Methodology', labelKey: 'case.vcue.methodology.label' },
+        { id: 'experiment', label: 'The Experiment', labelKey: 'case.vcue.experiment.label' },
+        { id: 'qualitative', label: 'Qualitative Findings', labelKey: 'case.vcue.qual.label' },
+        { id: 'findings', label: 'Findings', labelKey: 'case.vcue.findings.label' },
+        { id: 'beginners-experts', label: 'Beginners vs Experts', labelKey: 'case.vcue.vs.label' },
+        { id: 'framework', label: 'Original Framework', labelKey: 'case.vcue.model.label' },
+        { id: 'principles', label: 'Design Principles', labelKey: 'case.vcue.principles.label' },
+        { id: 'reflection', label: 'Reflection', labelKey: 'case.vcue.reflection.label' },
+      ].map(function (s) { return { id: s.id, label: s.label, labelKey: s.labelKey, el: document.getElementById(s.id) }; })
+       .filter(function (s) { return s.el; });
+
+      function scrollMax() {
+        const doc = document.documentElement;
+        return Math.max(0, doc.scrollHeight - window.innerHeight);
+      }
+
+      function progress() {
+        const max = scrollMax();
+        if (max <= 0) return 0;
+        return Math.min(1, Math.max(0, window.scrollY / max));
+      }
+
+      function sectionLabel(s) {
+        if (typeof window.tPortfolio === 'function' && s.labelKey) {
+          const translated = window.tPortfolio(s.labelKey);
+          if (translated && translated !== s.labelKey) return translated;
+        }
+        return s.label;
+      }
+
+      function currentLabel() {
+        const probe = window.scrollY + window.innerHeight * 0.4;
+        let label = sections.length ? sectionLabel(sections[0]) : '';
+        for (let i = 0; i < sections.length; i++) {
+          if (sections[i].el.offsetTop <= probe) label = sectionLabel(sections[i]);
+        }
+        return label;
+      }
+
+      function paint() {
+        raf = 0;
+        if (!mqDesktop.matches) return;
+        const p = progress();
+        const pct = Math.round(p * 100);
+        const label = currentLabel();
+        if (pct !== lastPct) {
+          lastPct = pct;
+          fill.style.clipPath = 'inset(0 0 ' + (100 - pct) + '% 0)';
+          marker.style.top = pct + '%';
+          root.setAttribute('aria-valuenow', String(pct));
+        }
+        if (label !== lastLabel) {
+          lastLabel = label;
+          pctEl.textContent = label;
+        }
+      }
+
+      function requestPaint() {
+        if (!mqDesktop.matches) return;
+        revealLabel();
+        if (raf) return;
+        raf = requestAnimationFrame(paint);
+      }
+
+      function scrollToClientY(clientY) {
+        const rect = root.getBoundingClientRect();
+        const p = rect.height > 0 ? (clientY - rect.top) / rect.height : 0;
+        const clamped = Math.min(1, Math.max(0, p));
+        window.scrollTo({ top: clamped * scrollMax(), behavior: 'auto' });
+      }
+
+      function flushDrag() {
+        dragRaf = 0;
+        if (!dragging || dragClientY === null) return;
+        scrollToClientY(dragClientY);
+      }
+
+      function requestDragFlush() {
+        if (dragRaf) return;
+        dragRaf = requestAnimationFrame(flushDrag);
+      }
+
+      const cursorRing = document.getElementById('cur-ring');
+
+      function onPointerDown(e) {
+        if (!mqDesktop.matches) return;
+        dragging = true;
+        root.classList.add('is-dragging');
+        revealLabel();
+        if (cursorRing) {
+          cursorRing.classList.add('expanded');
+          if (window.gsap) gsap.to(cursorRing, { duration: 0.4, scale: 2, overwrite: true });
+        }
+        root.setPointerCapture && e.pointerId != null && root.setPointerCapture(e.pointerId);
+        scrollToClientY(e.clientY);
+        e.preventDefault();
+      }
+      function onPointerMove(e) {
+        if (!dragging) return;
+        dragClientY = e.clientY;
+        requestDragFlush();
+      }
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        dragClientY = null;
+        root.classList.remove('is-dragging');
+        revealLabel();
+        if (cursorRing) {
+          cursorRing.classList.remove('expanded');
+          if (window.gsap) gsap.to(cursorRing, { duration: 0.4, scale: 1, overwrite: true });
+        }
+      }
+
+      root.addEventListener('pointerdown', onPointerDown);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', endDrag);
+      window.addEventListener('pointercancel', endDrag);
+
+      root.addEventListener('keydown', function (e) {
+        if (!mqDesktop.matches) return;
+        const max = scrollMax();
+        if (max <= 0) return;
+        let target = null;
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          target = Math.max(0, window.scrollY - max * 0.05);
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          target = Math.min(max, window.scrollY + max * 0.05);
+        } else if (e.key === 'Home') {
+          target = 0;
+        } else if (e.key === 'End') {
+          target = max;
+        }
+        if (target !== null) {
+          e.preventDefault();
+          window.scrollTo({ top: target, behavior: 'auto' });
+        }
+      });
+
+      window.addEventListener('scroll', requestPaint, { passive: true });
+      window.addEventListener('resize', function () {
+        lastPct = -1;
+        requestPaint();
+      }, { passive: true });
+      mqDesktop.addEventListener('change', function () {
+        lastPct = -1;
+        requestPaint();
+      });
+      window.addEventListener('portfolio:languagechange', function () {
+        lastLabel = '';
+        requestPaint();
+      });
+      requestPaint();
+    })();
   </script>
 </body>
 </html>
