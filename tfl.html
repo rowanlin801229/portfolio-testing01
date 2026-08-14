@@ -65,74 +65,86 @@
       user-select: none;
     }
 
-    /* ── SCROLL PROGRESS (skiper94-inspired; desktop only; draggable scrubber) ──
-       https://skiper-ui.com/v1/skiper94 — Scroll progress 002 ── */
+    /* ── SCROLL PROGRESS (skiper95 / Scroll progress 003; desktop only; draggable)
+       https://skiper-ui.com/v1/skiper95 — ruler ticks + clip-path fill; percentage follows. Homepage keeps skiper94. ── */
     .scroll-progress {
       position: fixed;
-      left: max(0.6rem, 1.3vw);
+      left: max(0.85rem, 1.5vw);
       top: 50%;
       transform: translateY(-50%);
       z-index: 150;
-      height: 15rem;
-      width: 1.25rem;
+      width: 11rem;
+      height: 30vh;
       cursor: pointer;
       touch-action: none;
     }
     .scroll-progress__track {
       position: absolute;
-      left: 50%;
+      left: 0;
       top: 0;
-      transform: translateX(-50%);
-      width: 0.375rem;
+      width: 1rem;
       height: 100%;
-      border-radius: 999px;
-      background: rgba(74, 74, 72, 0.14);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(232, 232, 226, 0.32) 0px,
+        rgba(232, 232, 226, 0.32) 1px,
+        transparent 1px,
+        transparent 8px
+      );
       overflow: visible;
       pointer-events: none;
-      transition: background 0.2s ease;
     }
     .scroll-progress:hover .scroll-progress__track,
     .scroll-progress.is-dragging .scroll-progress__track {
-      background: rgba(74, 74, 72, 0.26);
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(232, 232, 226, 0.48) 0px,
+        rgba(232, 232, 226, 0.48) 1px,
+        transparent 1px,
+        transparent 8px
+      );
     }
     .scroll-progress__fill {
       position: absolute;
       inset: 0;
-      border-radius: inherit;
-      background: var(--accent);
+      width: 100%;
+      background-color: transparent;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(232, 232, 226, 0.95) 0px,
+        rgba(232, 232, 226, 0.95) 1px,
+        transparent 1px,
+        transparent 8px
+      );
       clip-path: inset(0 0 100% 0);
       will-change: clip-path;
     }
     .scroll-progress__marker {
       position: absolute;
-      left: 50%;
+      left: 0;
       top: 0%;
-      width: 1rem;
+      width: 1.5rem;
       height: 1px;
-      background: var(--accent);
-      transform: translate(-50%, 0);
+      background: rgba(232, 232, 226, 0.95);
+      transform: translateY(-50%);
       will-change: top;
       pointer-events: auto;
     }
     .scroll-progress__marker::after {
       content: '';
       position: absolute;
-      left: -0.85rem;
+      left: -0.5rem;
       top: 50%;
       transform: translateY(-50%);
       width: 11rem;
       height: 2.75rem;
-    }
-    .scroll-progress:hover .scroll-progress__marker,
-    .scroll-progress.is-dragging .scroll-progress__marker {
-      height: 2px;
     }
     .scroll-progress.is-dragging {
       cursor: grabbing;
     }
     .scroll-progress__pct {
       position: absolute;
-      left: calc(100% + 0.45rem);
+      left: calc(100% + 0.35rem);
       top: 50%;
       transform: translateY(-50%) translateX(-0.2rem);
       font-family: 'Cormorant Garamond', serif;
@@ -141,7 +153,7 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       line-height: 1;
-      color: var(--accent);
+      color: rgba(232, 232, 226, 0.95);
       white-space: nowrap;
       pointer-events: auto;
       user-select: none;
@@ -156,9 +168,9 @@
       transform: translateY(-50%) translateX(0);
     }
     .scroll-progress:focus-visible {
-      outline: 2px solid var(--accent);
+      outline: 2px solid rgba(232, 232, 226, 0.5);
       outline-offset: 4px;
-      border-radius: 999px;
+      border-radius: 2px;
     }
     @media (max-width: 767px) {
       .scroll-progress {
@@ -271,7 +283,7 @@
   </style>
 </head>
 <body>
-  <!-- Scroll progress 002 style — inspired by Skiper UI skiper94 (https://skiper-ui.com/v1/skiper94). Desktop only. Draggable scrubber: click or drag to jump to a scroll position. -->
+  <!-- Scroll progress 003 style — inspired by Skiper UI skiper95 (https://skiper-ui.com/v1/skiper95). Desktop only. Percentage follows the tick. Draggable. -->
   <div class="scroll-progress" id="scroll-progress" role="slider" tabindex="0"
        aria-label="Page scroll position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
     <div class="scroll-progress__track">
@@ -458,7 +470,7 @@
     const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-    /* ── SCROLL PROGRESS (skiper94-style, desktop only; draggable scrubber) ── */
+    /* ── SCROLL PROGRESS (skiper95 ruler + skiper94 section labels; desktop only; draggable) ── */
     (function () {
       const root = document.getElementById('scroll-progress');
       const fill = document.getElementById('scroll-progress-fill');
