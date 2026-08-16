@@ -3131,6 +3131,277 @@
       }
     }
 
+    /* ── Pandora hero (photo lock, no mesh) ── */
+    #hero.ph-hero {
+      --ph-ink: #0A0A0B;
+      --ph-paper: #F4F3F1;
+      --ph-paper-dim: rgba(244,243,241,.62);
+      --ph-accent: #C9564B;
+      height: 240vh !important;
+      min-height: 240vh !important;
+      max-height: none !important;
+      position: relative !important;
+      top: auto !important;
+      display: block !important;
+      justify-items: stretch !important;
+      width: 100% !important;
+      padding: 0 !important;
+      overflow: visible !important;
+      background: var(--ph-ink) !important;
+    }
+    #hero.ph-hero .ph-stage {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100% !important;
+      min-width: 100% !important;
+      max-width: none !important;
+      height: 100svh !important;
+      overflow: hidden;
+      background: var(--ph-ink);
+    }
+    #hero.ph-hero .ph-plate {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      transform-origin: 36% 68%;
+      will-change: transform;
+    }
+    #hero.ph-hero .ph-poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    @media (max-width: 767px) {
+      html.hero-mode-mobile #hero.ph-hero,
+      #hero.ph-hero {
+        height: 240vh !important;
+        min-height: 240vh !important;
+        max-height: none !important;
+        display: block !important;
+        padding: 0 !important;
+        background: #0A0A0B !important;
+      }
+      #hero.ph-hero .ph-poster {
+        object-fit: cover;
+      }
+    }
+    #ph-screen-glow {
+      position: fixed;
+      left: 0; top: 0;
+      z-index: 5;
+      width: 48px; height: 36px;
+      margin: 0;
+      transform: translate(-50%,-50%);
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(255,228,160,1) 0%,
+        rgba(255,190,80,.55) 22%,
+        rgba(220,130,40,.12) 55%,
+        transparent 72%);
+      mix-blend-mode: plus-lighter;
+      pointer-events: none;
+      opacity: .55;
+    }
+    @supports not (mix-blend-mode: plus-lighter) {
+      #ph-screen-glow { mix-blend-mode: screen; }
+    }
+    #hero.ph-hero .ph-scrim {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(6,6,8,.72) 0%, rgba(6,6,8,.40) 46%, rgba(6,6,8,.80) 100%),
+        radial-gradient(120% 90% at 50% 45%, rgba(6,6,8,.20) 0%, rgba(6,6,8,.62) 100%);
+    }
+    #hero.ph-hero .ph-grain {
+      position: absolute;
+      inset: -50%;
+      z-index: 4;
+      pointer-events: none;
+      opacity: .10;
+      mix-blend-mode: overlay;
+      animation: ph-grain .6s steps(3) infinite;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    @keyframes ph-grain {
+      0% { transform: translate(0,0); }
+      33% { transform: translate(-2%,1.5%); }
+      66% { transform: translate(1.5%,-1%); }
+    }
+    #hero.ph-hero .ph-beats {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      padding: 0 24px;
+    }
+    #hero.ph-hero .ph-beat {
+      position: absolute;
+      width: min(1080px, 90vw);
+      text-align: center;
+      opacity: 0;
+      will-change: opacity, transform;
+      text-shadow: 0 2px 24px rgba(0,0,0,.55);
+    }
+    #hero.ph-hero .ph-beat:first-child { opacity: 1; }
+    #hero.ph-hero .ph-eyebrow {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 10px;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+      color: var(--ph-accent);
+      margin-bottom: 26px;
+    }
+    #hero.ph-hero .ph-eyebrow--bar {
+      display: inline-block;
+      padding: 0.45em 0.85em 0.4em 1.05em;
+      background: rgba(0, 0, 0, 0.7);
+      text-shadow: none;
+    }
+    #hero.ph-hero .ph-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(40px, 7.4vw, 112px);
+      color: var(--ph-paper);
+      letter-spacing: 0.12em;
+    }
+    #hero.ph-hero .ph-lockup {
+      display: inline-block;
+      text-align: center;
+    }
+    #hero.ph-hero .ph-title {
+      margin-top: 22px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: clamp(30px, 4.4vw, 58px);
+      line-height: .92;
+      letter-spacing: -.01em;
+      color: var(--ph-paper-dim);
+    }
+    #hero.ph-hero .ph-title em { font-style: italic; }
+    #hero.ph-hero .ph-title .ph-sep {
+      color: var(--ph-accent);
+      font-style: normal;
+      padding: 0 .07em;
+    }
+    #hero.ph-hero .ph-line {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: clamp(25px, 4.2vw, 56px);
+      line-height: 1.26;
+      color: var(--ph-paper);
+    }
+    #hero.ph-hero .ph-line em {
+      font-style: italic;
+      color: var(--ph-accent);
+    }
+    #hero.ph-hero .ph-platforms {
+      margin-top: 44px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(18px, 3vw, 44px);
+    }
+    #hero.ph-hero .ph-platforms span {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 10px;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: var(--ph-paper-dim);
+    }
+    #hero.ph-hero .ph-platforms .ph-ico {
+      width: 18px;
+      height: 18px;
+      stroke: var(--ph-accent);
+      fill: none;
+      stroke-width: 1.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #hero.ph-hero .ph-sig {
+      margin: 8px auto 0;
+      width: 100%;
+      --sig-reveal: 0%;
+      -webkit-clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+      clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+    }
+    #hero.ph-hero .ph-sig img {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      mix-blend-mode: screen;
+      filter: saturate(.48) brightness(1.04);
+    }
+    #ph-trail {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+    }
+    #hero.ph-hero .ph-ticks {
+      position: absolute;
+      right: clamp(18px, 3vw, 44px);
+      top: 50%;
+      translate: 0 -50%;
+      z-index: 12;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    #hero.ph-hero .ph-tick {
+      width: 1px;
+      height: 26px;
+      background: rgba(244,243,241,.2);
+    }
+    #hero.ph-hero .ph-tick.on { background: var(--ph-accent); }
+    @media (max-width: 720px) {
+      #hero.ph-hero .ph-ticks { display: none; }
+    }
+    @media (hover: none), (prefers-reduced-motion: reduce) {
+      #ph-trail { display: none; }
+      #ph-screen-glow { opacity: .55 !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #hero.ph-hero { height: auto !important; min-height: 100svh !important; }
+      #hero.ph-hero .ph-stage {
+        position: relative;
+        height: auto;
+        min-height: 100svh;
+      }
+      #hero.ph-hero .ph-grain { animation: none; }
+      #hero.ph-hero .ph-beats {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 56px;
+        padding: 120px 24px;
+      }
+      #hero.ph-hero .ph-beat {
+        position: relative;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      #hero.ph-hero .ph-plate { transform: none !important; }
+      #hero.ph-hero .ph-sig {
+        clip-path: none;
+        -webkit-clip-path: none;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -3203,152 +3474,65 @@
     </nav>
 
     <!-- HERO -->
-    <div class="hero-pin-wrap" id="hero-pin-wrap">
-    <section id="hero" aria-label="Introduction">
-      <div id="wave-bg" aria-hidden="true"></div>
-
-      <div class="hero-mobile-shell">
-      <div class="hero-sticky">
-      <div class="hero-bg">
-        <div class="hero-photo-stage">
+    <section id="hero" class="ph-hero" aria-label="Introduction">
+      <div class="ph-stage">
+        <div class="ph-plate" id="ph-plate">
           <img
-            class="hero-photo-bg"
-            loading="eager" src="images/rowan.png"
-            alt="Portrait of Rowan Lin"
-            loading="eager"
+            class="ph-poster"
+            id="ph-poster"
+            src="images/hero/hero-color-seated.jpg"
+            alt="Rowan Lin seated at a laptop overlooking floating islands"
+            width="1376"
+            height="752"
             decoding="async"
-          />
-          <div class="hero-photo-flash" aria-hidden="true"></div>
-          <div class="hero-photo-sheen" aria-hidden="true"></div>
+          >
         </div>
-      </div>
-
-      <div class="hero-center">
-        <div class="hero-sig-draw" role="img" aria-label="林昱嫻">
-          <div class="hero-sig-write">
-            <img
-              class="hero-sig-final"
-              src="images/signtrue-rowan.png"
-              alt=""
-              decoding="async"
-              aria-hidden="true"
-            />
-            <div class="hero-sig-color" aria-hidden="true"></div>
-            <div class="hero-sig-ink" aria-hidden="true"></div>
-          </div>
+        <div class="ph-scrim" aria-hidden="true"></div>
+        <div class="ph-grain" aria-hidden="true"></div>
+        <div id="ph-screen-glow" aria-hidden="true"></div>
+        <canvas id="ph-trail" aria-hidden="true"></canvas>
+        <div class="ph-ticks" aria-hidden="true">
+          <div class="ph-tick"></div>
+          <div class="ph-tick"></div>
         </div>
-      </div>
-
-      <div class="hero-stage hero-mobile-stage">
-        <div class="hero-visual">
-          <div class="hero-intro-line">
-            <div class="hero-intro-stack">
-              <div class="hero-marquee-strip hero-marquee-strip--ltr hero-marquee-strip--primary">
-                <div class="hero-marquee-viewport">
-                  <h1 class="hero-intro-text display">
-                    Hi, I'm <span class="hero-intro-accent">Rowan.</span>
-                  </h1>
-                </div>
-              </div>
-              <div class="hero-marquee-strip hero-marquee-strip--rtl">
-                <div class="hero-marquee-viewport">
-                  <p class="hero-intro-sub">
-                    Cross-screen UI/UX <span class="hero-intro-accent">Designer</span>
-                  </p>
-                </div>
-              </div>
-              <div class="hero-marquee-strip hero-marquee-strip--ltr">
-                <div class="hero-marquee-viewport">
-                  <p class="hero-intro-tag">
-                    Bridging platforms, <span class="hero-intro-accent">connecting users.</span>
-                  </p>
-                </div>
-              </div>
+        <div class="ph-beats">
+          <div class="ph-beat">
+            <p class="ph-eyebrow ph-eyebrow--bar">Cross-screen UI/UX &amp; Product Design · London</p>
+            <p class="ph-name">Yu-Hsien(Rowan) Lin</p>
+            <div class="ph-lockup">
+              <h1 class="ph-title" id="ph-title"><em id="ph-designWord">Design</em><span class="ph-sep">·</span><em id="ph-adaptWord">Adapt</em><span class="ph-sep">·</span><em id="ph-scaleWord">Scale</em></h1>
+              <div class="ph-sig" id="ph-sigWrite"><img src="images/hero/signature.png" alt="林昱嫻"></div>
             </div>
           </div>
-          <div class="hero-photo-parallax">
-            <img
-              class="hero-photo"
-              src="images/02.png"
-              width="1536"
-              height="2048"
-              alt=""
-              loading="eager"
-              decoding="async"
-            />
-          </div>
-        </div>
-      </div>
-
-      </div>
-
-      </div>
-
-      <div class="hero-desktop-shell">
-      <div class="hero-editorial hero-stage-grid">
-        <!-- Block 1: Name -->
-        <div class="hero-block hero-block--name">
-          <div class="hero-name-row">
-            <div class="hero-clip">
-              <h1 class="hero-name">Yu-Hsien(Rowan) Lin</h1>
+          <div class="ph-beat">
+            <p class="ph-eyebrow ph-eyebrow--bar">Five years, five screens</p>
+            <p class="ph-line">Turning complex product journeys into<br><em>clear, scalable interfaces</em> across screen sizes.</p>
+            <div class="ph-platforms">
+              <span>
+                <svg class="ph-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2.5" width="8" height="19" rx="1.6"/><path d="M11 18.8h2"/></svg>
+                Mobile
+              </span>
+              <span>
+                <svg class="ph-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1.6"/><path d="M10 18.5h4"/></svg>
+                Tablet
+              </span>
+              <span>
+                <svg class="ph-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="12.5" rx="1.4"/><path d="M8 20.5h8M12 16.5v4"/></svg>
+                Web
+              </span>
+              <span>
+                <svg class="ph-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="6.5" width="8" height="11" rx="2.2"/><path d="M10.5 6.5V4.2h3v2.3M10.5 17.5v2.3h3V17.5M11 12h2"/></svg>
+                Wearable
+              </span>
+              <span>
+                <svg class="ph-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4.5" width="20" height="12" rx="1.4"/><path d="M8 20.5h8M12 16.5v4"/></svg>
+                TV
+              </span>
             </div>
           </div>
-        </div>
-
-        <!-- Block 2: Role + Photo -->
-        <div class="hero-block hero-block--role">
-        <div class="hero-role-row">
-          <div class="hero-clip hero-role-side hero-role-side--left">
-            <span class="hero-role-left">A Cross-screen</span>
-          </div>
-
-          <div class="hero-card-stack">
-            <div class="hero-card">
-              <div class="hero-card-photo-wrap">
-                <div class="hero-photo-stage">
-                  <img src="images/hero-rowan-wide.png"
-                       alt="Portrait of Yu-Hsien Lin"
-                       class="hero-card-photo"
-                       width="1915"
-                       height="821"
-                       loading="eager"
-                       decoding="async">
-                  <div class="hero-photo-flash" aria-hidden="true"></div>
-                  <div class="hero-photo-sheen" aria-hidden="true"></div>
-                </div>
-
-                <div class="hero-sig-draw" role="img" aria-label="林昱嫻">
-                  <div class="hero-sig-write">
-                    <img class="hero-sig-final"
-                         src="images/signtrue-rowan.png"
-                         alt=""
-                         decoding="async"
-                         aria-hidden="true">
-                    <div class="hero-sig-color" aria-hidden="true"></div>
-                    <div class="hero-sig-ink" aria-hidden="true"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="hero-clip hero-role-side hero-role-side--right">
-            <span class="hero-role-right">designer</span>
-          </div>
-        </div>
-        </div>
-
-      </div>
-      </div>
-
-      <div class="hero-scroll" aria-hidden="true">
-        <div class="scroll-ind">
-          <div class="scroll-bar"></div>
-          <span>Scroll</span>
         </div>
       </div>
     </section>
-    </div>
 
     <!-- WORK -->
     <section id="work">
@@ -3754,6 +3938,294 @@
     }
 
     ReactDOM.createRoot(document.getElementById('tweaks-root')).render(React.createElement(PortfolioTweaks));
+  </script>
+
+  <script>
+    /* ── Pandora hero: photo lock + scroll zoom + screen glow + trail ── */
+    (function () {
+      var hero = document.getElementById('hero');
+      if (!hero || !hero.classList.contains('ph-hero')) return;
+
+      var CONFIG = {
+        photoStart: 0.90,
+        sit: { nx: 0.36, ny: 0.68 },
+        screen: { nx: 0.405, ny: 0.635 }
+      };
+      var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var beats = Array.prototype.slice.call(hero.querySelectorAll('.ph-beat'));
+      var ticks = Array.prototype.slice.call(hero.querySelectorAll('.ph-tick'));
+      var plate = document.getElementById('ph-plate');
+      var poster = document.getElementById('ph-poster');
+      var glow = document.getElementById('ph-screen-glow');
+      var sigWrite = document.getElementById('ph-sigWrite');
+      var adaptWord = document.getElementById('ph-adaptWord');
+      var scaleWord = document.getElementById('ph-scaleWord');
+      var N = beats.length;
+      var SIG_EASE = 1.05;
+      var IMG_ASPECT = 1376 / 752;
+      var pointer = { x: 0.5, y: 0.5 };
+
+      function syncSigWidth() {
+        if (!sigWrite) return;
+        var title = document.getElementById('ph-title');
+        var design = document.getElementById('ph-designWord');
+        var scale = document.getElementById('ph-scaleWord');
+        var w = 0;
+        if (design && scale) w = scale.getBoundingClientRect().right - design.getBoundingClientRect().left;
+        else if (title) w = title.getBoundingClientRect().width;
+        if (w > 0) sigWrite.style.width = w + 'px';
+      }
+      addEventListener('resize', syncSigWidth);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncSigWidth);
+      syncSigWidth();
+
+      addEventListener('pointermove', function (ev) {
+        pointer.x = ev.clientX / innerWidth;
+        pointer.y = ev.clientY / innerHeight;
+      }, { passive: true });
+
+      function useCoverFit() {
+        return innerWidth <= 767 || innerWidth / innerHeight < 1.15;
+      }
+      function coverScale() {
+        var va = innerWidth / innerHeight;
+        return va > IMG_ASPECT ? va / IMG_ASPECT : IMG_ASPECT / va;
+      }
+      function mapPoint(nx, ny) {
+        var vw = innerWidth, vh = innerHeight;
+        var va = vw / vh;
+        if (useCoverFit()) {
+          if (va > IMG_ASPECT) {
+            var ch = vw / IMG_ASPECT;
+            return { x: nx, y: (ny * ch - (ch - vh) / 2) / vh };
+          }
+          var cw = vh * IMG_ASPECT;
+          return { x: (nx * cw - (cw - vw) / 2) / vw, y: ny };
+        }
+        if (va > IMG_ASPECT) {
+          var dispW = vh * IMG_ASPECT;
+          return { x: ((vw - dispW) / 2 + nx * dispW) / vw, y: ny };
+        }
+        var dispH = vw / IMG_ASPECT;
+        return { x: nx, y: ((vh - dispH) / 2 + ny * dispH) / vh };
+      }
+      function imageContentRect(img) {
+        var r = img.getBoundingClientRect();
+        var nw = img.naturalWidth || 1376;
+        var nh = img.naturalHeight || 752;
+        var ia = nw / nh;
+        var ea = r.width / Math.max(r.height, 1);
+        if (useCoverFit()) {
+          if (ea > ia) {
+            var h = r.width / ia;
+            return { left: r.left, top: r.top + (r.height - h) / 2, width: r.width, height: h };
+          }
+          var w = r.height * ia;
+          return { left: r.left + (r.width - w) / 2, top: r.top, width: w, height: r.height };
+        }
+        if (ea > ia) {
+          var h2 = r.height, w2 = h2 * ia;
+          return { left: r.left + (r.width - w2) / 2, top: r.top, width: w2, height: h2 };
+        }
+        var w3 = r.width, h3 = w3 / ia;
+        return { left: r.left, top: r.top + (r.height - h3) / 2, width: w3, height: h3 };
+      }
+      function placeGlow() {
+        if (!glow || !CONFIG.screen || !poster) return;
+        var S = CONFIG.screen;
+        var box = imageContentRect(poster);
+        glow.style.left = (box.left + box.width * S.nx).toFixed(1) + 'px';
+        glow.style.top = (box.top + box.height * S.ny).toFixed(1) + 'px';
+        glow.style.width = (box.height * 0.055).toFixed(1) + 'px';
+        glow.style.height = (box.height * 0.042).toFixed(1) + 'px';
+        glow.style.transform = 'translate(-50%,-50%)';
+      }
+      function progress() {
+        if (reduce) return 0;
+        var r = hero.getBoundingClientRect();
+        var total = r.height - innerHeight;
+        if (!(total > 1)) return 0;
+        return Math.max(0, Math.min(1, -r.top / total));
+      }
+      function paintBeats(p) {
+        if (reduce) return;
+        /* 兩拍互斥：第一拍先完全消失，空一拍，第二拍才進。避免字疊在一起。 */
+        var o0 = 1, o1 = 0;
+        if (p < 0.42) o0 = 1;
+        else if (p < 0.52) o0 = 1 - (p - 0.42) / 0.10;
+        else o0 = 0;
+        if (p < 0.60) o1 = 0;
+        else if (p < 0.70) o1 = (p - 0.60) / 0.10;
+        else o1 = 1;
+        var opac = [o0, o1];
+        beats.forEach(function (b, i) {
+          var o = Math.max(0, Math.min(1, opac[i] || 0));
+          b.style.opacity = o.toFixed(3);
+          b.style.transform = 'translateY(' + ((1 - o) * 24) + 'px)';
+          b.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
+          b.setAttribute('aria-hidden', o > 0.5 ? 'false' : 'true');
+          if (i === 0 && sigWrite) {
+            var t = o0 >= 1 ? 1 : 0;
+            var eased = 1 - Math.pow(1 - t, SIG_EASE);
+            sigWrite.style.setProperty('--sig-reveal', (eased * 100).toFixed(2) + '%');
+          }
+        });
+        ticks.forEach(function (t, i) { t.classList.toggle('on', (i === 0 && o0 >= o1) || (i === 1 && o1 > o0)); });
+      }
+      function drivePhoto() {
+        placeGlow();
+        addEventListener('resize', placeGlow);
+        function tick() {
+          var p = progress();
+          document.documentElement.style.setProperty('--p', p.toFixed(4));
+          var e = p * p * (3 - 2 * p);
+          var sit = mapPoint(CONFIG.sit.nx, CONFIG.sit.ny);
+          var scale = (useCoverFit() ? 1 : coverScale() * CONFIG.photoStart) * (1 + e * 0.14);
+          var mouse = 1 - e * 0.35;
+          var tx = reduce ? 0 : (pointer.x - 0.5) * 12 * mouse;
+          var ty = reduce ? 0 : (pointer.y - 0.5) * 8 * mouse;
+          if (plate && !reduce) {
+            plate.style.transformOrigin = (sit.x * 100).toFixed(2) + '% ' + (sit.y * 100).toFixed(2) + '%';
+            plate.style.transform = 'translate(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px) scale(' + scale.toFixed(4) + ')';
+          }
+          placeGlow();
+          if (glow && !reduce) {
+            var t = performance.now() * 0.001;
+            var flick = 0.48
+              + 0.26 * Math.sin(t * 6.4)
+              + 0.14 * Math.sin(t * 14.8)
+              + 0.09 * Math.sin(t * 29.2 + 1.1);
+            glow.style.opacity = String(Math.max(0.18, Math.min(0.92, flick)));
+          }
+          paintBeats(p);
+          requestAnimationFrame(tick);
+        }
+        if (!reduce) requestAnimationFrame(tick);
+        else { placeGlow(); paintBeats(0); }
+      }
+      drivePhoto();
+
+      (function initTrail() {
+        var coarse = matchMedia('(hover: none)').matches;
+        if (coarse || reduce) return;
+        var canvas = document.getElementById('ph-trail');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var TN = 70, STEP = 44;
+        var motes = Array.from({ length: TN }, function () {
+          return { x: 0, y: 0, vx: 0, vy: 0, life: 0, max: 1, size: 2, phi: 0, live: false };
+        });
+        var slot = 0;
+        var E = { x: 0, y: 0, lx: 0, ly: 0, acc: 0, ready: false };
+        var P = { x: 0, y: 0 };
+        var idleT = 0, last = performance.now(), hidden = false;
+        function damp(a, b, lambda, dt) {
+          return b + (a - b) * Math.exp(-lambda * dt);
+        }
+        function resize() {
+          var dpr = Math.min(devicePixelRatio || 1, 2);
+          var r = canvas.parentElement.getBoundingClientRect();
+          canvas.width = Math.max(1, r.width * dpr);
+          canvas.height = Math.max(1, r.height * dpr);
+          canvas.style.width = r.width + 'px';
+          canvas.style.height = r.height + 'px';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        function spawn(x, y, ang, isIdle) {
+          var i = slot;
+          slot = (i + 1) % TN;
+          var m = motes[i];
+          var lat = (Math.random() - 0.5) * 78;
+          m.x = x + (Math.random() - 0.5) * 42;
+          m.y = y + (Math.random() - 0.5) * 42;
+          m.vx = Math.cos(ang) * -2 + Math.cos(ang + 1.5708) * lat;
+          m.vy = Math.sin(ang) * -2 + Math.sin(ang + 1.5708) * lat - 18;
+          m.life = 0;
+          m.max = isIdle ? 2.6 + Math.random() * 1.2 : 1.8 + Math.random() * 1.6;
+          m.size = 0.9 + Math.random() * 1.6;
+          m.phi = Math.random() * 6.2832;
+          m.live = true;
+        }
+        addEventListener('pointermove', function (ev) {
+          var r = canvas.getBoundingClientRect();
+          P.x = ev.clientX - r.left;
+          P.y = ev.clientY - r.top;
+          if (!E.ready) {
+            E.x = E.lx = P.x;
+            E.y = E.ly = P.y;
+            E.ready = true;
+          }
+        }, { passive: true });
+        document.addEventListener('visibilitychange', function () {
+          hidden = document.hidden;
+          if (!hidden) last = performance.now();
+        });
+        addEventListener('resize', resize);
+        resize();
+        function tick(now) {
+          requestAnimationFrame(tick);
+          if (hidden) return;
+          var dt = (now - last) / 1000;
+          last = now;
+          if (dt > 1 / 30) dt = 1 / 30;
+          if (!E.ready) {
+            ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+            return;
+          }
+          E.x = damp(E.x, P.x, 16, dt);
+          E.y = damp(E.y, P.y, 16, dt);
+          var dx = E.x - E.lx, dy = E.y - E.ly;
+          var moved = Math.hypot(dx, dy);
+          var ang = moved > 1e-6 ? Math.atan2(dy, dx) : 0;
+          E.acc += moved;
+          var guard = 0;
+          while (E.acc >= STEP && guard++ < 7) {
+            E.acc -= STEP;
+            var t = moved > 1e-6 ? Math.min(1, guard * STEP / moved) : 0;
+            spawn(E.lx + dx * t, E.ly + dy * t, ang, false);
+          }
+          E.lx = E.x;
+          E.ly = E.y;
+          if (moved < 0.45) {
+            idleT += dt;
+            if (idleT > 0.75) {
+              idleT = 0;
+              spawn(E.x, E.y, Math.random() * 6.2832, true);
+            }
+          } else idleT = 0;
+          var w = canvas.clientWidth, h = canvas.clientHeight;
+          ctx.clearRect(0, 0, w, h);
+          ctx.globalCompositeOperation = 'lighter';
+          for (var n = 0; n < TN; n++) {
+            var m = motes[n];
+            if (!m.live) continue;
+            m.life += dt;
+            var u = m.life / m.max;
+            if (u >= 1) { m.live = false; continue; }
+            m.vx += Math.sin(now * 0.0013 + m.phi) * 36 * dt;
+            m.vy += Math.cos(now * 0.0011 + 1.7 * m.phi) * 30 * dt - 26 * dt;
+            m.vx *= 1 - 0.22 * dt;
+            m.vy *= 1 - 0.22 * dt;
+            m.x += m.vx * dt;
+            m.y += m.vy * dt;
+            var a = 0.42;
+            if (u < 0.12) a *= u / 0.12;
+            else if (u > 0.22) a *= 1 - (u - 0.22) / 0.78;
+            var s = m.size * (1 + 0.2 * u);
+            var g = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, s * 3.6);
+            g.addColorStop(0, 'rgba(255,214,120,' + a + ')');
+            g.addColorStop(0.28, 'rgba(255,176,64,' + (a * 0.42) + ')');
+            g.addColorStop(1, 'rgba(210,120,30,0)');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, s * 3.6, 0, 6.2832);
+            ctx.fill();
+          }
+          ctx.globalCompositeOperation = 'source-over';
+        }
+        requestAnimationFrame(tick);
+      })();
+    })();
   </script>
 
   <script>
@@ -5097,6 +5569,7 @@
 
     /* ── HERO EDITORIAL: name fit + entrance + signature scroll ── */
     (function () {
+      if (document.getElementById('hero') && document.getElementById('hero').classList.contains('ph-hero')) return;
       var desktop = window.matchMedia('(min-width: 768px)');
 
       function splitHeroName() {
