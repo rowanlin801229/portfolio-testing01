@@ -3178,13 +3178,18 @@
       transform-origin: 36% 68%;
       will-change: transform;
     }
-    #hero.ph-hero .ph-poster {
+    #hero.ph-hero .ph-poster,
+    #hero.ph-hero .ph-video {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+    #hero.ph-hero .ph-video {
+      z-index: 1;
+      pointer-events: none;
     }
     @media (max-width: 767px) {
       html.hero-mode-mobile #hero.ph-hero,
@@ -3196,7 +3201,8 @@
         padding: 0 !important;
         background: #0A0A0B !important;
       }
-      #hero.ph-hero .ph-poster {
+      #hero.ph-hero .ph-poster,
+      #hero.ph-hero .ph-video {
         object-fit: cover;
       }
     }
@@ -3409,6 +3415,7 @@
         transform: none !important;
       }
       #hero.ph-hero .ph-plate { transform: none !important; }
+      #hero.ph-hero .ph-video { display: none !important; }
       #hero.ph-hero .ph-title {
         opacity: 1 !important;
         transform: none !important;
@@ -3502,6 +3509,19 @@
             height="752"
             decoding="async"
           >
+          <video
+            class="ph-video"
+            id="ph-video"
+            muted
+            playsinline
+            autoplay
+            loop
+            preload="auto"
+            poster="images/hero/hero-color-seated.jpg"
+            aria-hidden="true"
+          >
+            <source src="images/hero/hero-clouds.mp4" type="video/mp4">
+          </video>
         </div>
         <div class="ph-scrim" aria-hidden="true"></div>
         <div class="ph-grain" aria-hidden="true"></div>
@@ -3968,10 +3988,25 @@
         screen: { nx: 0.405, ny: 0.635 }
       };
       var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (video) {
+        if (reduce) {
+          video.pause();
+          video.removeAttribute('autoplay');
+        } else {
+          var tryPlay = function () { video.play().catch(function () {}); };
+          if (document.readyState === 'complete') tryPlay();
+          else addEventListener('load', tryPlay);
+          document.addEventListener('visibilitychange', function () {
+            if (document.hidden) video.pause();
+            else tryPlay();
+          });
+        }
+      }
       var beats = Array.prototype.slice.call(hero.querySelectorAll('.ph-beat'));
       var ticks = Array.prototype.slice.call(hero.querySelectorAll('.ph-tick'));
       var plate = document.getElementById('ph-plate');
       var poster = document.getElementById('ph-poster');
+      var video = document.getElementById('ph-video');
       var glow = document.getElementById('ph-screen-glow');
       var sigWrite = document.getElementById('ph-sigWrite');
       var sigMask = document.getElementById('ph-sigMask');
