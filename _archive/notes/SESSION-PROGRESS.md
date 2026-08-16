@@ -1,6 +1,7 @@
 # Session progress — Portfolio
 
 **Last updated:** 2026-08-16  
+**今日完整紀錄:** [`2026-08-16.md`](./2026-08-16.md)（hero 接到站上、簽名、Kling 雲、行動版裁切、`_archive`）  
 **Live repo:** `rowanlin801229/portfolio-testing01`  
 **Branch:** `master`  
 **Local preview (作品集):** `http://127.0.0.1:8766/`  
@@ -12,7 +13,7 @@
 
 ## 2026-08-16 — 新 Pandora hero 接到作品集（取代舊 hero）
 
-**Status:** **Local only, not committed/pushed.** 實驗做了一整天後，晚上把「目前喜歡的效果」接到 `index.html`。
+**Status:** 已上線。細節與當日全部 commit 見 [`2026-08-16.md`](./2026-08-16.md)。下面這段是當天稍早的工作筆記，部分句子（「Local only」）已過時。
 
 ### 兩個地方，不要搞混
 
