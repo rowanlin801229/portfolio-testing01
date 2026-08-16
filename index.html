@@ -3174,7 +3174,7 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
       display: block;
     }
     @media (max-width: 767px) {
@@ -3272,7 +3272,7 @@
       font-weight: 400;
       font-size: clamp(40px, 7.4vw, 112px);
       color: var(--ph-paper);
-      letter-spacing: 0.12em;
+      letter-spacing: 0.09em;
     }
     #hero.ph-hero .ph-lockup {
       display: inline-block;
@@ -3334,17 +3334,19 @@
     #hero.ph-hero .ph-sig {
       margin: 8px auto 0;
       width: 100%;
-      --sig-reveal: 0%;
-      -webkit-clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
-      clip-path: inset(0 calc(100% - var(--sig-reveal, 0%)) 0 0);
+      mix-blend-mode: screen;
+      filter: saturate(.48) brightness(1.04);
+    }
+    #hero.ph-hero .ph-sig-mask {
+      display: block;
+      overflow: hidden;
+      width: 0;
+      will-change: width;
     }
     #hero.ph-hero .ph-sig img {
       display: block;
-      width: 100%;
       height: auto;
-      object-fit: contain;
-      mix-blend-mode: screen;
-      filter: saturate(.48) brightness(1.04);
+      max-width: none;
     }
     #ph-trail {
       position: absolute;
@@ -3396,9 +3398,8 @@
         transform: none !important;
       }
       #hero.ph-hero .ph-plate { transform: none !important; }
-      #hero.ph-hero .ph-sig {
-        clip-path: none;
-        -webkit-clip-path: none;
+      #hero.ph-hero .ph-sig-mask {
+        width: 100%;
       }
     }
 
@@ -3501,7 +3502,7 @@
             <p class="ph-name">Yu-Hsien(Rowan) Lin</p>
             <div class="ph-lockup">
               <h1 class="ph-title" id="ph-title"><em id="ph-designWord">Design</em><span class="ph-sep">·</span><em id="ph-adaptWord">Adapt</em><span class="ph-sep">·</span><em id="ph-scaleWord">Scale</em></h1>
-              <div class="ph-sig" id="ph-sigWrite"><img src="images/hero/signature.png" alt="林昱嫻"></div>
+              <div class="ph-sig" id="ph-sigWrite"><div class="ph-sig-mask" id="ph-sigMask"><img src="images/hero/signature.png" alt="林昱嫻"></div></div>
             </div>
           </div>
           <div class="ph-beat">
@@ -3947,7 +3948,7 @@
       if (!hero || !hero.classList.contains('ph-hero')) return;
 
       var CONFIG = {
-        photoStart: 0.90,
+        overscan: 1.06,
         sit: { nx: 0.36, ny: 0.68 },
         screen: { nx: 0.405, ny: 0.635 }
       };
@@ -3958,10 +3959,16 @@
       var poster = document.getElementById('ph-poster');
       var glow = document.getElementById('ph-screen-glow');
       var sigWrite = document.getElementById('ph-sigWrite');
+      var sigMask = document.getElementById('ph-sigMask');
+      var sigImg = sigWrite ? sigWrite.querySelector('img') : null;
       var adaptWord = document.getElementById('ph-adaptWord');
       var scaleWord = document.getElementById('ph-scaleWord');
       var N = beats.length;
-      var SIG_EASE = 1.05;
+      var SIG_EASE = 2.2;
+      var SIG_DURATION = 2600;
+      var sigStarted = false;
+      var sigDone = false;
+      var sigLeftBeat = false;
       var IMG_ASPECT = 1376 / 752;
       var pointer = { x: 0.5, y: 0.5 };
 
@@ -3973,41 +3980,83 @@
         var w = 0;
         if (design && scale) w = scale.getBoundingClientRect().right - design.getBoundingClientRect().left;
         else if (title) w = title.getBoundingClientRect().width;
-        if (w > 0) sigWrite.style.width = w + 'px';
+        if (w > 0) {
+          sigWrite.style.width = w + 'px';
+          if (sigImg) sigImg.style.width = w + 'px';
+        }
       }
       addEventListener('resize', syncSigWidth);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncSigWidth);
       syncSigWidth();
+
+      function setSigReveal(pct) {
+        if (!sigMask) return;
+        var p = Math.max(0, Math.min(100, pct));
+        sigMask.style.width = p.toFixed(2) + '%';
+      }
+
+      function startSigWrite() {
+        if (!sigWrite || !sigMask || sigStarted) return;
+        sigStarted = true;
+        sigDone = false;
+        syncSigWidth();
+        setSigReveal(0);
+        var t0 = performance.now();
+        function frame(now) {
+          var t = Math.max(0, Math.min(1, (now - t0) / SIG_DURATION));
+          var eased = 1 - Math.pow(1 - t, SIG_EASE);
+          setSigReveal(eased * 100);
+          if (t < 1) requestAnimationFrame(frame);
+          else {
+            setSigReveal(100);
+            sigDone = true;
+          }
+        }
+        requestAnimationFrame(frame);
+      }
+
+      function whenMainVisible(fn) {
+        var main = document.getElementById('main');
+        /* Wait for #main fade (0.3s delay + 0.9s opacity) so the first stroke is visible. */
+        function go() { setTimeout(fn, 1250); }
+        if (!main || main.classList.contains('visible')) {
+          go();
+          return;
+        }
+        var obs = new MutationObserver(function () {
+          if (main.classList.contains('visible')) {
+            obs.disconnect();
+            go();
+          }
+        });
+        obs.observe(main, { attributes: true, attributeFilter: ['class'] });
+      }
+
+      function whenSigReady(fn) {
+        if (!sigImg || sigImg.complete) {
+          fn();
+          return;
+        }
+        sigImg.addEventListener('load', fn, { once: true });
+        sigImg.addEventListener('error', fn, { once: true });
+      }
+
+      whenMainVisible(function () { whenSigReady(startSigWrite); });
 
       addEventListener('pointermove', function (ev) {
         pointer.x = ev.clientX / innerWidth;
         pointer.y = ev.clientY / innerHeight;
       }, { passive: true });
 
-      function useCoverFit() {
-        return innerWidth <= 767 || innerWidth / innerHeight < 1.15;
-      }
-      function coverScale() {
-        var va = innerWidth / innerHeight;
-        return va > IMG_ASPECT ? va / IMG_ASPECT : IMG_ASPECT / va;
-      }
       function mapPoint(nx, ny) {
         var vw = innerWidth, vh = innerHeight;
         var va = vw / vh;
-        if (useCoverFit()) {
-          if (va > IMG_ASPECT) {
-            var ch = vw / IMG_ASPECT;
-            return { x: nx, y: (ny * ch - (ch - vh) / 2) / vh };
-          }
-          var cw = vh * IMG_ASPECT;
-          return { x: (nx * cw - (cw - vw) / 2) / vw, y: ny };
-        }
         if (va > IMG_ASPECT) {
-          var dispW = vh * IMG_ASPECT;
-          return { x: ((vw - dispW) / 2 + nx * dispW) / vw, y: ny };
+          var ch = vw / IMG_ASPECT;
+          return { x: nx, y: (ny * ch - (ch - vh) / 2) / vh };
         }
-        var dispH = vw / IMG_ASPECT;
-        return { x: nx, y: ((vh - dispH) / 2 + ny * dispH) / vh };
+        var cw = vh * IMG_ASPECT;
+        return { x: (nx * cw - (cw - vw) / 2) / vw, y: ny };
       }
       function imageContentRect(img) {
         var r = img.getBoundingClientRect();
@@ -4015,20 +4064,12 @@
         var nh = img.naturalHeight || 752;
         var ia = nw / nh;
         var ea = r.width / Math.max(r.height, 1);
-        if (useCoverFit()) {
-          if (ea > ia) {
-            var h = r.width / ia;
-            return { left: r.left, top: r.top + (r.height - h) / 2, width: r.width, height: h };
-          }
-          var w = r.height * ia;
-          return { left: r.left + (r.width - w) / 2, top: r.top, width: w, height: r.height };
-        }
         if (ea > ia) {
-          var h2 = r.height, w2 = h2 * ia;
-          return { left: r.left + (r.width - w2) / 2, top: r.top, width: w2, height: h2 };
+          var h = r.width / ia;
+          return { left: r.left, top: r.top + (r.height - h) / 2, width: r.width, height: h };
         }
-        var w3 = r.width, h3 = w3 / ia;
-        return { left: r.left, top: r.top + (r.height - h3) / 2, width: w3, height: h3 };
+        var w = r.height * ia;
+        return { left: r.left + (r.width - w) / 2, top: r.top, width: w, height: r.height };
       }
       function placeGlow() {
         if (!glow || !CONFIG.screen || !poster) return;
@@ -4064,13 +4105,14 @@
           b.style.transform = 'translateY(' + ((1 - o) * 24) + 'px)';
           b.style.pointerEvents = o > 0.5 ? 'auto' : 'none';
           b.setAttribute('aria-hidden', o > 0.5 ? 'false' : 'true');
-          if (i === 0 && sigWrite) {
-            var t = o0 >= 1 ? 1 : 0;
-            var eased = 1 - Math.pow(1 - t, SIG_EASE);
-            sigWrite.style.setProperty('--sig-reveal', (eased * 100).toFixed(2) + '%');
-          }
         });
         ticks.forEach(function (t, i) { t.classList.toggle('on', (i === 0 && o0 >= o1) || (i === 1 && o1 > o0)); });
+        if (p > 0.35) sigLeftBeat = true;
+        if (sigLeftBeat && p < 0.08 && sigDone) {
+          sigStarted = false;
+          sigLeftBeat = false;
+          startSigWrite();
+        }
       }
       function drivePhoto() {
         placeGlow();
@@ -4080,7 +4122,7 @@
           document.documentElement.style.setProperty('--p', p.toFixed(4));
           var e = p * p * (3 - 2 * p);
           var sit = mapPoint(CONFIG.sit.nx, CONFIG.sit.ny);
-          var scale = (useCoverFit() ? 1 : coverScale() * CONFIG.photoStart) * (1 + e * 0.14);
+          var scale = CONFIG.overscan * (1 + e * 0.14);
           var mouse = 1 - e * 0.35;
           var tx = reduce ? 0 : (pointer.x - 0.5) * 12 * mouse;
           var ty = reduce ? 0 : (pointer.y - 0.5) * 8 * mouse;
