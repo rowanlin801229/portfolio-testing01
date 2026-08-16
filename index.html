@@ -3204,6 +3204,14 @@
       #hero.ph-hero .ph-poster,
       #hero.ph-hero .ph-video {
         object-fit: cover;
+        /* Keep the seated figure + laptop screen in the portrait crop. */
+        object-position: 30% 65%;
+      }
+      #hero.ph-hero .ph-beat:last-child {
+        text-align: left;
+      }
+      #hero.ph-hero .ph-beat:last-child .ph-line {
+        text-align: left;
       }
     }
     #ph-screen-glow {
@@ -4086,15 +4094,19 @@
         pointer.y = ev.clientY / innerHeight;
       }, { passive: true });
 
+      function coverFocus() {
+        return innerWidth <= 767 ? { x: 0.30, y: 0.65 } : { x: 0.50, y: 0.50 };
+      }
       function mapPoint(nx, ny) {
         var vw = innerWidth, vh = innerHeight;
         var va = vw / vh;
+        var focus = coverFocus();
         if (va > IMG_ASPECT) {
           var ch = vw / IMG_ASPECT;
-          return { x: nx, y: (ny * ch - (ch - vh) / 2) / vh };
+          return { x: nx, y: (ny * ch - (ch - vh) * focus.y) / vh };
         }
         var cw = vh * IMG_ASPECT;
-        return { x: (nx * cw - (cw - vw) / 2) / vw, y: ny };
+        return { x: (nx * cw - (cw - vw) * focus.x) / vw, y: ny };
       }
       function imageContentRect(img) {
         var r = img.getBoundingClientRect();
@@ -4102,12 +4114,13 @@
         var nh = img.naturalHeight || 752;
         var ia = nw / nh;
         var ea = r.width / Math.max(r.height, 1);
+        var focus = coverFocus();
         if (ea > ia) {
           var h = r.width / ia;
-          return { left: r.left, top: r.top + (r.height - h) / 2, width: r.width, height: h };
+          return { left: r.left, top: r.top - (h - r.height) * focus.y, width: r.width, height: h };
         }
         var w = r.height * ia;
-        return { left: r.left + (r.width - w) / 2, top: r.top, width: w, height: r.height };
+        return { left: r.left - (w - r.width) * focus.x, top: r.top, width: w, height: r.height };
       }
       function placeGlow() {
         if (!glow || !CONFIG.screen || !poster) return;
