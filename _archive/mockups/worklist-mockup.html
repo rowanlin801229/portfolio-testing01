@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Work List Mockup — Option Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --fg:#4a4a48;
+    --accent:#B84545;
+    --muted:rgba(74,74,72,0.78);
+    --line:rgba(74,74,72,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'Space Grotesk', system-ui, sans-serif;
+    padding:0 0 6rem;
+  }
+  .intro{
+    max-width:900px;
+    margin:0 auto;
+    padding:3.5rem 2rem 1rem;
+  }
+  .intro h1{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:2.2rem;
+    margin:0 0 0.5rem;
+  }
+  .intro p{
+    color:var(--muted);
+    font-size:0.9rem;
+    line-height:1.6;
+    max-width:640px;
+  }
+  .option-label{
+    max-width:1400px;
+    margin:3rem auto 0;
+    padding:0 2rem;
+    display:flex;
+    align-items:baseline;
+    gap:1rem;
+    border-top:1px solid var(--line);
+    padding-top:1.5rem;
+  }
+  .option-label .tag{
+    font-size:0.7rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:600;
+  }
+  .option-label .desc{
+    font-size:0.78rem;
+    color:var(--muted);
+  }
+
+  .work-list{
+    list-style:none;
+    margin:1rem auto 0;
+    max-width:1400px;
+    padding:0 2rem;
+  }
+  .work-item{
+    position:relative;
+    border-bottom:1px solid var(--line);
+  }
+  .work-inner{
+    display:grid;
+    align-items:center;
+    gap:1.5rem;
+    padding:1.6rem 0;
+  }
+  .wi-num{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1.0625rem;
+    color:var(--muted);
+  }
+  .wi-name{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-weight:300;
+    letter-spacing:-0.02em;
+    line-height:1;
+    color:var(--fg);
+  }
+  .wi-thumb{
+    background-size:cover;
+    background-position:center;
+    border-radius:2px;
+  }
+  .wi-right{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:0.4rem;
+    text-align:right;
+  }
+  .wi-type{
+    font-size:0.75rem;
+    letter-spacing:0.14em;
+    color:var(--muted);
+    line-height:1.5;
+  }
+  .wi-arrow{
+    font-size:1.2rem;
+    color:var(--accent);
+  }
+
+  /* ---- Size variants ---- */
+
+  /* A: ~45% bigger than Obys (Obys thumb ~230x150) */
+  .opt-a .work-inner{
+    grid-template-columns: 3rem auto 340px 1fr auto;
+    padding:1.9rem 0;
+  }
+  .opt-a .wi-name{ font-size:clamp(2.15rem, 4.2vw, 3.6rem); }
+  .opt-a .wi-thumb{ width:340px; height:210px; }
+
+  /* B: ~90% bigger than Obys, bold/editorial */
+  .opt-b .work-inner{
+    grid-template-columns: 3rem auto 440px 1fr auto;
+    padding:2.4rem 0;
+  }
+  .opt-b .wi-name{ font-size:clamp(2.6rem, 5vw, 4.6rem); }
+  .opt-b .wi-thumb{ width:440px; height:280px; }
+  .opt-b .wi-type{ font-size:0.8rem; }
+
+  /* C: current name size, image scaled to match name height (your current wi-name is already large) */
+  .opt-c .work-inner{
+    grid-template-columns: 3rem auto 380px 1fr auto;
+    padding:2.2rem 0;
+  }
+  .opt-c .wi-name{ font-size:clamp(2.15rem, 4.65vw, 4.15rem); }
+  .opt-c .wi-thumb{ width:380px; height:240px; }
+
+  @media (max-width:1100px){
+    .opt-a .work-inner, .opt-b .work-inner, .opt-c .work-inner{
+      grid-template-columns: 2.5rem auto 1fr;
+    }
+    .opt-a .wi-thumb, .opt-b .wi-thumb, .opt-c .wi-thumb{ display:none; }
+    .wi-right{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="intro">
+    <h1>Work list — thumbnail size options</h1>
+    <p>Same row structure you asked for (index left, name, thumbnail center, tags + arrow right), using your real fonts/colors/images. Three size options below, static thumbnails (always visible, not hover-only). Nothing here touches index.html — this is a standalone comparison file.</p>
+  </div>
+
+  <!-- OPTION A -->
+  <div class="option-label">
+    <span class="tag">Option A</span>
+    <span class="desc">~45% bigger than Obys · thumbnail 340×210 · name stays close to current size</span>
+  </div>
+  <ul class="work-list opt-a">
+    <li class="work-item">
+      <div class="work-inner">
+        <span class="wi-num">01</span>
+        <span class="wi-name">FainTV</span>
+        <div class="wi-thumb" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg')"></div>
+        <div class="wi-right">
+          <span class="wi-type">Cross-screen · Mobile<br>Tablet · Web · TV</span>
+          <span class="wi-arrow">→</span>
+        </div>
+      </div>
+    </li>
+    <li class="work-item">
+      <div class="work-inner">
+        <span class="wi-num">02</span>
+        <span class="wi-name">Visual Cues Study</span>
+        <div class="wi-thumb" style="background-image:url('images/vcue/vcue-banner.jpg'); background-color:#0e0e0d;"></div>
+        <div class="wi-right">
+          <span class="wi-type">UX Research<br>Mixed Methods</span>
+          <span class="wi-arrow">→</span>
+        </div>
+      </div>
+    </li>
+    <li class="work-item">
+      <div class="work-inner">
+        <span class="wi-num">03</span>
+        <span class="wi-name">Health GeneTech</span>
+        <div class="wi-thumb" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg')"></div>
+        <div class="wi-right">
+          <span class="wi-type">Responsive Web<br>Branding</span>
+          <span class="wi-arrow">→</span>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <!-- OPTION B -->
+  <div class="option-label">
+    <span class="tag">Option B</span>
+    <span class="desc">~90% bigger than Obys · thumbnail 440×280 · name pushed larger too — bold/editorial</span>
+  </div>
+  <ul class="work-list opt-b">
+    <li class="work-item">
+      <div class="work-inner">
+        <span class="wi-num">01</span>
+        <span class="wi-name">FainTV</span>
+        <div class="wi-thumb" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg')"></div>
+        <div class="wi-right">
+          <span class="wi-type">Cross-screen · Mobile<br>Tablet · Web · TV</span>
+          <span class="wi-arrow">→</span>
+        </div>
+      </div>
+    </li>
+    <li class="work-item">
+      <div class="work-inner">
+        <span class="wi-num">02</span>
+        <span class="wi-name">Visual Cues Study</span>
+        <div class="wi-thumb" style="background-image:url('images/vcue/vcue-banner.jpg'); background-color:#0e0e0d;"></div>
+        <div class="wi-right">
+          <span class="wi-type">UX Research<br>Mixed Methods</span>
+          <span class="wi-arrow">→</span>
+        </div>
+      </div>
+    </li>
+    <li class="work-item">
+      <div class="work-inner">
+        <span class="wi-num">03</span>
+        <span class="wi-name">Health GeneTech</span>
+        <div class="wi-thumb" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg')"></div>
+        <div class="wi-right">
+          <span class="wi-type">Responsive Web<br>Branding</span>
+          <span class="wi-arrow">→</span>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <!-- OPTION C -->
+  <div class="option-label">
+    <span class="tag">Option C</span>
+    <span class="desc">Name stays exactly your current size (clamp 2.15–4.15rem) · thumbnail 380×240 scaled to match name height</span>
+  </div>
+  <ul class="work-list opt-c">
+    <li class="work-item">
+      <div class="work-inner">
+        <span class="wi-num">01</span>
+        <span class="wi-name">FainTV</span>
+        <div class="wi-thumb" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg')"></div>
+        <div class="wi-right">
+          <span class="wi-type">Cross-screen · Mobile<br>Tablet · Web · TV</span>
+          <span class="wi-arrow">→</span>
+        </div>
+      </div>
+    </li>
+    <li class="work-item">
+      <div class="work-inner">
+        <span class="wi-num">02</span>
+        <span class="wi-name">Visual Cues Study</span>
+        <div class="wi-thumb" style="background-image:url('images/vcue/vcue-banner.jpg'); background-color:#0e0e0d;"></div>
+        <div class="wi-right">
+          <span class="wi-type">UX Research<br>Mixed Methods</span>
+          <span class="wi-arrow">→</span>
+        </div>
+      </div>
+    </li>
+    <li class="work-item">
+      <div class="work-inner">
+        <span class="wi-num">03</span>
+        <span class="wi-name">Health GeneTech</span>
+        <div class="wi-thumb" style="background-image:url('https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg')"></div>
+        <div class="wi-right">
+          <span class="wi-type">Responsive Web<br>Branding</span>
+          <span class="wi-arrow">→</span>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+</body>
+</html>

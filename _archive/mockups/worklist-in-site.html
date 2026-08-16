@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rowan Lin — Work list in site (preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --fg:#4a4a48;
+    --accent:#B84545;
+    --muted:rgba(74,74,72,0.78);
+    --muted-soft:rgba(74,74,72,0.4);
+    --line:rgba(74,74,72,0.14);
+    --card-w:300px;
+    --card-h:184px;
+    --card-gap:52px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'Space Grotesk', system-ui, sans-serif;
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:inherit; text-decoration:none; }
+  .display{
+    font-family:'Cormorant Garamond', Georgia, serif;
+    font-style:italic;
+    font-weight:400;
+    letter-spacing:-0.02em;
+  }
+
+  /* ── Nav ── */
+  .site-nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:50;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:1.1rem 5vw;
+    background:rgba(255,255,255,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid transparent;
+  }
+  .site-nav .logo{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1.35rem;
+  }
+  .site-nav ul{
+    display:flex;
+    gap:1.5rem;
+    list-style:none;
+    font-size:0.78rem;
+    letter-spacing:0.12em;
+  }
+  .site-nav a:hover{ color:var(--accent); }
+  .banner{
+    position:fixed;
+    top:3.4rem; left:0; right:0;
+    z-index:49;
+    background:#1e1e1c;
+    color:#f5f5f2;
+    font-size:0.72rem;
+    letter-spacing:0.08em;
+    text-align:center;
+    padding:0.45rem 1rem;
+  }
+  .banner a{ color:#f0c4c4; text-decoration:underline; }
+
+  /* ── Sections shell ── */
+  .sec-label{
+    font-size:0.72rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:0.75rem;
+  }
+  .sec-desc{
+    font-size:0.95rem;
+    line-height:1.7;
+    color:var(--muted);
+    max-width:36rem;
+    margin-bottom:2rem;
+  }
+
+  /* ── HERO ── */
+  #hero{
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:8rem 5vw 12vh;
+    border-bottom:1px solid var(--line);
+  }
+  #hero .kicker{
+    font-size:0.75rem;
+    letter-spacing:0.18em;
+    color:var(--muted);
+    margin-bottom:1.25rem;
+  }
+  #hero h1{
+    font-size:clamp(2.8rem, 7vw, 5.2rem);
+    line-height:1.05;
+    margin-bottom:1.25rem;
+  }
+  #hero h1 em{ color:var(--accent); font-style:italic; }
+  #hero p{
+    max-width:28rem;
+    font-size:1rem;
+    line-height:1.7;
+    color:var(--muted);
+  }
+  .scroll-cue{
+    margin-top:3rem;
+    font-size:0.7rem;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--muted-soft);
+  }
+
+  /* ── WORK (desktop Obys pin) ── */
+  #work{
+    border-top:none;
+  }
+  #work .work-head{
+    padding:8vh 5vw 2rem;
+  }
+  .work-pin-wrap{
+    position:relative;
+    height:600vh;
+  }
+  .work-stage{
+    position:sticky;
+    top:0;
+    height:100vh;
+    height:100dvh;
+    width:100%;
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:minmax(12rem,1fr) var(--card-w) minmax(12rem,1fr);
+    column-gap:clamp(2rem,5vw,4.5rem);
+    max-width:1500px;
+    margin:0 auto;
+    padding:0 clamp(2.5rem,6vw,5rem);
+  }
+  .wp-list-wrap{
+    position:relative;
+    height:100%;
+    justify-self:start;
+    display:flex;
+    align-items:center;
+    max-width:22rem;
+    width:100%;
+  }
+  .wp-list{
+    display:flex;
+    flex-direction:column;
+    gap:0.4rem;
+    text-align:left;
+    will-change:transform;
+  }
+  .wp-name{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:1.35rem;
+    line-height:1.45;
+    color:var(--muted-soft);
+    opacity:0.38;
+    transition:color 0.3s ease, font-size 0.3s ease, opacity 0.3s ease;
+  }
+  .wp-name .num{ font-size:0.85em; margin-right:0.5rem; }
+  .wp-name.is-focus{
+    font-size:clamp(1.95rem, 3.1vw, 2.55rem);
+    color:var(--fg);
+    opacity:1;
+  }
+  .wp-name.is-focus .num{ color:var(--accent); }
+
+  .wp-rail{
+    position:relative;
+    width:var(--card-w);
+    height:100%;
+    justify-self:center;
+  }
+  .wp-card{
+    position:absolute;
+    left:0;
+    width:var(--card-w);
+    height:var(--card-h);
+    transform-origin:50% 50%;
+    will-change:top, opacity, transform;
+  }
+  .wp-card .inner{
+    width:100%;
+    height:100%;
+    border-radius:2px;
+    overflow:hidden;
+    background:#ececec;
+    box-shadow:0 14px 40px rgba(0,0,0,0.1);
+  }
+  .wp-card img{
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .wp-card.is-focus{
+    z-index:5;
+    opacity:1 !important;
+    transform:scale(1) !important;
+  }
+  .wp-card.is-focus .inner{ box-shadow:0 24px 60px rgba(0,0,0,0.16); }
+
+  .wp-right-wrap{
+    position:relative;
+    height:100%;
+    justify-self:end;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    width:100%;
+    max-width:18rem;
+  }
+  .wp-right{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content:flex-end;
+    gap:1rem;
+  }
+  .wp-type{
+    font-size:0.95rem;
+    letter-spacing:0.12em;
+    line-height:1.55;
+    color:var(--muted);
+    text-align:right;
+  }
+  .wp-arrow{
+    flex-shrink:0;
+    color:var(--accent);
+    font-size:1.55rem;
+    line-height:1;
+  }
+
+  /* Mobile classic list */
+  .work-list-mobile{
+    display:none;
+    list-style:none;
+    margin:0 auto;
+    padding:0 5vw 4rem;
+    max-width:720px;
+  }
+  .work-list-mobile .work-item{ border-bottom:1px solid var(--line); }
+  /* Old list: number · title · type · arrow — NO thumbnail */
+  .work-list-mobile .work-inner{
+    display:grid;
+    grid-template-columns:2.5rem 1fr auto;
+    gap:0.35rem 1rem;
+    padding:1.75rem 0;
+    align-items:center;
+  }
+  .work-list-mobile .wi-num{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1rem;
+    color:var(--muted);
+    align-self:start;
+    padding-top:0.35rem;
+  }
+  .work-list-mobile .wi-text{ min-width:0; }
+  .work-list-mobile .wi-name{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(1.75rem, 7vw, 2.4rem);
+    line-height:1.1;
+    letter-spacing:-0.02em;
+    display:block;
+  }
+  .work-list-mobile .wi-type{
+    display:block;
+    margin-top:0.45rem;
+    font-size:0.78rem;
+    letter-spacing:0.04em;
+    line-height:1.45;
+    color:var(--muted);
+  }
+  .work-list-mobile .wi-arrow{
+    color:var(--accent);
+    font-size:1.25rem;
+    align-self:center;
+  }
+  .work-list-mobile .wi-thumb{ display:none !important; }
+
+  /* ── ABOUT ── */
+  #about{
+    padding:12vh 5vw;
+    border-top:1px solid var(--line);
+    display:grid;
+    grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
+    gap:3rem 4vw;
+    align-items:center;
+  }
+  #about .about-photo{
+    width:100%;
+    max-width:420px;
+    aspect-ratio:4/5;
+    object-fit:cover;
+    border-radius:2px;
+    background:#eee;
+  }
+  #about h2.headline{
+    font-size:clamp(2rem, 4vw, 3.2rem);
+    line-height:1.15;
+    margin:0.5rem 0 1.25rem;
+  }
+  #about p{
+    font-size:1rem;
+    line-height:1.75;
+    color:var(--muted);
+    max-width:32rem;
+  }
+
+  /* ── IMPACT strip ── */
+  #impact{
+    padding:8vh 5vw;
+    border-top:1px solid var(--line);
+    background:#fafaf8;
+  }
+  .impact-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:2rem;
+    margin-top:2rem;
+  }
+  .stat-val{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:clamp(2rem, 3.5vw, 2.8rem);
+    display:block;
+    margin-bottom:0.35rem;
+  }
+  .stat-lbl{
+    font-size:0.75rem;
+    letter-spacing:0.1em;
+    color:var(--muted);
+    line-height:1.45;
+  }
+
+  /* ── CONTACT ── */
+  #contact{
+    padding:14vh 5vw 16vh;
+    border-top:1px solid var(--line);
+  }
+  #contact .ct-headline{
+    font-size:clamp(2.4rem, 6vw, 4.5rem);
+    line-height:1.05;
+    margin:1rem 0 2rem;
+  }
+  #contact .ct-headline em{ color:var(--accent); }
+  .ct-links{
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    font-size:0.95rem;
+    letter-spacing:0.12em;
+  }
+  .ct-sep{ width:1px; height:1rem; background:var(--line); }
+  .ct-link:hover{ color:var(--accent); }
+
+  .site-foot{
+    padding:1.5rem 5vw 2.5rem;
+    border-top:1px solid var(--line);
+    font-size:0.72rem;
+    letter-spacing:0.1em;
+    color:var(--muted-soft);
+    display:flex;
+    justify-content:space-between;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+
+  @media (max-width:900px){
+    .site-nav ul{ display:none; }
+    #hero{ padding:7rem 6vw 10vh; min-height:88vh; }
+    #about{ grid-template-columns:1fr; }
+    .impact-grid{ grid-template-columns:1fr 1fr; }
+    .work-pin-wrap{ display:none !important; }
+    .work-list-mobile{ display:block; }
+  }
+  @media (min-width:901px){
+    .work-list-mobile{ display:none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="site-nav" aria-label="Primary">
+    <a class="logo" href="#hero">Rowan Lin</a>
+    <ul>
+      <li><a href="#work">Projects</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#impact">Impact</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="banner">
+    PREVIEW — Obys work list inside site flow ·
+    <a href="index.html">← back to index.html</a> ·
+    <a href="worklist-mockup-motion.html">standalone mockup</a>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero" aria-label="Introduction">
+    <p class="kicker">UI / UX Designer · London</p>
+    <h1 class="display">Designing calm<br>digital <em>products</em></h1>
+    <p>Portfolio preview. Desktop: pin-scroll with center thumbnails. Mobile: classic list (title + type only, no thumbnails).</p>
+    <p class="scroll-cue">Scroll</p>
+  </section>
+
+  <!-- WORK -->
+  <section id="work">
+    <div class="work-head">
+      <h2 class="sec-label">Projects</h2>
+      <p class="sec-desc">Featured work across cross-screen products, wearable interaction, and responsive systems.</p>
+    </div>
+
+    <!-- Desktop Obys pin -->
+    <div class="work-pin-wrap" id="workPin">
+      <div class="work-stage" id="workStage">
+        <div class="wp-list-wrap">
+          <div class="wp-list" id="wpList"></div>
+        </div>
+        <div class="wp-rail" id="wpRail"></div>
+        <div class="wp-right-wrap">
+          <div class="wp-right">
+            <div class="wp-type" id="wpType"></div>
+            <span class="wp-arrow">→</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile classic list -->
+    <ul class="work-list-mobile" id="workListMobile" aria-label="Projects"></ul>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div>
+      <img class="about-photo" src="./images/about-rowan.jpg" alt="Rowan Lin" onerror="this.style.background='#ddd';this.removeAttribute('src')">
+    </div>
+    <div>
+      <h2 class="sec-label">About</h2>
+      <h2 class="headline display">Building clarity<br>through craft</h2>
+      <p>Placeholder about block so you can feel how Projects sits between Hero and About. Swap for your real copy later when merging into index.html.</p>
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section id="impact">
+    <h2 class="sec-label">Impact</h2>
+    <div class="impact-grid">
+      <div>
+        <span class="stat-val">6+</span>
+        <span class="stat-lbl">Shipped product surfaces</span>
+      </div>
+      <div>
+        <span class="stat-val">30→80%</span>
+        <span class="stat-lbl">Task completion (voice UI)</span>
+      </div>
+      <div>
+        <span class="stat-val">UK · TW</span>
+        <span class="stat-lbl">Cross-market practice</span>
+      </div>
+      <div>
+        <span class="stat-val">UI/UX</span>
+        <span class="stat-lbl">Research → interface</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <h2 class="sec-label">Let's Connect</h2>
+    <h2 class="ct-headline display">START A<br><em>MISSION</em><br>TOGETHER.</h2>
+    <div class="ct-links">
+      <a class="ct-link" href="mailto:rowanlin801229@gmail.com">Email</a>
+      <span class="ct-sep"></span>
+      <a class="ct-link" href="https://www.linkedin.com/in/rowanlin1229/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </section>
+
+  <div class="site-foot">
+    <span>Preview only — not production index.html</span>
+    <span>© Rowan Lin</span>
+  </div>
+
+<script>
+(function () {
+  const CARD_H = 184;
+  const CARD_GAP = 52;
+  const STEP = CARD_H + CARD_GAP;
+
+  const projects = [
+    {
+      name: 'FainTV',
+      type: 'Cross-screen · Mobile<br>Tablet · Web · TV',
+      href: 'faintv.html',
+      img: 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/6aec79a7-2e69-4843-899e-4c15bd551b17/1.1+loading+page.jpg'
+    },
+    {
+      name: 'Visual Cues Study',
+      type: 'UX Research<br>Mixed Methods',
+      href: 'vcue.html',
+      img: 'images/vcue/vcue-banner.jpg'
+    },
+    {
+      name: 'Health GeneTech',
+      type: 'Responsive Web<br>Branding',
+      href: 'genebook.html',
+      img: 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/26e8690c-4bb6-4fe0-9ffe-77550d479b06/2.1+loading+page.jpg'
+    },
+    {
+      name: 'Training for Life',
+      type: 'Mobile · Wearable',
+      href: 'tfl.html',
+      img: 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/b37447d1-fc78-41b5-812e-6c7127c5a7bf/4.1+-+workout+landing+page.jpg'
+    },
+    {
+      name: 'Ai Cun Cell',
+      type: 'Mobile · Healthcare',
+      href: 'aicuncell.html',
+      img: 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a2c6df5c-28b9-480b-a51f-171dc085410b/1.1+landing+page.jpg'
+    },
+    {
+      name: 'Marilyn',
+      type: 'Responsive Web<br>Campaign',
+      href: 'marilyn.html',
+      img: 'https://images.squarespace-cdn.com/content/v1/69454dff3cd6134ff5e7f86a/a7f85fc8-9e9d-48cc-8b65-d1ea109acdd0/banner.png'
+    }
+  ];
+
+  const n = projects.length;
+  const wrap = document.getElementById('workPin');
+  const stage = document.getElementById('workStage');
+  const list = document.getElementById('wpList');
+  const rail = document.getElementById('wpRail');
+  const typeEl = document.getElementById('wpType');
+  const mobileList = document.getElementById('workListMobile');
+  const isMobile = () => window.matchMedia('(max-width: 900px)').matches;
+
+  const cards = [];
+  const names = [];
+
+  projects.forEach((p, i) => {
+    const nameEl = document.createElement('div');
+    nameEl.className = 'wp-name';
+    nameEl.innerHTML =
+      '<span class="num">' + String(i + 1).padStart(2, '0') + '</span>' + p.name;
+    nameEl.style.cursor = 'pointer';
+    nameEl.addEventListener('click', () => { location.href = p.href; });
+    list.appendChild(nameEl);
+    names.push(nameEl);
+
+    const card = document.createElement('div');
+    card.className = 'wp-card';
+    card.innerHTML =
+      '<div class="inner"><img src="' + p.img + '" alt="' + p.name + '" draggable="false"></div>';
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => { location.href = p.href; });
+    rail.appendChild(card);
+    cards.push(card);
+
+    const li = document.createElement('li');
+    li.className = 'work-item';
+    const typeOneLine = p.type.replace(/<br\s*\/?>/gi, ' · ');
+    li.innerHTML =
+      '<div class="work-inner">' +
+        '<span class="wi-num">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<div class="wi-text">' +
+          '<span class="wi-name">' + p.name + '</span>' +
+          '<span class="wi-type">' + typeOneLine + '</span>' +
+        '</div>' +
+        '<span class="wi-arrow">→</span>' +
+      '</div>';
+    li.style.cursor = 'pointer';
+    li.addEventListener('click', () => { location.href = p.href; });
+    mobileList.appendChild(li);
+  });
+
+  function setRunway() {
+    if (isMobile()) {
+      wrap.style.height = 'auto';
+      return;
+    }
+    wrap.style.height = n * 100 + 'vh';
+  }
+
+  function progress() {
+    const r = wrap.getBoundingClientRect();
+    const scrollable = r.height - window.innerHeight;
+    if (scrollable <= 1) return 0;
+    return Math.max(0, Math.min(1, -r.top / scrollable));
+  }
+
+  let lastIdx = -1;
+  let raf = 0;
+
+  function frame() {
+    raf = 0;
+    if (isMobile()) {
+      list.style.transform = '';
+      return;
+    }
+
+    const stageRect = stage.getBoundingClientRect();
+    const railRect = rail.getBoundingClientRect();
+    const midY = stageRect.top + stageRect.height * 0.5;
+    const t = progress() * (n - 1);
+    const idx = Math.max(0, Math.min(n - 1, Math.round(t)));
+
+    cards.forEach((card, i) => {
+      const centerY = midY + (i - t) * STEP;
+      card.style.top = (centerY - CARD_H * 0.5 - railRect.top) + 'px';
+      const dist = Math.abs(i - t);
+      const isFocus = i === idx;
+      card.classList.toggle('is-focus', isFocus);
+      if (isFocus) {
+        card.style.opacity = '1';
+        card.style.transform = 'scale(1)';
+      } else {
+        card.style.opacity = String(Math.max(0.1, 0.3 - Math.max(0, dist - 0.45) * 0.12));
+        card.style.transform = 'scale(0.86)';
+      }
+    });
+
+    names.forEach((el, i) => {
+      el.classList.toggle('is-focus', i === idx);
+      el.style.opacity = i === idx
+        ? '1'
+        : String(Math.max(0.15, 0.42 - Math.abs(i - t) * 0.1));
+    });
+
+    const focusName = names[idx];
+    const nameRect = focusName.getBoundingClientRect();
+    const nameCenter = nameRect.top + nameRect.height * 0.5;
+    const prev = list.style.transform;
+    let prevY = 0;
+    if (prev && prev.includes('translateY')) {
+      const m = prev.match(/translateY\(([-\d.]+)px\)/);
+      if (m) prevY = parseFloat(m[1]) || 0;
+    }
+    list.style.transform = 'translateY(' + (prevY + (midY - nameCenter)) + 'px)';
+
+    if (idx !== lastIdx) {
+      lastIdx = idx;
+      typeEl.innerHTML = projects[idx].type;
+    }
+  }
+
+  function onScroll() {
+    if (!raf) raf = requestAnimationFrame(frame);
+  }
+
+  setRunway();
+  typeEl.innerHTML = projects[0].type;
+  names[0].classList.add('is-focus');
+  cards[0].classList.add('is-focus');
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    list.style.transform = 'translateY(0px)';
+    setRunway();
+    onScroll();
+  }, { passive: true });
+
+  rail.querySelectorAll('img').forEach((img) => {
+    if (!img.complete) img.addEventListener('load', onScroll, { once: true });
+  });
+
+  requestAnimationFrame(() => {
+    setRunway();
+    frame();
+    requestAnimationFrame(frame);
+  });
+})();
+</script>
+</body>
+</html>

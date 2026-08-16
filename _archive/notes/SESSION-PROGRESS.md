@@ -20,8 +20,11 @@
 |------|------|
 | **正式作品集（看這個）** | `/Users/linyuxian/Desktop/portfolio testing01/index.html` |
 | **Hero 實驗原型** | `/Users/linyuxian/Desktop/新作品集/portfolio hero section/rowan-hero-depth.html` |
-| 母片（烤進人物） | `portfolio testing01/images/hero/hero-color-seated.jpg`（從實驗夾 `hero/hero-color-seated.jpg` 複製） |
-| 簽名 | `portfolio testing01/images/hero/signature.png` |
+| 母片（烤進人物） | `images/hero/hero-color-seated.jpg` |
+| 簽名 | `images/hero/signature.png` |
+| Kling 無字靜幀 | `images/hero/hero-still-no-text.jpg`、`hero-still-16x9-no-text.jpg` |
+| 沒有人物的原風景 | `images/hero/hero-color-original.jpg`（備份，網站不讀） |
+| 對照說明 | `images/hero/README.md` |
 
 舊 hero（名字 curtain、桌面 photo card、mobile marquee）已從 `index.html` 的 markup 拿掉。舊 CSS／JS 還留在檔裡，但找不到 `.hero-desktop-shell` 就會自己 return，不要當現況。
 
