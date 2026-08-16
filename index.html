@@ -3286,6 +3286,8 @@
       line-height: .92;
       letter-spacing: -.01em;
       color: var(--ph-paper-dim);
+      opacity: 0;
+      transform: translateY(14px);
     }
     #hero.ph-hero .ph-title em { font-style: italic; }
     #hero.ph-hero .ph-title .ph-sep {
@@ -3398,6 +3400,10 @@
         transform: none !important;
       }
       #hero.ph-hero .ph-plate { transform: none !important; }
+      #hero.ph-hero .ph-title {
+        opacity: 1 !important;
+        transform: none !important;
+      }
       #hero.ph-hero .ph-sig-mask {
         width: 100%;
       }
@@ -3961,6 +3967,7 @@
       var sigWrite = document.getElementById('ph-sigWrite');
       var sigMask = document.getElementById('ph-sigMask');
       var sigImg = sigWrite ? sigWrite.querySelector('img') : null;
+      var titleEl = document.getElementById('ph-title');
       var adaptWord = document.getElementById('ph-adaptWord');
       var scaleWord = document.getElementById('ph-scaleWord');
       var N = beats.length;
@@ -3968,7 +3975,7 @@
       var SIG_DURATION = 2600;
       var sigStarted = false;
       var sigDone = false;
-      var sigLeftBeat = false;
+      var sigRaf = 0;
       var IMG_ASPECT = 1376 / 752;
       var pointer = { x: 0.5, y: 0.5 };
 
@@ -3995,6 +4002,14 @@
         sigMask.style.width = p.toFixed(2) + '%';
       }
 
+      function resetSig() {
+        sigStarted = false;
+        sigDone = false;
+        if (sigRaf) cancelAnimationFrame(sigRaf);
+        sigRaf = 0;
+        setSigReveal(0);
+      }
+
       function startSigWrite() {
         if (!sigWrite || !sigMask || sigStarted) return;
         sigStarted = true;
@@ -4003,45 +4018,24 @@
         setSigReveal(0);
         var t0 = performance.now();
         function frame(now) {
+          if (!sigStarted) return;
           var t = Math.max(0, Math.min(1, (now - t0) / SIG_DURATION));
           var eased = 1 - Math.pow(1 - t, SIG_EASE);
           setSigReveal(eased * 100);
-          if (t < 1) requestAnimationFrame(frame);
+          if (t < 1) sigRaf = requestAnimationFrame(frame);
           else {
             setSigReveal(100);
             sigDone = true;
           }
         }
-        requestAnimationFrame(frame);
+        sigRaf = requestAnimationFrame(frame);
       }
 
-      function whenMainVisible(fn) {
-        var main = document.getElementById('main');
-        /* Wait for #main fade (0.3s delay + 0.9s opacity) so the first stroke is visible. */
-        function go() { setTimeout(fn, 1250); }
-        if (!main || main.classList.contains('visible')) {
-          go();
-          return;
-        }
-        var obs = new MutationObserver(function () {
-          if (main.classList.contains('visible')) {
-            obs.disconnect();
-            go();
-          }
-        });
-        obs.observe(main, { attributes: true, attributeFilter: ['class'] });
+      function titleProgress(p) {
+        if (p < 0.12) return 0;
+        if (p < 0.22) return (p - 0.12) / 0.10;
+        return 1;
       }
-
-      function whenSigReady(fn) {
-        if (!sigImg || sigImg.complete) {
-          fn();
-          return;
-        }
-        sigImg.addEventListener('load', fn, { once: true });
-        sigImg.addEventListener('error', fn, { once: true });
-      }
-
-      whenMainVisible(function () { whenSigReady(startSigWrite); });
 
       addEventListener('pointermove', function (ev) {
         pointer.x = ev.clientX / innerWidth;
@@ -4107,12 +4101,13 @@
           b.setAttribute('aria-hidden', o > 0.5 ? 'false' : 'true');
         });
         ticks.forEach(function (t, i) { t.classList.toggle('on', (i === 0 && o0 >= o1) || (i === 1 && o1 > o0)); });
-        if (p > 0.35) sigLeftBeat = true;
-        if (sigLeftBeat && p < 0.08 && sigDone) {
-          sigStarted = false;
-          sigLeftBeat = false;
-          startSigWrite();
+        var tTitle = titleProgress(p);
+        if (titleEl) {
+          titleEl.style.opacity = tTitle.toFixed(3);
+          titleEl.style.transform = 'translateY(' + ((1 - tTitle) * 14).toFixed(1) + 'px)';
         }
+        if (tTitle >= 0.98 && o0 > 0.55) startSigWrite();
+        if (tTitle < 0.4) resetSig();
       }
       function drivePhoto() {
         placeGlow();
