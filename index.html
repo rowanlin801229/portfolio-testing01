@@ -3185,6 +3185,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: 50% 50%;
       display: block;
     }
     #hero.ph-hero .ph-video {
@@ -4094,8 +4095,9 @@
         pointer.y = ev.clientY / innerHeight;
       }, { passive: true });
 
+      var mqPhone = matchMedia('(max-width: 767px)');
       function coverFocus() {
-        return innerWidth <= 767 ? { x: 0.30, y: 0.65 } : { x: 0.50, y: 0.50 };
+        return mqPhone.matches ? { x: 0.30, y: 0.65 } : { x: 0.50, y: 0.50 };
       }
       function mapPoint(nx, ny) {
         var vw = innerWidth, vh = innerHeight;
