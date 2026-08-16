@@ -6,6 +6,7 @@
 |------|------|
 | `hero-color-seated.jpg` | **靜態母片**。風景 + 坐下的人物；影片載入前／減少動態時用。 |
 | `hero-clouds.mp4` | **平面循環背景**（Kling 426，正放+倒放 8 秒，避免接縫跳一下）。不是 mesh。 |
+| `kling/` | Kling **原檔備份**。現在在用的是 `kling/2026-08-17-lower-clouds-chosen.mp4`。 |
 | `signature.png` | **林昱嫻簽名**，疊在 Design·Adapt·Scale 底下。 |
 | `hero-still-no-text.jpg` | 同一張母片、沒有網頁字。給 Kling／之後當影片底。 |
 | `hero-still-16x9-no-text.jpg` | 上圖的 16:9 裁切，比較接近桌面看到的框。 |
