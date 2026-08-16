@@ -3276,6 +3276,37 @@
       text-shadow: 0 2px 24px rgba(0,0,0,.55);
     }
     #hero.ph-hero .ph-beat:first-child { opacity: 1; }
+    #hero.ph-hero .ph-scroll-hint {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      z-index: 11;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      transform: translateX(-50%);
+      color: var(--ph-paper-dim);
+      opacity: calc(1 - var(--p, 0) * 24);
+      pointer-events: none;
+    }
+    #hero.ph-hero .ph-scroll-hint-label {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 9px;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    #hero.ph-hero .ph-scroll-hint svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+      animation: ph-scroll-bounce 1.8s ease-in-out infinite;
+    }
+    @keyframes ph-scroll-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
     #hero.ph-hero .ph-eyebrow {
       font-family: 'Space Grotesk', system-ui, sans-serif;
       font-size: 10px;
@@ -3432,6 +3463,7 @@
       #hero.ph-hero .ph-sig-mask {
         width: 100%;
       }
+      #hero.ph-hero .ph-scroll-hint { display: none; }
     }
 
   </style>
@@ -3575,6 +3607,10 @@
               </span>
             </div>
           </div>
+        </div>
+        <div class="ph-scroll-hint" id="ph-scrollHint" aria-hidden="true">
+          <span class="ph-scroll-hint-label">Scroll Down</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
         </div>
       </div>
     </section>
