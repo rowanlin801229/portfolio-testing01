@@ -3034,6 +3034,15 @@
       width: 1.25rem;
       cursor: pointer;
       touch-action: none;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+    .scroll-progress.is-on {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
     }
     .scroll-progress__track {
       position: absolute;
@@ -6904,9 +6913,25 @@
         return label;
       }
 
+      const workEl = document.getElementById('work');
+      const heroEl = document.getElementById('hero');
+
+      function pastHero() {
+        if (workEl) return workEl.getBoundingClientRect().top <= window.innerHeight * 0.92;
+        if (heroEl) return heroEl.getBoundingClientRect().bottom <= window.innerHeight;
+        return true;
+      }
+
       function paint() {
         raf = 0;
         if (!mqDesktop.matches) return;
+        const show = pastHero();
+        root.classList.toggle('is-on', show);
+        root.setAttribute('aria-hidden', show ? 'false' : 'true');
+        if (!show) {
+          root.classList.remove('is-label-on');
+          return;
+        }
         const p = progress();
         const pct = Math.round(p * 100);
         const label = currentLabel();
@@ -6925,7 +6950,7 @@
 
       function requestPaint() {
         if (!mqDesktop.matches) return;
-        revealLabel();
+        if (pastHero()) revealLabel();
         if (raf) return;
         raf = requestAnimationFrame(paint);
       }
