@@ -793,10 +793,10 @@
       left: 50%;
       bottom: 1.35rem;
       display: flex;
-      height: 2.25rem;
-      align-items: flex-end;
+      height: 2.85rem;
+      align-items: center;
       justify-content: center;
-      gap: 0.32rem;
+      gap: 0.2rem;
       transform: translateX(-50%);
       opacity: 0;
       pointer-events: none;
@@ -807,12 +807,13 @@
     }
     .voice-demo__bar {
       display: block;
-      width: 0.28rem;
-      height: 100%;
+      width: 0.22rem;
+      height: var(--h, 40%);
       border-radius: 999px;
       background: #ffd100;
-      transform: scaleY(0.28);
-      transform-origin: center bottom;
+      transform: scaleY(1);
+      transform-origin: center center;
+      will-change: transform;
     }
     .voice-demo__controls {
       display: flex;
@@ -1757,11 +1758,21 @@
       <img class="voice-demo__img" src="images/faintv-voice-home-screen.webp" alt="TV home screen" width="1280" height="718" loading="lazy" decoding="async">
       <img class="voice-demo__img voice-demo__img--listen" src="images/faintv-voice-search-active.webp" alt="" width="1280" height="718" loading="lazy" decoding="async">
       <div class="voice-demo__wave" data-voice-bars aria-hidden="true">
-        <span class="voice-demo__bar"></span>
-        <span class="voice-demo__bar"></span>
-        <span class="voice-demo__bar"></span>
-        <span class="voice-demo__bar"></span>
-        <span class="voice-demo__bar"></span>
+        <span class="voice-demo__bar" style="--h:18%"></span>
+        <span class="voice-demo__bar" style="--h:32%"></span>
+        <span class="voice-demo__bar" style="--h:52%"></span>
+        <span class="voice-demo__bar" style="--h:72%"></span>
+        <span class="voice-demo__bar" style="--h:42%"></span>
+        <span class="voice-demo__bar" style="--h:26%"></span>
+        <span class="voice-demo__bar" style="--h:20%"></span>
+        <span class="voice-demo__bar" style="--h:38%"></span>
+        <span class="voice-demo__bar" style="--h:62%"></span>
+        <span class="voice-demo__bar" style="--h:78%"></span>
+        <span class="voice-demo__bar" style="--h:100%"></span>
+        <span class="voice-demo__bar" style="--h:72%"></span>
+        <span class="voice-demo__bar" style="--h:42%"></span>
+        <span class="voice-demo__bar" style="--h:34%"></span>
+        <span class="voice-demo__bar" style="--h:22%"></span>
       </div>
     </div>
     <div class="voice-demo__controls">
@@ -2039,9 +2050,6 @@
     let barsRaf = 0;
     let listenTimer = 0;
     let pointerId = null;
-    const barState = bars.map(function () {
-      return { h: 0.28, t: 0.28, next: 0 };
-    });
 
     function setProgress(p) {
       progress = Math.max(0, Math.min(1, p));
@@ -2063,14 +2071,15 @@
     }
     function startBars() {
       stopBars();
+      if (reduce.matches) return;
+      const t0 = performance.now();
       function tick(now) {
-        barState.forEach(function (s, i) {
-          if (now >= s.next) {
-            s.t = 0.18 + Math.random() * 0.82;
-            s.next = now + 70 + Math.random() * 120;
-          }
-          s.h += (s.t - s.h) * 0.28;
-          if (bars[i]) bars[i].style.transform = 'scaleY(' + s.h + ')';
+        const t = (now - t0) / 1000;
+        bars.forEach(function (bar, i) {
+          const a = Math.sin(t * 7.4 + i * 0.62);
+          const b = Math.sin(t * 11.8 + i * 0.33);
+          const s = 0.58 + 0.42 * (0.62 * a + 0.38 * b);
+          bar.style.transform = 'scaleY(' + Math.max(0.38, s).toFixed(3) + ')';
         });
         barsRaf = requestAnimationFrame(tick);
       }
@@ -2079,7 +2088,7 @@
     function stopBars() {
       if (barsRaf) cancelAnimationFrame(barsRaf);
       barsRaf = 0;
-      bars.forEach(function (bar) { bar.style.transform = 'scaleY(0.28)'; });
+      bars.forEach(function (bar) { bar.style.transform = 'scaleY(1)'; });
     }
     function cancelFill() {
       if (fillRaf) cancelAnimationFrame(fillRaf);
