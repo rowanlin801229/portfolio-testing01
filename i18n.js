@@ -170,7 +170,7 @@
   }
 
   /* Bump this when translations.json changes so browsers pick up new keys. */
-  fetch('translations.json?v=20260819')
+  fetch('translations.json?v=20260819s')
     .then(function (res) {
       if (!res.ok) throw new Error('Failed to load translations.json');
       return res.json();

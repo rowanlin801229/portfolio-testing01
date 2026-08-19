@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /aicuncell
+Disallow: /marilyn
+Disallow: /_archive
+Disallow: /overheadflights-journey
+Disallow: /uploads
+
+Sitemap: https://www.rowanlin1229.com/sitemap.xml
