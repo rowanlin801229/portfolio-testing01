@@ -1,3 +1,4 @@
-uploads/
+uploads/*
+!uploads/rowan-lin-cv.pdf
 .vercel
 node_modules/
