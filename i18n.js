@@ -121,6 +121,12 @@
       el.setAttribute('aria-label', dict[key]);
     });
 
+    document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-alt');
+      if (!key || dict[key] == null) return;
+      el.setAttribute('alt', dict[key]);
+    });
+
     syncWorkItemTypes(lang);
     updateLangButtons(lang);
 

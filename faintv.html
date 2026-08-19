@@ -32,7 +32,31 @@
     html[lang="zh-Hant"] .cs-next-name {
       font-size: clamp(1.55rem, 4.2vw, 2.55rem);
     }
-    body { cursor: none; }
+    html[lang="zh-Hant"] #action thead th {
+      text-transform: none;
+    }
+    /* pretty first so Safari <17.5 keeps wrapping if balance is unknown */
+    #hero h1,
+    #situation h2,
+    #task h2,
+    #action h2,
+    #action1 h2,
+    #action2 h2,
+    #action3 h2,
+    [data-i18n="case.faintv.a1flow.title"] {
+      text-wrap: pretty;
+      text-wrap: balance;
+    }
+    [data-i18n-html="case.faintv.result.body"],
+    [data-i18n="case.faintv.impact.summary"],
+    [data-i18n="case.faintv.impact.context"],
+    [data-i18n="case.faintv.impact.stat1"],
+    [data-i18n="case.faintv.impact.stat2"],
+    [data-i18n="case.faintv.impact.stat3"],
+    [data-i18n="case.faintv.impact.stat4"] {
+      text-wrap: pretty;
+    }
+    body { cursor: none; overflow-x: clip; }
     .nav-lang-btn.is-active { opacity: 1; border-color: rgba(255, 255, 255, 0.28); }
 
     /* ── SCROLL PROGRESS (skiper95 / Scroll progress 003; desktop only; draggable)
@@ -43,7 +67,7 @@
       top: 50%;
       transform: translateY(-50%);
       z-index: 150;
-      width: 11rem;
+      width: 1.5rem;
       height: 30vh;
       cursor: pointer;
       touch-action: none;
@@ -106,7 +130,7 @@
       left: -0.5rem;
       top: 50%;
       transform: translateY(-50%);
-      width: 11rem;
+      width: 2.25rem;
       height: 2.75rem;
     }
     .scroll-progress.is-dragging {
@@ -114,7 +138,7 @@
     }
     .scroll-progress__pct {
       position: absolute;
-      left: calc(100% + 0.35rem);
+      left: 1.5rem;
       top: 50%;
       transform: translateY(-50%) translateX(-0.2rem);
       font-family: 'Cormorant Garamond', serif;
@@ -122,10 +146,13 @@
       font-weight: 500;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      line-height: 1;
+      line-height: 1.2;
       color: rgba(232, 232, 226, 0.95);
       white-space: nowrap;
-      pointer-events: auto;
+      max-width: 8.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none;
       user-select: none;
       opacity: 0;
       transition: opacity 0.4s ease, transform 0.4s ease;
@@ -173,6 +200,739 @@
       transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .reveal.in { opacity: 1; transform: none; }
+    #action1,
+    #action2 {
+      --peek-max: 72rem;
+      --peek-col: min(var(--peek-max), 100%);
+    }
+    .a2-carousel {
+      width: 100%;
+      max-width: 72rem;
+      margin-left: auto;
+      margin-right: auto;
+      --peek-col: min(72rem, 100%);
+    }
+    .a2-carousel:focus-visible {
+      outline: 2px solid rgba(184, 69, 69, 0.55);
+      outline-offset: 6px;
+    }
+    .a2-carousel [data-a2-viewport] {
+      touch-action: pan-y;
+      cursor: grab;
+      overflow: hidden;
+    }
+    .a2-carousel [data-a2-viewport]:active {
+      cursor: grabbing;
+    }
+    .a2-carousel__track {
+      display: flex;
+      width: 100%;
+      gap: 0.75rem;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+    .a2-carousel__slide {
+      min-width: 0;
+      flex: 0 0 calc((var(--peek-col) - 0.75rem) / 1.3);
+    }
+    .a2-carousel__slide img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 1rem;
+      border: none;
+      background: #18181b;
+    }
+    .a2-carousel--screens .a2-carousel__slide {
+      flex-basis: calc((var(--peek-col) - 0.75rem) / 2.6);
+    }
+    .a2-carousel--screens .a2-carousel__slide img {
+      aspect-ratio: 1952 / 2178;
+      object-fit: contain;
+    }
+    .a2-dot {
+      display: flex;
+      height: 1.5rem;
+      width: 1.5rem;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+    }
+    .a2-dot::after {
+      content: '';
+      height: 0.4rem;
+      width: 0.4rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.22);
+      transition: width 0.35s ease, background-color 0.35s ease;
+    }
+    .a2-dot.is-active::after {
+      width: 1.15rem;
+      background: #B84545;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .a2-carousel__track,
+      .a2-dot::after { transition: none; }
+    }
+    .flow-stagger-item {
+      opacity: 0;
+      transform: translateY(40px) scale(0.92);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .flow-stagger-item.is-in {
+      opacity: 1;
+      transform: none;
+    }
+    @media (min-width: 768px) {
+      .flow-scroll {
+        height: 125vh;
+      }
+      .flow-scroll__pin {
+        position: sticky;
+        top: 6.5rem;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .flow-stagger-item {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      .flow-scroll { height: auto; }
+      .flow-scroll__pin { position: static; }
+    }
+
+    .a1-lanes,
+    #action1 .a1-lanes {
+      display: block;
+      width: 100%;
+      max-width: 72rem;
+      margin-left: auto;
+      margin-right: auto;
+      min-width: 0;
+      overflow-x: hidden;
+    }
+    .a1-lane {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .a1-lane + .a1-lane {
+      margin-top: 5.5rem;
+    }
+    .a1-lane__head {
+      display: block;
+      margin-bottom: 2rem;
+    }
+    .a1-lane__frame {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .a1-lane__frame [data-a1-prev],
+    .a1-lane__frame [data-a1-next] {
+      display: none;
+      z-index: 20;
+    }
+    @media (min-width: 768px) {
+      .a1-lane__frame [data-a1-prev],
+      .a1-lane__frame [data-a1-next] {
+        display: flex;
+      }
+    }
+    .a1-lane__frame [data-a1-prev]:disabled,
+    .a1-lane__frame [data-a1-next]:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+    .a1-lane__track {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: calc((var(--peek-col) - 0.75rem) / 1.3);
+      column-gap: 0.75rem;
+      align-items: stretch;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 0;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      cursor: grab;
+    }
+    .a1-lane--phone .a1-lane__track {
+      grid-auto-columns: calc((var(--peek-col) - 0.75rem) / 2.2);
+    }
+    @media (min-width: 768px) {
+      .a1-lane--phone .a1-lane__track {
+        grid-auto-columns: calc((var(--peek-col) - 2.25rem) / 4);
+      }
+    }
+    .a1-lane__track::-webkit-scrollbar { display: none; }
+    .a1-lane__track:focus-visible {
+      outline: 2px solid rgba(184, 69, 69, 0.55);
+      outline-offset: 6px;
+    }
+    .a1-lane__track.is-dragging {
+      scroll-snap-type: none;
+      scroll-behavior: auto;
+      cursor: grabbing;
+      user-select: none;
+    }
+    .a1-lane__card {
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      min-width: 0;
+      min-height: 0;
+      overflow: visible;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+    .a1-lane__shot {
+      position: relative;
+      flex: 0 0 auto;
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      border-radius: 1rem;
+      border: none;
+      background: #18181b;
+    }
+    .a1-lane--tv .a1-lane__shot {
+      aspect-ratio: 16 / 9;
+    }
+    .a1-lane--phone .a1-lane__shot {
+      aspect-ratio: 390 / 844;
+    }
+    .a1-lane__shot img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      object-fit: cover;
+      object-position: center;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .a1-lane--phone .a1-lane__shot img {
+      object-fit: contain;
+    }
+    .a1-lane__shot--empty {
+      background: rgba(24, 24, 27, 0.9);
+    }
+    .a1-lane__body {
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      flex: 0 0 auto;
+      min-width: 0;
+      overflow: hidden;
+      padding: 1.25rem 0 0;
+    }
+    .a1-lane--tv .a1-lane__body,
+    .a1-lane--phone .a1-lane__body {
+      height: auto;
+    }
+    .a1-lane__card--wide {
+      width: calc((var(--peek-col) - 0.75rem) / 1.3);
+      max-width: none;
+    }
+    .a1-lane--back .a1-lane__shot {
+      aspect-ratio: 16 / 9;
+    }
+    .a1-lane__card--wide .a1-lane__body {
+      height: auto;
+    }
+    .a1-lane__body p {
+      max-width: 100%;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      text-wrap: pretty;
+    }
+    .a1-lane__body .font-serif {
+      font-size: 1.15rem;
+    }
+    .a1-lane__body .text-lg {
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+    .a1-lane__body .text-base {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+    }
+    .a1-lane--tv .a1-lane__frame [data-a1-prev],
+    .a1-lane--tv .a1-lane__frame [data-a1-next] {
+      top: calc(((var(--peek-col) - 0.75rem) / 1.3) * 9 / 32);
+    }
+    .a1-lane--phone .a1-lane__frame [data-a1-prev],
+    .a1-lane--phone .a1-lane__frame [data-a1-next] {
+      top: calc(((var(--peek-col) - 0.75rem) / 2.2) * 844 / 780);
+    }
+    @media (min-width: 768px) {
+      .a1-lane--phone .a1-lane__frame [data-a1-prev],
+      .a1-lane--phone .a1-lane__frame [data-a1-next] {
+        top: calc(((var(--peek-col) - 2.25rem) / 4) * 844 / 780);
+      }
+    }
+    .a1-lane__fade {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      right: 0;
+      bottom: auto;
+      width: 2.75rem;
+      height: calc(((var(--peek-col) - 0.75rem) / 1.3) * 9 / 16);
+      pointer-events: none;
+      background: linear-gradient(to left, #09090b, transparent);
+      transition: opacity 0.3s ease;
+    }
+    .a1-lane--phone .a1-lane__fade {
+      height: calc(((var(--peek-col) - 0.75rem) / 2.2) * 844 / 390);
+    }
+    @media (min-width: 768px) {
+      .a1-lane--phone .a1-lane__fade {
+        height: calc(((var(--peek-col) - 2.25rem) / 4) * 844 / 390);
+      }
+    }
+    .a1-lane__fade.is-end {
+      opacity: 0;
+    }
+    .a1-lane__wide {
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(24, 24, 27, 0.5);
+      padding: 2rem 1.5rem;
+    }
+    .a1-lane__wide p {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    @media (min-width: 768px) {
+      .a1-lane__wide { padding: 2.5rem 2rem; }
+      .a1-lane__body { padding: 1.25rem 0 0; }
+      .a1-lane--tv .a1-lane__body,
+      .a1-lane--phone .a1-lane__body,
+      .a1-lane__card--wide .a1-lane__body { height: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .a1-lane__track {
+        scroll-behavior: auto;
+      }
+      .a1-lane__fade {
+        transition: none;
+      }
+      .a1-track {
+        scroll-behavior: auto;
+      }
+    }
+
+    #action1 {
+      overflow-x: visible;
+    }
+    .a1-stages {
+      display: flex;
+      flex-direction: column;
+      gap: 96px;
+      overflow-x: visible;
+      width: 100%;
+      max-width: none;
+      margin-top: 3.5rem;
+    }
+    .a1-stage {
+      position: relative;
+      min-width: 0;
+    }
+    .a1-stage-title {
+      margin: 0 auto 2rem;
+      max-width: 72rem;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .a1-stage--tv .a1-stage-title,
+    .a1-stage--back .a1-stage-title {
+      color: #B84545;
+    }
+    .a1-stage--phone .a1-stage-title {
+      color: #3E9E6F;
+    }
+    .a1-track {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      cursor: grab;
+      padding-left: max(0px, calc((100% - 72rem) / 2));
+      scroll-padding-inline-start: max(0px, calc((100% - 72rem) / 2));
+      width: calc(100% + 1.25rem);
+      margin-right: -1.25rem;
+      -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 4.5rem), transparent 100%);
+      mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 4.5rem), transparent 100%);
+    }
+    @media (min-width: 768px) {
+      .a1-track {
+        width: calc(100% + 2.5rem);
+        margin-right: -2.5rem;
+      }
+    }
+    .a1-track::-webkit-scrollbar { display: none; }
+    .a1-track:focus-visible {
+      outline: 2px solid rgba(184, 69, 69, 0.55);
+      outline-offset: 6px;
+    }
+    .a1-track.is-dragging {
+      scroll-snap-type: none;
+      cursor: grabbing;
+      user-select: none;
+    }
+    .a1-track.is-end {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .a1-nav {
+      display: none;
+      position: absolute;
+      z-index: 20;
+      height: 2.75rem;
+      width: 2.75rem;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(9, 9, 11, 0.7);
+      color: #f4f4f5;
+      font-size: 1.25rem;
+      line-height: 1;
+      backdrop-filter: blur(8px);
+      transform: translateY(-50%);
+    }
+    .a1-nav:hover {
+      border-color: #B84545;
+      color: #B84545;
+    }
+    .a1-nav:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+    .a1-nav:disabled:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #f4f4f5;
+    }
+    .a1-nav--prev { left: 0.75rem; }
+    .a1-nav--next { right: 0.75rem; }
+    @media (min-width: 768px) {
+      .a1-nav {
+        display: flex;
+      }
+      .a1-nav--prev { left: 1.25rem; }
+      .a1-nav--next { right: 1.25rem; }
+      .a1-stage--tv .a1-nav {
+        top: calc(2rem + 1em + 420px * 9 / 32);
+      }
+      .a1-stage--phone .a1-nav {
+        top: calc(2rem + 1em + 260px * 844 / 780);
+      }
+    }
+    @media (min-width: 1024px) {
+      .a1-stage--tv .a1-nav {
+        top: calc(2rem + 1em + 560px * 9 / 32);
+      }
+    }
+    .a1-card {
+      display: flex;
+      flex: 0 0 auto;
+      flex-direction: column;
+      scroll-snap-align: start;
+    }
+    .a1-stage--tv .a1-card {
+      width: 82%;
+    }
+    .a1-stage--phone .a1-card {
+      width: 55%;
+    }
+    @media (min-width: 768px) {
+      .a1-stage--tv .a1-card {
+        width: 420px;
+      }
+      .a1-stage--phone .a1-card {
+        width: 260px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .a1-stage--tv .a1-card {
+        width: 560px;
+      }
+    }
+    .a1-card--wide {
+      width: min(72rem, 100%);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .a1-card-shot {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      border-radius: 1rem;
+      border: none;
+      background: #18181b;
+    }
+    .a1-stage--tv .a1-card-shot,
+    .a1-stage--back .a1-card-shot {
+      aspect-ratio: 16 / 9;
+    }
+    .a1-stage--phone .a1-card-shot {
+      aspect-ratio: 390 / 844;
+    }
+    .a1-card-shot img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .a1-stage--phone .a1-card-shot img {
+      object-fit: contain;
+    }
+    .a1-card-body {
+      padding: 1.25rem 0 0;
+    }
+    .a1-card-body .font-serif {
+      font-size: 1.15rem;
+    }
+    .a1-card-body .text-lg {
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+    .a1-card-body .text-base {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+    }
+
+    .voice-demo {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .voice-demo__tv {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      border-radius: 1rem;
+      border: none;
+      background: #18181b;
+    }
+    .voice-demo__img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+    .voice-demo__img--listen {
+      opacity: 0;
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .voice-demo.is-listening .voice-demo__img--listen {
+      opacity: 1;
+    }
+    .voice-demo__wave {
+      position: absolute;
+      z-index: 2;
+      left: 50%;
+      bottom: 1.35rem;
+      display: flex;
+      height: 2.25rem;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0.32rem;
+      transform: translateX(-50%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .voice-demo.is-listening .voice-demo__wave {
+      opacity: 1;
+    }
+    .voice-demo__bar {
+      display: block;
+      width: 0.28rem;
+      height: 100%;
+      border-radius: 999px;
+      background: #ffd100;
+      transform: scaleY(0.28);
+      transform-origin: center bottom;
+    }
+    .voice-demo__controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .voice-demo__prompt {
+      max-width: 22rem;
+      margin: 0 0 1.25rem;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #d4d4d8;
+    }
+    .voice-demo__btn-wrap {
+      position: relative;
+      width: 9.15rem;
+      height: 9.15rem;
+    }
+    .voice-demo__ring {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .voice-demo__ring-track {
+      fill: none;
+      stroke: rgba(232, 232, 226, 0.18);
+      stroke-width: 3.25;
+    }
+    .voice-demo__ring-value {
+      fill: none;
+      stroke: #B84545;
+      stroke-width: 3.25;
+      stroke-linecap: round;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      stroke-dasharray: 289.03;
+      stroke-dashoffset: 289.03;
+    }
+    .voice-demo.is-holding .voice-demo__ring-track {
+      stroke: rgba(232, 232, 226, 0.42);
+    }
+    .voice-demo__btn {
+      position: absolute;
+      inset: 0.95rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.28rem;
+      padding: 0.55rem 0.7rem 0.6rem;
+      border: 0;
+      border-radius: 999px;
+      background: #ffd100;
+      color: #0f0f13;
+      font-size: 0.88rem;
+      font-weight: 700;
+      line-height: 1.1;
+      white-space: nowrap;
+      cursor: pointer;
+      touch-action: none;
+      box-shadow: 0 10px 28px rgba(255, 209, 0, 0.22);
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+    .voice-demo__mic {
+      display: block;
+      width: 32px;
+      height: 32px;
+      color: #0f0f13;
+    }
+    .voice-demo__mic-arc {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .voice-demo.is-holding .voice-demo__mic-arc,
+    .voice-demo.is-listening .voice-demo__mic-arc {
+      opacity: 1;
+    }
+    .voice-demo__btn:hover {
+      filter: brightness(1.05);
+    }
+    .voice-demo__btn:focus-visible {
+      outline: 2px solid rgba(184, 69, 69, 0.7);
+      outline-offset: 4px;
+    }
+    .voice-demo:not(.has-tried) .voice-demo__btn-wrap {
+      animation: voicePulse 1.8s ease-in-out infinite;
+    }
+    .voice-demo.is-holding .voice-demo__btn,
+    .voice-demo.is-listening .voice-demo__btn {
+      transform: scale(0.96);
+    }
+    .voice-demo__replay {
+      margin-top: 1.35rem;
+      border: 0;
+      background: transparent;
+      padding: 0.35rem 0.15rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: #a1a1aa;
+      text-decoration: underline;
+      text-underline-offset: 0.28em;
+      cursor: pointer;
+      transition: color 0.25s ease;
+    }
+    .voice-demo__replay:hover,
+    .voice-demo__replay:focus-visible {
+      color: #e4e4e7;
+    }
+    .voice-demo__replay:focus-visible {
+      outline: 2px solid rgba(184, 69, 69, 0.55);
+      outline-offset: 4px;
+    }
+    .voice-demo__replay:disabled {
+      opacity: 0.4;
+      cursor: default;
+      text-decoration: none;
+    }
+    .voice-demo .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    @keyframes voicePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.045); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .voice-demo:not(.has-tried) .voice-demo__btn-wrap {
+        animation: none;
+      }
+      .voice-demo__img--listen,
+      .voice-demo__wave {
+        transition: none;
+      }
+    }
 
     .hf-top, .hf-bottom { position: relative; }
     .hf-top::before, .hf-bottom::before {
@@ -264,7 +1024,7 @@
     }
   </style>
 </head>
-<body class="bg-zinc-950 text-zinc-200 font-sans font-light antialiased selection:bg-brand-red/30 selection:text-zinc-100 overflow-x-hidden">
+<body class="bg-zinc-950 text-zinc-200 font-sans font-light antialiased selection:bg-brand-red/30 selection:text-zinc-100 overflow-x-clip">
 
   <!-- Scroll progress 003 style — inspired by Skiper UI skiper95 (https://skiper-ui.com/v1/skiper95). Desktop only. Percentage follows the tick. Draggable. -->
   <div class="scroll-progress" id="scroll-progress" role="slider" tabindex="0"
@@ -359,89 +1119,69 @@
 
 <!-- S: SITUATION -->
 <section id="situation" class="border-b border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32">
-  <div class="mx-auto max-w-4xl reveal">
-    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.situation.label">S — Situation</span>
-    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.situation.title">A TV streaming service where elderly users couldn't complete basic tasks on their own.</h2>
+  <div class="mx-auto max-w-6xl reveal">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.situation.label">01 — Situation</span>
+    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.situation.title">From channel supplier to streaming platform — built for older viewers.</h2>
   </div>
-  <p class="mx-auto mt-10 max-w-3xl text-lg leading-[1.9] text-zinc-300 reveal" data-i18n-html="case.faintv.situation.body">FainTV is a Taiwanese TV streaming service. Its core audience watches on a shared living-room screen — many are elderly users who rely on a remote control as their <strong class="font-semibold text-zinc-200">primary input device</strong>.</p>
-
-  <div class="mx-auto mt-16 max-w-5xl reveal">
-    <span class="mb-8 block text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.situation.challenges">Challenges</span>
-    <div class="flex flex-col gap-4">
-      <div class="group flex gap-4 rounded-xl border border-white/10 bg-zinc-900/60 p-5 transition-colors duration-500 hover:border-brand-red/30 hover:bg-zinc-900 md:p-6">
-        <span class="font-serif text-2xl italic text-brand-red/80 transition-colors group-hover:text-brand-red">1</span>
-        <p class="text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.situation.challenge1">Remote-control text input is <strong class="font-semibold text-zinc-200">slow and exhausting</strong> — especially for elderly users trying to search for content or log in.</p>
-      </div>
-      <div class="group flex gap-4 rounded-xl border border-white/10 bg-zinc-900/60 p-5 transition-colors duration-500 hover:border-brand-red/30 hover:bg-zinc-900 md:p-6">
-        <span class="font-serif text-2xl italic text-brand-red/80 transition-colors group-hover:text-brand-red">2</span>
-        <p class="text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.situation.challenge2">A voice assistant already existed but was <strong class="font-semibold text-zinc-200">limited to search only</strong> — it couldn't help with registration, subscription, or shopping, where users needed it most.</p>
-      </div>
-      <div class="group flex gap-4 rounded-xl border border-white/10 bg-zinc-900/60 p-5 transition-colors duration-500 hover:border-brand-red/30 hover:bg-zinc-900 md:p-6">
-        <span class="font-serif text-2xl italic text-brand-red/80 transition-colors group-hover:text-brand-red">3</span>
-        <p class="text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.situation.challenge3">Checkout flows required entering personal details, addresses, and invoice information via D-pad, leading to <strong class="font-semibold text-zinc-200">high drop-off among elderly users</strong>.</p>
-      </div>
-    </div>
+  <div class="mx-auto mt-10 max-w-3xl flex flex-col gap-6 text-lg leading-[1.9] text-zinc-300 reveal" data-i18n-html="case.faintv.situation.body">
+    <p>FainTV was the largest channel supplier for Chunghwa Telecom's MOD service. This project set out to consolidate that content into FainTV's own streaming platform and set-top box — moving from supplier to platform owner — with voice search and TV shopping as new features.</p>
+    <p>Years of supplying MOD meant the team already understood its audience well. MOD was therefore both the most direct competitor and the primary reference point.</p>
+    <p>As the sole UI/UX designer, I worked with three product managers and three engineers, covering research through to cross-screen flows and interface design.</p>
   </div>
 
   <div class="mx-auto mt-20 max-w-5xl reveal">
-    <span class="mb-8 block text-base font-bold uppercase tracking-[0.3em] text-brand-green" data-i18n="case.faintv.owned.label">What I owned</span>
-    <div class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
-      <div class="flex gap-3 rounded-xl border border-white/10 bg-zinc-900/40 p-4 transition-all duration-500 hover:border-brand-green/25 hover:bg-zinc-900/70 md:p-5">
-        <div class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green"></div>
-        <p class="text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.owned.item1"><strong class="font-semibold text-zinc-200">TV information architecture</strong> and interaction design</p>
-      </div>
-      <div class="flex gap-3 rounded-xl border border-white/10 bg-zinc-900/40 p-4 transition-all duration-500 hover:border-brand-green/25 hover:bg-zinc-900/70 md:p-5">
-        <div class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green"></div>
-        <p class="text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.owned.item2"><strong class="font-semibold text-zinc-200">Voice search</strong> and T-commerce experience on TV</p>
-      </div>
-      <div class="flex gap-3 rounded-xl border border-white/10 bg-zinc-900/40 p-4 transition-all duration-500 hover:border-brand-green/25 hover:bg-zinc-900/70 md:p-5">
-        <div class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green"></div>
-        <p class="text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.owned.item3"><strong class="font-semibold text-zinc-200">Cross-device task allocation</strong> and TV ↔ Mobile handoff design</p>
-      </div>
-      <div class="flex gap-3 rounded-xl border border-white/10 bg-zinc-900/40 p-4 transition-all duration-500 hover:border-brand-green/25 hover:bg-zinc-900/70 md:p-5">
-        <div class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green"></div>
-        <p class="text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.owned.item4">User research and interviews <strong class="font-semibold text-zinc-200">(50+ participants)</strong></p>
-      </div>
-      <div class="flex gap-3 rounded-xl border border-white/10 bg-zinc-900/40 p-4 transition-all duration-500 hover:border-brand-green/25 hover:bg-zinc-900/70 md:p-5">
-        <div class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green"></div>
-        <p class="text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.owned.item5">Mobile checkout experience</p>
-      </div>
-      <div class="flex gap-3 rounded-xl border border-white/10 bg-zinc-900/40 p-4 transition-all duration-500 hover:border-brand-green/25 hover:bg-zinc-900/70 md:p-5">
-        <div class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-green"></div>
-        <p class="text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.owned.item6">Web account management</p>
-      </div>
-    </div>
+    <span class="mb-6 block text-base font-bold uppercase tracking-[0.3em] text-brand-green" data-i18n="case.faintv.owned.label">What I owned</span>
+    <ul class="grid grid-cols-1 gap-x-12 gap-y-2 md:grid-cols-2">
+      <li class="flex gap-2 text-base leading-relaxed text-zinc-500">
+        <span class="shrink-0 text-zinc-600">–</span>
+        <span data-i18n="case.faintv.owned.item1">Competitive analysis and user research</span>
+      </li>
+      <li class="flex gap-2 text-base leading-relaxed text-zinc-500">
+        <span class="shrink-0 text-zinc-600">–</span>
+        <span data-i18n="case.faintv.owned.item2">Cross-device task allocation and TV ↔ Mobile handoff design</span>
+      </li>
+      <li class="flex gap-2 text-base leading-relaxed text-zinc-500">
+        <span class="shrink-0 text-zinc-600">–</span>
+        <span data-i18n="case.faintv.owned.item3">TV set-top box UI, including first-time setup and sign-in</span>
+      </li>
+      <li class="flex gap-2 text-base leading-relaxed text-zinc-500">
+        <span class="shrink-0 text-zinc-600">–</span>
+        <span data-i18n="case.faintv.owned.item4">Mobile flow for registration, payment, and checkout</span>
+      </li>
+      <li class="flex gap-2 text-base leading-relaxed text-zinc-500">
+        <span class="shrink-0 text-zinc-600">–</span>
+        <span data-i18n="case.faintv.owned.item5">Voice search interaction and feedback states</span>
+      </li>
+      <li class="flex gap-2 text-base leading-relaxed text-zinc-500">
+        <span class="shrink-0 text-zinc-600">–</span>
+        <span data-i18n="case.faintv.owned.item6">Hi-fi prototypes and usability testing across TV, mobile, and web</span>
+      </li>
+    </ul>
   </div>
 </section>
 
-<!-- S insight -->
-<div class="border-b border-white/10 bg-zinc-900/80 px-5 py-16 md:px-12 md:py-20 reveal">
-  <span class="mb-4 block text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.outcome.label">Outcome</span>
-  <p class="max-w-4xl font-serif text-[clamp(1.25rem,2.5vw,1.95rem)] font-light italic leading-snug text-zinc-200" data-i18n-html="case.faintv.outcome.body">In usability testing, redesigning FainTV's login flow increased task completion among elderly users from <strong class="font-normal text-zinc-100">30% to 80%</strong> — validating a voice-first, lower-input direction on TV.</p>
-</div>
-
 <!-- T: TASK -->
 <section id="task" class="border-b border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32">
-  <div class="mx-auto max-w-4xl reveal">
-    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.task.label">T — Task</span>
-    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.task.title">Elderly users could discover content — but couldn't complete what came next.</h2>
+  <div class="mx-auto max-w-6xl reveal">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.task.label">02 — Task</span>
+    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.task.title">Every task on this platform has to survive a D-pad.</h2>
   </div>
 
   <div class="mx-auto mt-14 grid max-w-6xl grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:grid-cols-2 reveal">
     <div class="bg-zinc-900/90 p-8 transition-colors duration-500 hover:bg-zinc-900 md:p-10">
-      <span class="mb-8 block border-b border-brand-red/20 pb-4 text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.task.problems">Problems</span>
+      <span class="mb-8 block border-b border-brand-red/20 pb-4 text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.task.problems">Constraints</span>
       <ul class="flex flex-col gap-4 text-lg leading-relaxed text-zinc-300">
-        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-red" data-i18n-html="case.faintv.task.problem1">Typing on TV is painful — many <strong class="text-zinc-200">give up or ask family</strong> before completing a search.</li>
-        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-red" data-i18n-html="case.faintv.task.problem2">Payment and invoice details via remote are so <strong class="text-zinc-200">slow and error-prone</strong> most rely on family to finish.</li>
-        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-red" data-i18n-html="case.faintv.task.problem3">Voice can find content, but <strong class="text-zinc-200">doesn't help with registration, subscription, or checkout</strong>.</li>
+        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-red" data-i18n="case.faintv.task.problem1">Sign-in and payment are the entry point to the entire business model — yet the only input device is a remote control D-pad.</li>
+        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-red" data-i18n="case.faintv.task.problem2">TV shopping requires a delivery address and card details: the longest text entry in the product, on the worst possible input device.</li>
+        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-red" data-i18n="case.faintv.task.problem3">Voice search was intended to bypass typing, but only if users can tell whether the system is listening.</li>
       </ul>
     </div>
     <div class="bg-zinc-900/90 p-8 transition-colors duration-500 hover:bg-zinc-900 md:p-10">
       <span class="mb-8 block border-b border-brand-green/20 pb-4 text-base font-bold uppercase tracking-[0.3em] text-brand-green" data-i18n="case.faintv.task.goals">Design goals</span>
       <ul class="flex flex-col gap-4 text-lg leading-relaxed text-zinc-300">
-        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-green" data-i18n-html="case.faintv.task.goal1">Complete core tasks in <strong class="text-zinc-200">as few clear steps as possible</strong> — minimal remote input.</li>
-        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-green" data-i18n-html="case.faintv.task.goal2">Clarify which steps belong on TV and which should <strong class="text-zinc-200">move to mobile or web</strong>.</li>
-        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-green" data-i18n-html="case.faintv.task.goal3">Keep the experience <strong class="text-zinc-200">simple enough for elderly users to operate independently</strong>.</li>
+        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-green" data-i18n="case.faintv.task.goal1">Get registration and payment off the television entirely, without asking the viewer to leave what they're watching.</li>
+        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-green" data-i18n="case.faintv.task.goal2">Keep checkout completable for someone who has never used an app to buy anything.</li>
+        <li class="relative pl-5 before:absolute before:left-0 before:top-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-brand-green" data-i18n="case.faintv.task.goal3">Make voice feel responsive enough to be trusted on the first attempt.</li>
       </ul>
     </div>
   </div>
@@ -457,63 +1197,105 @@
   </div>
 
   <div class="mx-auto mt-14 max-w-4xl rounded-xl border-l-4 border-brand-blue bg-brand-blue/5 p-6 md:p-8 reveal">
-    <span class="mb-3 block text-base font-bold uppercase tracking-[0.3em] text-brand-blue" data-i18n="case.faintv.task.challenge.label">Design challenge</span>
-    <p class="font-serif text-[clamp(1.05rem,2vw,1.35rem)] font-light italic leading-relaxed text-zinc-200" data-i18n="case.faintv.task.challenge.body">Redesign FainTV so that TV does what it's best at — browsing, voice search, and confirming decisions — and mobile handles the rest.</p>
+    <span class="mb-3 block text-base font-bold uppercase tracking-[0.3em] text-brand-blue" data-i18n="case.faintv.task.challenge.label">The core constraint</span>
+    <p class="font-serif text-[clamp(1.05rem,2vw,1.35rem)] font-light italic leading-relaxed text-zinc-200" data-i18n="case.faintv.task.challenge.body">Entering Chinese characters on a television means navigating a grid with arrow keys, one stroke at a time. Typing a full name alone takes dozens of button presses — the single highest drop-off point in every round of testing.</p>
   </div>
 </section>
 
 <!-- T punchline -->
-<div class="border-b border-white/10 bg-zinc-900 px-5 py-14 text-center md:py-16 reveal">
-  <p class="mx-auto max-w-3xl font-serif text-[clamp(1.15rem,2.5vw,1.75rem)] font-light italic leading-snug text-brand-red" data-i18n="case.faintv.task.punchline">The problem isn't the form — it's that the form is on the wrong device.</p>
+<div class="border-b border-white/10 bg-zinc-900 py-14 text-center md:py-16 reveal">
+  <div class="mx-auto max-w-6xl px-5 md:px-10">
+    <p class="mx-auto max-w-3xl font-serif text-[clamp(1.15rem,2.5vw,1.75rem)] font-light italic leading-snug text-brand-red" data-i18n="case.faintv.task.punchline">The problem was never the user. It was the device they were using.</p>
+  </div>
 </div>
 
 <!-- A: PROCESS -->
-<section id="action" class="border-b border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32">
-  <div class="mx-auto max-w-4xl reveal">
-    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.action.label">A — Action</span>
-    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.action.title">Four phases — from discovering the pain, to proving the cross-device solution worked.</h2>
+<section id="action" class="border-b border-white/10">
+  <div class="px-5 py-20 md:px-10 md:py-28 lg:py-32">
+  <div class="mx-auto max-w-6xl reveal">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.action.label">03 — Research</span>
+    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.action.title">Five methods, one finding that changed the architecture.</h2>
   </div>
-  <div class="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4 reveal">
-    <div class="group bg-zinc-900/95 p-8 transition-colors duration-500 hover:bg-zinc-900">
-      <div class="font-serif text-4xl font-light italic text-brand-blue transition-transform duration-500 group-hover:translate-y-[-2px]">01</div>
-      <span class="mt-4 block text-base font-semibold uppercase tracking-[0.12em] text-zinc-200" data-i18n="case.faintv.action.discover.name">Discover</span>
-      <p class="mt-3 text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.action.discover.desc">Interviews with 50+ users confirmed that <strong class="font-semibold text-zinc-100">registration, payment, and invoice steps</strong> caused the most drop-off on TV.</p>
-      <span class="mt-6 inline-block rounded px-2 py-1 text-base font-semibold uppercase tracking-wider text-brand-blue bg-brand-blue/10" data-i18n="case.faintv.action.discover.tag">Research</span>
+  <div class="mx-auto mt-16 max-w-6xl overflow-x-auto reveal">
+    <table class="w-full min-w-[720px] border-collapse text-left text-base">
+      <thead>
+        <tr>
+          <th class="w-[20%] align-top border-b-2 border-zinc-500 px-6 pb-4 text-left text-base font-semibold uppercase tracking-[0.2em] text-zinc-300" data-i18n="case.faintv.research.col.method">Method</th>
+          <th class="w-[40%] align-top border-l border-white/10 border-b-2 border-zinc-500 px-6 pb-4 text-left text-base font-semibold uppercase tracking-[0.2em] text-zinc-300" data-i18n="case.faintv.research.col.purpose">Purpose</th>
+          <th class="w-[40%] align-top border-l border-white/10 border-b-2 border-zinc-500 px-6 pb-4 text-left text-base font-semibold uppercase tracking-[0.2em] text-zinc-300" data-i18n="case.faintv.research.col.insight">Insight</th>
+        </tr>
+      </thead>
+      <tbody class="text-zinc-300">
+        <tr class="border-b border-white/5">
+          <td class="align-top px-6 py-6 text-left" data-i18n="case.faintv.research.r1.method">Competitive analysis</td>
+          <td class="align-top border-l border-white/10 px-6 py-6 text-left" data-i18n="case.faintv.research.r1.purpose">Benchmarked primarily against Chunghwa Telecom's MOD — FainTV's own largest client, and the service our target users were already using. Netflix and similar pure-streaming platforms were reviewed but excluded from direct comparison: different audience, different interaction model.</td>
+          <td class="align-top border-l border-white/10 px-6 py-6 text-left" data-i18n="case.faintv.research.r1.insight">MOD wins on price and brand trust, in a market with almost no comparable alternative. It does not win on experience. That gap is FainTV's opening.</td>
+        </tr>
+        <tr class="border-b border-white/5">
+          <td class="align-top px-6 py-6 text-left" data-i18n="case.faintv.research.r2.method">Online survey (30+ responses)</td>
+          <td class="align-top border-l border-white/10 px-6 py-6 text-left" data-i18n="case.faintv.research.r2.purpose">Understand why users pay for a TV service, and how price and convenience weigh against traditional cable.</td>
+          <td class="align-top border-l border-white/10 px-6 py-6 text-left" data-i18n="case.faintv.research.r2.insight">Purchase decisions clustered almost entirely around price and brand trust. Features and interface were rarely mentioned.</td>
+        </tr>
+        <tr class="border-b border-white/5">
+          <td class="align-top px-6 py-6 text-left" data-i18n="case.faintv.research.r3.method">In-depth interviews (6)</td>
+          <td class="align-top border-l border-white/10 px-6 py-6 text-left" data-i18n="case.faintv.research.r3.purpose">Understand usage context and behaviour patterns — how older viewers actually operate a television at home, when they watch, and what they do when something goes wrong.</td>
+          <td class="align-top border-l border-white/10 px-6 py-6 text-left" data-i18n-html="case.faintv.research.r3.insight"><strong>The viewer and the payer are not the same person.</strong> Older adults are the primary viewers, but entering personal details character-by-character with a remote is close to impossible. When they get stuck, they wait for their adult children — who, in most cases, do not live with them.</td>
+        </tr>
+        <tr class="border-b border-white/5">
+          <td class="align-top px-6 py-6 text-left" data-i18n="case.faintv.research.r4.method">Contextual observation (~12 hrs, in users' homes)</td>
+          <td class="align-top border-l border-white/10 px-6 py-6 text-left" data-i18n="case.faintv.research.r4.purpose">Observe the real sequence of powering on, browsing channels, and shopping.</td>
+          <td class="align-top border-l border-white/10 px-6 py-6 text-left" data-i18n="case.faintv.research.r4.insight">Users could add items to a cart without difficulty, but almost never completed checkout. Checkout requires personal details and a delivery address — too high a barrier on a D-pad.</td>
+        </tr>
+        <tr class="border-b border-white/5">
+          <td class="align-top px-6 py-6 text-left" data-i18n="case.faintv.research.r5.method">Usability testing (hi-fi prototypes, TV / mobile / web)</td>
+          <td class="align-top border-l border-white/10 px-6 py-6 text-left" data-i18n="case.faintv.research.r5.purpose">Validate cross-screen flows and the new features.</td>
+          <td class="align-top border-l border-white/10 px-6 py-6 text-left" data-i18n="case.faintv.research.r5.insight">Voice press-and-hold: 1s triggered accidentally, 3s felt right, at 5s users assumed the feature was broken, at 10s they had already moved on. Voice also required animated feedback — without a visual response, users had no way to confirm the system was listening.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+
+<!-- A process insight -->
+<div class="border-y border-white/10 bg-zinc-900/80 py-16 md:py-20 reveal">
+  <div class="mx-auto max-w-6xl px-5 md:px-10">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.3em] text-brand-green" data-i18n="case.faintv.action.insight.label">Key insight</span>
+    <p class="max-w-4xl font-serif text-[clamp(1.25rem,2.5vw,1.95rem)] font-light italic leading-snug text-zinc-200" data-i18n="case.faintv.action.insight.body">If the person paying isn't in front of the television, there is no reason for the transaction to stay there. This — not a platform assumption — determined the cross-screen architecture.</p>
+  </div>
+</div>
+
+  <div class="px-5 pb-20 md:px-10 md:pb-28 lg:pb-32">
+  <div class="mx-auto mt-16 max-w-5xl reveal">
+    <span class="mb-8 block text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.persona.label">The two people we designed for</span>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+      <div class="group flex items-center gap-5 rounded-2xl border border-white/10 bg-zinc-900/50 p-6 transition-all duration-500 hover:-translate-y-1 hover:border-brand-red/40">
+        <img src="images/faintv-persona-chinshui.jpg" alt="Chin-Shui Chen" class="h-20 w-20 shrink-0 rounded-full object-cover object-[38%_42%] md:h-24 md:w-24">
+        <div>
+          <p class="font-serif text-xl italic text-zinc-100" data-i18n="case.faintv.persona.p1.name">Chin-Shui Chen, 68</p>
+          <p class="mt-1 text-base text-zinc-400" data-i18n="case.faintv.persona.p1.role">Retired factory supervisor</p>
+          <p class="mt-2 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.persona.p1.pain">Typing on the remote is so slow he'd rather give up than finish a search.</p>
+        </div>
+      </div>
+      <div class="group flex items-center gap-5 rounded-2xl border border-white/10 bg-zinc-900/50 p-6 transition-all duration-500 hover:-translate-y-1 hover:border-brand-green/40">
+        <img src="images/faintv-persona-yiting.jpg" alt="Yi-Ting Chen" data-i18n-alt="case.faintv.persona.p2.alt" class="h-20 w-20 shrink-0 rounded-full object-cover object-center md:h-24 md:w-24">
+        <div>
+          <p class="font-serif text-xl italic text-zinc-100" data-i18n="case.faintv.persona.p2.name">Yi-Ting Chen, 38</p>
+          <p class="mt-1 text-base text-zinc-400" data-i18n="case.faintv.persona.p2.role">Office worker — Chin-Shui's daughter, lives in another city</p>
+          <p class="mt-2 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.persona.p2.pain">She pays for the service but is not the one watching it — and when something goes wrong, she is usually not in the room.</p>
+        </div>
+      </div>
     </div>
-    <div class="group bg-zinc-900/95 p-8 transition-colors duration-500 hover:bg-zinc-900">
-      <div class="font-serif text-4xl font-light italic text-brand-red transition-transform duration-500 group-hover:translate-y-[-2px]">02</div>
-      <span class="mt-4 block text-base font-semibold uppercase tracking-[0.12em] text-zinc-200" data-i18n="case.faintv.action.define.name">Define</span>
-      <p class="mt-3 text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.action.define.desc">Split tasks into TV-native vs. not. Core hypothesis: <strong class="font-semibold text-zinc-100">TV for deciding, mobile for filling and paying</strong>.</p>
-      <span class="mt-6 inline-block rounded px-2 py-1 text-base font-semibold uppercase tracking-wider text-brand-red bg-brand-red/10" data-i18n="case.faintv.action.define.tag">Synthesis</span>
-    </div>
-    <div class="group bg-zinc-900/95 p-8 transition-colors duration-500 hover:bg-zinc-900">
-      <div class="font-serif text-4xl font-light italic text-brand-green transition-transform duration-500 group-hover:translate-y-[-2px]">03</div>
-      <span class="mt-4 block text-base font-semibold uppercase tracking-[0.12em] text-zinc-200" data-i18n="case.faintv.action.design.name">Design</span>
-      <p class="mt-3 text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.action.design.desc">Designed TV voice search and T-commerce. Proposed <strong class="font-semibold text-zinc-100">"start on TV, finish on mobile"</strong> for subscription and checkout.</p>
-      <span class="mt-6 inline-block rounded px-2 py-1 text-base font-semibold uppercase tracking-wider text-brand-green bg-brand-green/10" data-i18n="case.faintv.action.design.tag">Design</span>
-    </div>
-    <div class="group bg-zinc-900/95 p-8 transition-colors duration-500 hover:bg-zinc-900">
-      <div class="font-serif text-4xl font-light italic text-brand-violet transition-transform duration-500 group-hover:translate-y-[-2px]">04</div>
-      <span class="mt-4 block text-base font-semibold uppercase tracking-[0.12em] text-zinc-200" data-i18n="case.faintv.action.test.name">Test &amp; learn</span>
-      <p class="mt-3 text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.action.test.desc">Voice search was well-received but <strong class="font-semibold text-zinc-100">long form-based steps still caused friction</strong> — validating the cross-device solution.</p>
-      <span class="mt-6 inline-block rounded px-2 py-1 text-base font-semibold uppercase tracking-wider text-brand-violet bg-brand-violet/10" data-i18n="case.faintv.action.test.tag">Testing</span>
-    </div>
+  </div>
   </div>
 </section>
 
-<!-- A process insight -->
-<div class="border-b border-white/10 bg-zinc-900/80 px-5 py-16 md:px-12 md:py-20 reveal">
-  <span class="mb-4 block text-base font-bold uppercase tracking-[0.3em] text-brand-green" data-i18n="case.faintv.action.insight.label">Key insight from testing</span>
-  <p class="max-w-4xl font-serif text-[clamp(1.25rem,2.5vw,1.95rem)] font-light italic leading-snug text-zinc-200" data-i18n-html="case.faintv.action.insight.body">Users loved using voice for content discovery, but still got stuck whenever the TV asked them to type. This confirmed that <strong class="font-normal text-zinc-100">input friction was a device problem, not a user problem.</strong></p>
-</div>
-
-<!-- A: STRATEGY -->
-<section id="strategy" class="border-b border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32">
-  <div class="mx-auto max-w-4xl reveal">
-    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.strategy.label">A — Strategy</span>
-    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.strategy.title">Not every task belongs on every screen.</h2>
+<!-- A1: SIGN-IN & CROSS-SCREEN -->
+<section id="action1" class="border-b border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32">
+  <div class="mx-auto max-w-6xl reveal">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.strategy.label">04 — Sign-in &amp; cross-screen architecture</span>
+    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.strategy.title">Registration and payment are a multi-person flow.</h2>
   </div>
-  <p class="mx-auto mt-10 max-w-3xl text-lg leading-[1.9] text-zinc-300 reveal" data-i18n="case.faintv.strategy.body">Designing for elderly users means choosing the right device for each moment — based on input effort, context, and who might be helping — not cramming everything into one interface.</p>
+  <p class="mx-auto mt-10 max-w-3xl text-lg leading-[1.9] text-zinc-300 reveal" data-i18n="case.faintv.strategy.body">A mobile path was added to registration and subscription, because this was never something one person completed alone. Working across devices frees the flow from requiring both people to be in the same room — each finishes their part on the device already in their hand.</p>
 
   <div class="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 reveal">
     <div class="group rounded-2xl border border-white/10 bg-zinc-900/50 p-8 pt-10 transition-all duration-500 hover:-translate-y-1 hover:border-brand-red/40 hover:shadow-xl hover:shadow-brand-red/5 border-t-4 border-t-brand-red">
@@ -529,11 +1311,11 @@
     <div class="group rounded-2xl border border-white/10 bg-zinc-900/50 p-8 pt-10 transition-all duration-500 hover:-translate-y-1 hover:border-brand-blue/40 hover:shadow-xl hover:shadow-brand-blue/5 border-t-4 border-t-brand-blue">
       <span class="text-base font-bold uppercase tracking-[0.3em] text-brand-blue" data-i18n="case.faintv.strategy.web.name">Web</span>
       <p class="mt-3 font-serif text-xl italic text-zinc-100" data-i18n="case.faintv.strategy.web.headline">Management &amp; long-term records</p>
-      <p class="mt-2 text-lg text-zinc-300" data-i18n="case.faintv.strategy.web.desc">Caregivers, history, subscription control</p>
+      <p class="mt-2 text-lg text-zinc-300" data-i18n="case.faintv.strategy.web.desc">Family, history, subscription control</p>
     </div>
   </div>
 
-  <p class="mx-auto mt-16 max-w-5xl text-center text-lg text-zinc-300 reveal" data-i18n="case.faintv.strategy.table.intro">What belongs on TV — what moves to mobile — what shifts to web</p>
+  <p class="mx-auto mt-16 max-w-5xl text-center text-lg text-zinc-300 reveal" data-i18n="case.faintv.strategy.table.intro">Every task has to belong to a screen.</p>
   <div class="mx-auto mt-6 max-w-6xl overflow-x-auto reveal">
     <table class="w-full min-w-[640px] border-collapse text-left text-lg">
       <thead>
@@ -556,47 +1338,377 @@
         <tr class="border-b border-white/5"><td class="py-3" data-i18n="case.faintv.strategy.table.payment">Payment &amp; invoice details</td><td class="py-3 text-center text-zinc-300">—</td><td class="py-3 text-center"><span class="inline-block min-w-[4rem] rounded bg-brand-green/20 px-2 py-1 text-base font-semibold text-brand-green" data-i18n="case.faintv.strategy.badge.primary">Primary</span></td><td class="py-3 text-center"><span class="inline-block min-w-[4rem] rounded bg-brand-blue/15 px-2 py-1 text-base font-semibold text-brand-blue" data-i18n="case.faintv.strategy.badge.supported">Supported</span></td></tr>
         <tr><td colspan="4" class="pt-8 pb-2 text-base font-bold uppercase tracking-[0.2em] text-zinc-300" data-i18n="case.faintv.strategy.table.group.mgmt">Account management</td></tr>
         <tr class="border-b border-white/5"><td class="py-3" data-i18n="case.faintv.strategy.table.history">View order history</td><td class="py-3 text-center text-zinc-300">—</td><td class="py-3 text-center"><span class="inline-block min-w-[4rem] rounded bg-brand-green/15 px-2 py-1 text-base font-semibold text-brand-green" data-i18n="case.faintv.strategy.badge.supported">Supported</span></td><td class="py-3 text-center"><span class="inline-block min-w-[4rem] rounded bg-brand-blue/20 px-2 py-1 text-base font-semibold text-brand-blue" data-i18n="case.faintv.strategy.badge.primary">Primary</span></td></tr>
-        <tr class="border-b border-white/5"><td class="py-3" data-i18n="case.faintv.strategy.table.subscription">Manage subscription</td><td class="py-3 text-center text-zinc-300">—</td><td class="py-3 text-center"><span class="inline-block min-w-[4rem] rounded bg-brand-green/15 px-2 py-1 text-base font-semibold text-brand-green" data-i18n="case.faintv.strategy.badge.supported">Supported</span></td><td class="py-3 text-center"><span class="inline-block min-w-[4rem] rounded bg-brand-blue/20 px-2 py-1 text-base font-semibold text-brand-blue" data-i18n="case.faintv.strategy.badge.primary">Primary</span></td></tr>
-        <tr><td class="py-3" data-i18n="case.faintv.strategy.table.caregiver">Caregiver / family assistance</td><td class="py-3 text-center text-zinc-300">—</td><td class="py-3 text-center"><span class="inline-block min-w-[4rem] rounded bg-brand-green/15 px-2 py-1 text-base font-semibold text-brand-green" data-i18n="case.faintv.strategy.badge.supported">Supported</span></td><td class="py-3 text-center"><span class="inline-block min-w-[4rem] rounded bg-brand-blue/20 px-2 py-1 text-base font-semibold text-brand-blue" data-i18n="case.faintv.strategy.badge.primary">Primary</span></td></tr>
+        <tr><td class="py-3" data-i18n="case.faintv.strategy.table.subscription">Manage subscription</td><td class="py-3 text-center text-zinc-300">—</td><td class="py-3 text-center"><span class="inline-block min-w-[4rem] rounded bg-brand-green/15 px-2 py-1 text-base font-semibold text-brand-green" data-i18n="case.faintv.strategy.badge.supported">Supported</span></td><td class="py-3 text-center"><span class="inline-block min-w-[4rem] rounded bg-brand-blue/20 px-2 py-1 text-base font-semibold text-brand-blue" data-i18n="case.faintv.strategy.badge.primary">Primary</span></td></tr>
       </tbody>
     </table>
   </div>
 
-  <div class="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-0 overflow-hidden rounded-2xl border border-white/10 md:grid-cols-3 reveal">
-    <div class="border-b border-white/10 p-8 transition-colors duration-500 hover:bg-zinc-900/80 md:border-b-0 md:border-r border-l-4 border-l-brand-red">
-      <p class="text-lg font-semibold text-zinc-200" data-i18n="case.faintv.strategy.why.tv.title">Why "confirm purchase" stays on TV</p>
-      <p class="mt-3 text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.strategy.why.tv.body">The <strong class="font-semibold text-zinc-100">decision moment belongs on the engaged screen</strong>. Moving intent to mobile mid-viewing breaks flow for elderly users.</p>
+  <p class="mx-auto mt-20 max-w-3xl text-center font-serif text-[clamp(1.05rem,2.2vw,1.65rem)] font-light italic leading-snug text-brand-red md:mt-28" data-i18n="case.faintv.strategy.punchline">"I don't design screens — I design which screen each task belongs on."</p>
+
+  <div class="mx-auto mt-20 max-w-6xl reveal md:mt-28">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.a1flow.label">The handoff</span>
+    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.a1flow.title">The TV is the starting point. The phone completes every step.</h2>
+  </div>
+  <p class="mx-auto mt-10 max-w-3xl text-lg leading-[1.9] text-zinc-300 reveal" data-i18n="case.faintv.a1flow.body">The viewer enters their child's phone number on the TV, or scans the QR code with their own. Either way, a link travels to a phone.</p>
+
+  <div class="a1-stages">
+    <div class="a1-stage a1-stage--tv">
+      <h3 class="a1-stage-title" data-i18n="case.faintv.a1flow.col.tv">On TV</h3>
+      <div class="a1-track" tabindex="0" role="region" data-i18n-aria="case.faintv.a1flow.col.tv" aria-label="On TV">
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/tv-signup/h0.png" alt="The starting point on the TV — account sign-in" data-i18n-alt="case.faintv.a1tv.s1" width="1920" height="1080" draggable="false" loading="eager" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-red/80">01</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1tv.s1">The starting point on the TV — account sign-in</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1tv.h0.desc">The viewer starts on the television — sign in with a phone number, or skip and keep watching.</p>
+          </div>
+        </article>
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/tv-signup/h1.png" alt="Choose how to continue" data-i18n-alt="case.faintv.a1flow.step1.title" width="1920" height="1080" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-red/80">02</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1flow.step1.title">Choose how to continue</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1tv.s2">Choosing how to continue — the only two focusable elements on the screen</p>
+          </div>
+        </article>
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/tv-signup/h2.png" alt="Send the link to a phone" data-i18n-alt="case.faintv.a1tv.h2.title" width="1920" height="1080" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-red/80">03</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1tv.h2.title">Send the link</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1flow.step1.desc">Enter a phone number with the D-pad, or scan the QR code. This is the only text entry left on the television — and it is 10 digits, not 16.</p>
+          </div>
+        </article>
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/tv-signup/h3.png" alt="Keep watching while you wait" data-i18n-alt="case.faintv.a1flow.step2.title" width="1920" height="1080" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-red/80">04</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1flow.step2.title">Keep watching while you wait</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1flow.step2.desc">Free content stays available. The viewer is not held on a waiting screen for something happening in another city.</p>
+          </div>
+        </article>
+      </div>
+      <button type="button" class="a1-nav a1-nav--prev" data-a1-prev data-i18n-aria="case.faintv.a2carousel.prev" aria-label="Previous screen">←</button>
+      <button type="button" class="a1-nav a1-nav--next" data-a1-next data-i18n-aria="case.faintv.a2carousel.next" aria-label="Next screen">→</button>
     </div>
-    <div class="border-b border-white/10 p-8 transition-colors duration-500 hover:bg-zinc-900/80 md:border-b-0 md:border-r border-l-4 border-l-brand-green">
-      <p class="text-lg font-semibold text-zinc-200" data-i18n="case.faintv.strategy.why.mobile.title">Why login &amp; payment leave the TV</p>
-      <p class="mt-3 text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.strategy.why.mobile.body">SMS codes, passwords, card numbers — all <strong class="font-semibold text-zinc-100">fight against a 10-foot, D-pad-only environment</strong>. Highest drop-off in testing.</p>
+
+    <div class="a1-stage a1-stage--phone">
+      <h3 class="a1-stage-title" data-i18n="case.faintv.a1flow.col.mobile">On mobile</h3>
+      <div class="a1-track" tabindex="0" role="region" data-i18n-aria="case.faintv.a1flow.col.mobile" aria-label="On mobile">
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/mobile/faintv-mobile-01.png" alt="Member details" data-i18n-alt="case.faintv.a1mobile.s1" width="390" height="844" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-green/80">01</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1mobile.s1">Member details</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1mobile.s1.desc">Name, email, and phone — typed on a familiar touchscreen.</p>
+          </div>
+        </article>
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/mobile/faintv-mobile-02.png" alt="Personal information" data-i18n-alt="case.faintv.a1mobile.s2" width="390" height="844" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-green/80">02</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1mobile.s2">Personal information</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1mobile.s2.desc">Birthday and gender, without a D-pad.</p>
+          </div>
+        </article>
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/mobile/faintv-mobile-03.png" alt="Delivery address" data-i18n-alt="case.faintv.a1mobile.s3" width="390" height="844" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-green/80">03</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1mobile.s3">Delivery address</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1mobile.s3.desc">City, district, and street — the longest form, off the TV.</p>
+          </div>
+        </article>
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/mobile/faintv-mobile-04.png" alt="Payment method" data-i18n-alt="case.faintv.a1mobile.s4" width="390" height="844" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-green/80">04</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1mobile.s4">Payment method</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1mobile.s4.desc">Choose how to pay on a device built for tapping.</p>
+          </div>
+        </article>
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/mobile/faintv-mobile-05.png" alt="Card details" data-i18n-alt="case.faintv.a1mobile.s5" width="390" height="844" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-green/80">05</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1mobile.s5">Card details</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1mobile.s5.desc">Card number, expiry, and CVC — or Apple Pay.</p>
+          </div>
+        </article>
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/mobile/faintv-mobile-06.png" alt="Order confirmation" data-i18n-alt="case.faintv.a1mobile.s6" width="390" height="844" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-green/80">06</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1mobile.s6">Order confirmation</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1mobile.s6.desc">Review the order once, then pay.</p>
+          </div>
+        </article>
+        <article class="a1-card">
+          <div class="a1-card-shot">
+            <img src="images/faintv/mobile/faintv-mobile-07.png" alt="Subscription active" data-i18n-alt="case.faintv.a1mobile.s7" width="390" height="844" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a1-card-body">
+            <p class="font-serif text-2xl italic text-brand-green/80">07</p>
+            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1mobile.s7">Subscription active</p>
+            <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1mobile.s7.desc">The phone is done. The television can update itself.</p>
+          </div>
+        </article>
+      </div>
+      <button type="button" class="a1-nav a1-nav--prev" data-a1-prev data-i18n-aria="case.faintv.a2carousel.prev" aria-label="Previous screen">←</button>
+      <button type="button" class="a1-nav a1-nav--next" data-a1-next data-i18n-aria="case.faintv.a2carousel.next" aria-label="Next screen">→</button>
     </div>
-    <div class="p-8 transition-colors duration-500 hover:bg-zinc-900/80 border-l-4 border-l-brand-blue">
-      <p class="text-lg font-semibold text-zinc-200" data-i18n="case.faintv.strategy.why.web.title">Why caregiver tasks live on web</p>
-      <p class="mt-3 text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.strategy.why.web.body">Family members need <strong class="font-semibold text-zinc-100">full-screen management tools</strong>, not an elderly-optimised TV interface. Separating concerns keeps both clean.</p>
+
+    <div class="a1-stage a1-stage--back">
+      <h3 class="a1-stage-title" data-i18n="case.faintv.a1flow.col.back">Back on TV</h3>
+      <article class="a1-card a1-card--wide">
+        <div class="a1-card-shot">
+          <img src="images/faintv/tv-signup/h4.png" alt="The TV updates itself" data-i18n-alt="case.faintv.a1flow.step5.title" width="1920" height="1080" draggable="false" loading="lazy" decoding="async">
+        </div>
+        <div class="a1-card-body">
+          <p class="font-serif text-2xl italic text-brand-red/80">05</p>
+          <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a1flow.step5.title">The TV updates itself</p>
+          <p class="mt-2 max-w-3xl text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.a1flow.step5.desc">Subscription activates and the television reflects the change — without the viewer doing anything.</p>
+        </div>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- Strategy punchline -->
-<div class="border-b border-white/10 bg-zinc-900 px-5 py-14 text-center md:py-16 reveal">
-  <p class="mx-auto max-w-3xl font-serif text-[clamp(1.05rem,2.2vw,1.65rem)] font-light italic leading-snug text-brand-red" data-i18n="case.faintv.strategy.punchline">"I don't design screens — I design which screen each task belongs on."</p>
+<div class="border-y border-white/10 bg-zinc-900/80 py-16 md:py-20 reveal">
+  <div class="mx-auto max-w-6xl px-5 md:px-10">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.3em] text-brand-green" data-i18n="case.faintv.a1flow.fail.label">When it doesn't go to plan</span>
+    <p class="max-w-4xl font-serif text-[clamp(1.25rem,2.5vw,1.95rem)] font-light italic leading-snug text-zinc-200" data-i18n="case.faintv.a1flow.fail.body">The link expires after 20 minutes. Because the two people may be hours apart, the television keeps a single button: resend. One press, no re-entry, no navigating back to the beginning.</p>
+  </div>
 </div>
 
-<!-- A: VOICE -->
-<section id="voice" class="border-b border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32">
-  <div class="mx-auto max-w-4xl reveal">
-    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.voice.label">A — Voice design</span>
-    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.voice.title">Voice as the primary input — not just a search shortcut.</h2>
+<!-- A2: TV SHOPPING -->
+<section id="action2" class="handoff-flow-section border-b border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32">
+  <div class="handoff-flow-intro reveal mx-auto max-w-6xl border-b-0">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.handoff.label">05 — TV shopping</span>
+    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.handoff.title">They could fill the cart. They could never finish.</h2>
+    <p class="mt-10 max-w-none text-lg leading-[1.9] text-zinc-300" data-i18n="case.faintv.handoff.body">Twelve hours of in-home observation showed the same pattern in every household: adding a product was effortless, checkout was where it stopped. Entering an address and card details on a D-pad is the longest text entry in the product, on the worst possible input device.</p>
+  </div>
+
+  <div class="a1-lanes mt-14">
+    <section class="a1-lane a1-lane--tv reveal" data-a1-lane>
+      <div class="a1-lane__head">
+        <span class="text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.a2carousel.label">Before</span>
+        <p class="mt-4 max-w-3xl text-lg font-normal normal-case tracking-normal leading-[1.9] text-zinc-300" data-i18n="case.faintv.a2carousel.body">Five screens, more than twenty fields — every one of them entered with a D-pad.</p>
+      </div>
+      <div class="a1-lane__frame">
+        <div class="a1-lane__track" data-a1-track tabindex="0" role="region" data-i18n-aria="case.faintv.a2carousel.label" aria-label="Before">
+          <article class="a1-lane__card">
+            <div class="a1-lane__shot">
+              <img src="images/faintv/checkout/faintv-tv-checkout-01.jpg" alt="Member details — name, email, phone, city, district, street" data-i18n-alt="case.faintv.a2carousel.s1" width="1920" height="1080" draggable="false" loading="eager" decoding="async">
+            </div>
+            <div class="a1-lane__body">
+              <p class="font-serif text-2xl italic text-brand-red/80">01</p>
+              <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a2carousel.s1">Member details — name, email, phone, city, district, street</p>
+            </div>
+          </article>
+          <article class="a1-lane__card">
+            <div class="a1-lane__shot">
+              <img src="images/faintv/checkout/faintv-tv-checkout-02.jpg" alt="Checkout overview — three sections, none of them filled in" data-i18n-alt="case.faintv.a2carousel.s2" width="1920" height="1080" draggable="false" loading="lazy" decoding="async">
+            </div>
+            <div class="a1-lane__body">
+              <p class="font-serif text-2xl italic text-brand-red/80">02</p>
+              <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a2carousel.s2">Checkout overview — three sections, none of them filled in</p>
+            </div>
+          </article>
+          <article class="a1-lane__card">
+            <div class="a1-lane__shot">
+              <img src="images/faintv/checkout/faintv-tv-checkout-03.jpg" alt="Recipient details — six more fields" data-i18n-alt="case.faintv.a2carousel.s3" width="1920" height="1080" draggable="false" loading="lazy" decoding="async">
+            </div>
+            <div class="a1-lane__body">
+              <p class="font-serif text-2xl italic text-brand-red/80">03</p>
+              <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a2carousel.s3">Recipient details — six more fields</p>
+            </div>
+          </article>
+          <article class="a1-lane__card">
+            <div class="a1-lane__shot">
+              <img src="images/faintv/checkout/faintv-tv-checkout-04.jpg" alt="Card details — 16 digits, expiry, CVC" data-i18n-alt="case.faintv.a2carousel.s4" width="1920" height="1080" draggable="false" loading="lazy" decoding="async">
+            </div>
+            <div class="a1-lane__body">
+              <p class="font-serif text-2xl italic text-brand-red/80">04</p>
+              <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a2carousel.s4">Card details — 16 digits, expiry, CVC</p>
+            </div>
+          </article>
+          <article class="a1-lane__card">
+            <div class="a1-lane__shot">
+              <img src="images/faintv/checkout/faintv-tv-checkout-06.jpg" alt="Order confirmed" data-i18n-alt="case.faintv.a2carousel.s6" width="1920" height="1080" draggable="false" loading="lazy" decoding="async">
+            </div>
+            <div class="a1-lane__body">
+              <p class="font-serif text-2xl italic text-brand-red/80">05</p>
+              <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.a2carousel.s6">Order confirmed</p>
+            </div>
+          </article>
+        </div>
+        <button type="button" class="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-zinc-950/70 text-xl text-zinc-100 backdrop-blur-sm transition-colors hover:border-brand-red hover:text-brand-red disabled:hover:border-white/20 disabled:hover:text-zinc-100 md:left-5" data-a1-prev data-i18n-aria="case.faintv.a2carousel.prev" aria-label="Previous screen">←</button>
+        <button type="button" class="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-zinc-950/70 text-xl text-zinc-100 backdrop-blur-sm transition-colors hover:border-brand-red hover:text-brand-red disabled:hover:border-white/20 disabled:hover:text-zinc-100 md:right-5" data-a1-next data-i18n-aria="case.faintv.a2carousel.next" aria-label="Next screen">→</button>
+        <div class="a1-lane__fade" data-a1-fade aria-hidden="true"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="flow-scroll mt-16" data-flow-scroll>
+  <div class="flow-scroll__pin mx-auto flex max-w-6xl flex-col gap-8 md:flex-row md:items-stretch md:gap-4 lg:gap-8" data-flow-stagger>
+    <div class="flow-stagger-item flex flex-1 flex-col rounded-2xl border border-white/10 bg-zinc-900/50 p-8 pt-10 border-t-4 border-t-brand-red" data-flow-card>
+      <span class="text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.a1flow.col.tv">On TV</span>
+      <div class="mt-8 flex flex-col gap-8">
+        <div>
+          <p class="font-serif text-2xl italic text-brand-red/80">01</p>
+          <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.step1.title">Product appears during broadcast</p>
+          <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.handoff.step1.desc">Lightweight CTA overlay: "Press red to buy"</p>
+        </div>
+        <div>
+          <p class="font-serif text-2xl italic text-brand-red/80">02</p>
+          <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.step2.title">User confirms intent</p>
+          <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.handoff.step2.desc">Product summary + "Send to my phone"</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-stagger-item flex flex-col items-center justify-center gap-2 text-center md:w-36 md:shrink-0 lg:w-44" data-flow-arrow>
+      <div class="text-2xl text-zinc-600 md:hidden" aria-hidden="true">↓</div>
+      <div class="hidden text-2xl text-zinc-600 md:block" aria-hidden="true">→</div>
+      <span class="text-base font-bold uppercase tracking-[0.2em] text-zinc-400" data-i18n="case.faintv.handoff.mid.label">Handoff</span>
+      <p class="text-base font-semibold leading-snug text-zinc-100" data-i18n="case.faintv.handoff.mid.title">QR code on TV, or a link sent to a phone</p>
+      <p class="text-sm leading-relaxed text-zinc-400" data-i18n="case.faintv.handoff.mid.desc">The critical device transition — one scan, or one message</p>
+    </div>
+
+    <div class="flow-stagger-item flex flex-1 flex-col rounded-2xl border border-white/10 bg-zinc-900/50 p-8 pt-10 border-t-4 border-t-brand-green" data-flow-card>
+      <span class="text-base font-bold uppercase tracking-[0.3em] text-brand-green" data-i18n="case.faintv.a1flow.col.mobile">On mobile</span>
+      <div class="mt-8 flex flex-col gap-8">
+        <div>
+          <p class="font-serif text-2xl italic text-brand-green/80">03</p>
+          <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.step3.title">Mobile opens checkout</p>
+          <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.handoff.step3.desc">Member data pre-filled — address and payment only</p>
+        </div>
+        <div>
+          <p class="font-serif text-2xl italic text-brand-green/80">04</p>
+          <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.step4.title">Complete payment on mobile</p>
+          <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.handoff.step4.desc">Touchscreen input, with member data already filled in</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-stagger-item flex items-center justify-center" data-flow-arrow>
+      <div class="text-2xl text-zinc-600 md:hidden" aria-hidden="true">↓</div>
+      <div class="hidden text-2xl text-zinc-600 md:block" aria-hidden="true">→</div>
+    </div>
+
+    <div class="flow-stagger-item flex flex-1 flex-col rounded-2xl border border-white/10 bg-zinc-900/50 p-8 pt-10 border-t-4 border-t-brand-red" data-flow-card>
+      <span class="text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.a1flow.col.back">Back on TV</span>
+      <div class="mt-8">
+        <p class="font-serif text-2xl italic text-brand-red/80">05</p>
+        <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.step5.title">TV confirms success</p>
+        <p class="mt-2 text-base leading-relaxed text-zinc-400" data-i18n="case.faintv.handoff.step5.desc">Brief confirmation, then auto-returns to content</p>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="key-screens-intro mx-auto mt-24 max-w-6xl reveal">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.screens.label">After</span>
+    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.screens.title">The same flow, in the product.</h2>
+  </div>
+
+  <div class="mx-auto mt-10 max-w-6xl reveal">
+    <div class="a2-carousel a2-carousel--screens" data-a2-carousel tabindex="0" role="region" aria-roledescription="carousel" data-i18n-aria="case.faintv.screens.label">
+      <div class="relative" data-a2-viewport>
+        <div class="a2-carousel__track" data-a2-track>
+          <div class="a2-carousel__slide" aria-hidden="false">
+            <img src="images/faintv-key-tv-cta-overlay.jpg" alt="TV · Product CTA overlay" data-i18n-alt="case.faintv.screens.cta.title" class="w-full select-none" width="1952" height="2176" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a2-carousel__slide" aria-hidden="true">
+            <img src="images/faintv-key-tv-handoff-qr.jpg" alt="TV · Handoff moment" data-i18n-alt="case.faintv.screens.handoff.title" class="w-full select-none" width="1952" height="2178" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a2-carousel__slide" aria-hidden="true">
+            <img src="images/faintv-key-mobile-checkout.jpg" alt="Mobile · Checkout" data-i18n-alt="case.faintv.screens.checkout.title" class="w-full select-none" width="1952" height="2178" draggable="false" loading="lazy" decoding="async">
+          </div>
+          <div class="a2-carousel__slide" aria-hidden="true">
+            <img src="images/faintv-key-tv-purchase-confirmed.jpg" alt="TV · Purchase confirmed" data-i18n-alt="case.faintv.screens.confirmed.title" class="w-full select-none" width="1952" height="2178" draggable="false" loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <button type="button" class="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-zinc-950/70 text-xl text-zinc-100 backdrop-blur-sm transition-colors hover:border-brand-red hover:text-brand-red md:left-5" data-a2-prev data-i18n-aria="case.faintv.a2carousel.prev" aria-label="Previous screen">←</button>
+        <button type="button" class="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-zinc-950/70 text-xl text-zinc-100 backdrop-blur-sm transition-colors hover:border-brand-red hover:text-brand-red md:right-5" data-a2-next data-i18n-aria="case.faintv.a2carousel.next" aria-label="Next screen">→</button>
+      </div>
+
+      <div class="mt-5 flex items-start justify-between gap-6">
+        <div class="min-h-[4.5rem] flex-1">
+          <div data-a2-caption>
+            <p class="text-lg font-bold uppercase tracking-[0.1em] text-brand-red"><span data-i18n="case.faintv.screens.cta.title">TV · Product CTA overlay</span> <span class="ml-1 text-base font-normal opacity-60" data-i18n="case.faintv.screens.badge.shipped">Shipped</span></p>
+            <p class="mt-2 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.screens.cta.desc">Non-intrusive product prompt during broadcast. One button triggers the handoff.</p>
+          </div>
+          <div data-a2-caption hidden>
+            <p class="text-lg font-bold uppercase tracking-[0.1em] text-brand-red"><span data-i18n="case.faintv.screens.handoff.title">TV · Handoff moment</span> <span class="ml-1 text-base font-normal opacity-60" data-i18n="case.faintv.screens.badge.shipped">Shipped</span></p>
+            <p class="mt-2 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.screens.handoff.desc">QR code on screen + push notification sent. The critical device transition.</p>
+          </div>
+          <div data-a2-caption hidden>
+            <p class="text-lg font-bold uppercase tracking-[0.1em] text-brand-green" data-i18n="case.faintv.screens.checkout.title">Mobile · Checkout</p>
+            <p class="mt-2 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.screens.checkout.desc">Pre-filled member data, touchscreen input. Typically around 2 minutes.</p>
+          </div>
+          <div data-a2-caption hidden>
+            <p class="text-lg font-bold uppercase tracking-[0.1em] text-brand-red"><span data-i18n="case.faintv.screens.confirmed.title">TV · Purchase confirmed</span> <span class="ml-1 text-base font-normal opacity-60" data-i18n="case.faintv.screens.badge.shipped">Shipped</span></p>
+            <p class="mt-2 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.screens.confirmed.desc">Brief confirmation, then auto-returns to viewing. Loop closed on TV.</p>
+          </div>
+        </div>
+        <p class="shrink-0 font-serif text-lg italic tabular-nums tracking-wide text-zinc-500" aria-live="polite"><span data-a2-current>01</span> / 04</p>
+      </div>
+
+      <div class="mt-4 flex items-center justify-center gap-2" role="group">
+        <button type="button" class="a2-dot is-active" data-a2-dot aria-label="01" aria-current="true"></button>
+        <button type="button" class="a2-dot" data-a2-dot aria-label="02"></button>
+        <button type="button" class="a2-dot" data-a2-dot aria-label="03"></button>
+        <button type="button" class="a2-dot" data-a2-dot aria-label="04"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Handoff insight -->
+<div class="border-b border-white/10 bg-zinc-900/80 py-16 md:py-20 reveal">
+  <div class="mx-auto max-w-6xl px-5 md:px-10">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.3em] text-brand-green" data-i18n="case.faintv.handoff.insight.label">The decision that ran against instinct</span>
+    <p class="max-w-4xl font-serif text-[clamp(1.25rem,2.5vw,1.95rem)] font-light italic leading-snug text-zinc-200" data-i18n="case.faintv.handoff.insight.body">Checkout offers three routes: scan the QR code, send the link to a family member, or call customer service. The phone number is given deliberate visual weight. Observation showed that calling in an order is the existing habit for this audience — so the design preserves that route rather than forcing everyone into a digital flow.</p>
+  </div>
+</div>
+
+<!-- A3: VOICE -->
+<section id="action3" class="border-b border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32">
+  <div class="mx-auto max-w-6xl reveal">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.voice.label">06 — Voice</span>
+    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.voice.title">Press and hold for three seconds, with animated feedback.</h2>
   </div>
   <div class="mx-auto mt-14 grid max-w-6xl grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:grid-cols-2 reveal">
     <div class="bg-zinc-900/95 p-8 transition-colors duration-500 hover:bg-zinc-900 md:p-10">
-      <span class="mb-4 block text-base font-bold uppercase tracking-[0.15em] text-brand-red" data-i18n="case.faintv.voice.constraints.label">10-foot constraints</span>
-      <p class="text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.voice.constraints.body">Safe-area padding, large type (min 36px) and high-contrast focus rings. All content navigable with a <strong class="font-semibold text-zinc-200">D-pad only</strong>.</p>
+      <span class="mb-4 block text-base font-bold uppercase tracking-[0.15em] text-brand-red" data-i18n="case.faintv.voice.constraints.label">The constraint</span>
+      <p class="text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.voice.constraints.body">Voice was meant to bypass typing entirely. But on a television, users have no cursor, no keyboard highlight, and no way to tell whether the system registered them at all.</p>
     </div>
     <div class="bg-zinc-900/95 p-8 transition-colors duration-500 hover:bg-zinc-900 md:p-10">
-      <span class="mb-4 block text-base font-bold uppercase tracking-[0.15em] text-brand-red" data-i18n="case.faintv.voice.why.label">Why voice, not keyboard</span>
-      <p class="text-lg leading-relaxed text-zinc-300" data-i18n-html="case.faintv.voice.why.body"><strong class="font-semibold text-zinc-200">65% of elderly users</strong> struggled with the on-screen keyboard. Voice reduces a 20-step search into just 2 steps.</p>
+      <span class="mb-4 block text-base font-bold uppercase tracking-[0.15em] text-brand-red" data-i18n="case.faintv.voice.why.label">What testing showed</span>
+      <p class="text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.voice.why.body">Four press-and-hold durations were tested. At 1 second the trigger fired accidentally. At 3 seconds it felt right. At 5 seconds users began to assume the feature was broken. At 10 seconds they had already moved on to the next action before voice engaged — producing a delay severe enough to break the flow entirely.</p>
     </div>
   </div>
   <div class="mx-auto mt-10 grid max-w-6xl grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:grid-cols-3 reveal">
@@ -616,247 +1728,114 @@
       <p class="mt-2 text-lg text-zinc-300" data-i18n="case.faintv.voice.step3.desc">No intermediate screens — users land on results immediately</p>
     </div>
   </div>
-  <div class="-mx-5 mt-14 flex w-auto flex-col gap-0 overflow-hidden border-y border-white/10 bg-zinc-900 md:mx-auto md:mt-14 md:grid md:max-w-6xl md:grid-cols-2 md:gap-0 md:border md:border-white/10 md:rounded-2xl md:border-y-0 reveal">
-    <div class="group relative aspect-[16/10] min-h-[220px] w-full overflow-hidden bg-zinc-900 md:aspect-auto md:h-[min(45vh,480px)] md:min-h-[280px] md:border-r md:border-white/10">
-      <img src="images/faintv-voice-home-screen.jpg" alt="TV home screen FainTV UI screenshot" class="h-full w-full object-cover transition duration-[900ms] ease-out group-hover:scale-105">
+  <div class="voice-demo mx-auto mt-14 max-w-4xl reveal" data-voice-hold>
+    <div class="voice-demo__tv">
+      <img class="voice-demo__img" src="images/faintv-voice-home-screen.jpg" alt="TV home screen" width="1920" height="1080">
+      <img class="voice-demo__img voice-demo__img--listen" src="images/faintv-voice-search-active.jpg" alt="" width="1920" height="1080">
+      <div class="voice-demo__wave" data-voice-bars aria-hidden="true">
+        <span class="voice-demo__bar"></span>
+        <span class="voice-demo__bar"></span>
+        <span class="voice-demo__bar"></span>
+        <span class="voice-demo__bar"></span>
+        <span class="voice-demo__bar"></span>
+      </div>
     </div>
-    <div class="group relative aspect-[16/10] min-h-[220px] w-full overflow-hidden border-t border-white/10 bg-zinc-900 md:aspect-auto md:h-[min(45vh,480px)] md:min-h-[280px] md:border-0 md:border-t-0">
-      <img src="images/faintv-voice-search-active.jpg" alt="Voice search active state FainTV UI screenshot" class="h-full w-full object-cover transition duration-[900ms] ease-out group-hover:scale-105">
+    <div class="voice-demo__controls">
+      <p class="voice-demo__prompt" data-i18n="case.faintv.voice.hold.prompt">Press and hold — feel how long three seconds is</p>
+      <div class="voice-demo__btn-wrap">
+        <svg class="voice-demo__ring" viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="voice-demo__ring-track" cx="50" cy="50" r="46"></circle>
+          <circle class="voice-demo__ring-value" cx="50" cy="50" r="46" data-voice-ring></circle>
+        </svg>
+        <button type="button" class="voice-demo__btn" data-voice-pad data-i18n-aria="case.faintv.voice.hold.aria" aria-label="Press and hold for three seconds to start voice search" aria-describedby="voice-hold-status">
+          <svg class="voice-demo__mic" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="9" y="2.5" width="6" height="11" rx="3" fill="currentColor"/>
+            <path d="M6.75 11.25a5.25 5.25 0 0 0 10.5 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M12 16.5v3.25M8.75 19.75h6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path class="voice-demo__mic-arc" d="M4.35 8.1a6.1 6.1 0 0 0 0 7.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path class="voice-demo__mic-arc" d="M19.65 8.1a6.1 6.1 0 0 1 0 7.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+          <span data-i18n="case.faintv.voice.demo.button">Hold for 3s</span>
+        </button>
+      </div>
+      <button type="button" class="voice-demo__replay" data-voice-play data-i18n="case.faintv.voice.hold.play">Play once</button>
+      <span hidden data-voice-copy-listen data-i18n="case.faintv.voice.hold.listening">Listening</span>
+      <span id="voice-hold-status" class="sr-only" data-voice-status aria-live="polite"></span>
     </div>
   </div>
 </section>
 
 <!-- Voice insight -->
-<div class="border-b border-white/10 bg-zinc-900/80 px-5 py-16 md:px-12 md:py-20 reveal">
-  <span class="mb-4 block text-base font-bold uppercase tracking-[0.3em] text-brand-blue" data-i18n="case.faintv.voice.insight.label">Why this matters</span>
-  <p class="max-w-4xl font-serif text-[clamp(1.25rem,2.5vw,1.95rem)] font-light italic leading-snug text-zinc-200" data-i18n-html="case.faintv.voice.insight.body">Voice wasn't just a convenience feature — it was the <strong class="font-normal text-zinc-100">bridge between the TV and the rest of the cross-device system</strong>. Without it, elderly users had no reliable way to initiate a task on TV.</p>
-</div>
-
-<!-- A: PAIN -->
-<section id="pain" class="border-b border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32">
-  <div class="mx-auto max-w-4xl reveal">
-    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.pain.label">A — The pain point</span>
-    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.pain.title">The form isn't the problem. The device is.</h2>
-  </div>
-  <p class="mx-auto mt-10 max-w-3xl text-lg leading-[1.9] text-zinc-300 reveal" data-i18n-html="case.faintv.pain.body">Elderly users could discover products on TV — but many abandoned the flow as soon as checkout began. The remote turned a 2-minute task into a <strong class="font-semibold text-zinc-200">12–15 minute ordeal</strong>.</p>
-  <div class="mx-auto mt-14 grid max-w-6xl grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-16 reveal">
-    <div class="group relative overflow-hidden rounded-2xl border border-white/10 bg-zinc-900 shadow-2xl">
-      <div class="aspect-video min-h-[220px] w-full overflow-hidden md:min-h-[280px]">
-        <video class="h-full w-full object-cover transition duration-[900ms] ease-out group-hover:scale-[1.04]" autoplay muted loop playsinline preload="metadata" poster="images/faintv-pain-old-tv-checkout.jpg" aria-label="Before old TV checkout UI flow video">
-          <source src="videos/faintv-pain-old-tv-checkout.mp4" type="video/mp4">
-          <span class="text-zinc-400">Your browser does not support the video tag.</span>
-        </video>
-      </div>
-    </div>
-    <div class="flex flex-col gap-4">
-      <div class="rounded-xl border-l-4 border-brand-red bg-zinc-900/60 p-5 transition-colors hover:bg-zinc-900 md:p-6">
-        <p class="text-lg font-semibold text-zinc-200" data-i18n="case.faintv.pain.stat1.title">Average time: 12–15 minutes</p>
-        <p class="mt-1 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.pain.stat1.body">Most users under 60 took under 3 minutes on mobile for the same flow.</p>
-      </div>
-      <div class="rounded-xl border-l-4 border-brand-red bg-zinc-900/60 p-5 transition-colors hover:bg-zinc-900 md:p-6">
-        <p class="text-lg font-semibold text-zinc-200" data-i18n="case.faintv.pain.stat2.title">Most abandoned at credit card field</p>
-        <p class="mt-1 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.pain.stat2.body">16 digits via D-pad — the single biggest drop-off point across all sessions.</p>
-      </div>
-      <div class="rounded-xl border-l-4 border-brand-red bg-zinc-900/60 p-5 transition-colors hover:bg-zinc-900 md:p-6">
-        <p class="text-lg font-semibold text-zinc-200" data-i18n="case.faintv.pain.stat3.title">"I just asked my daughter to do it"</p>
-        <p class="mt-1 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.pain.stat3.body">A recurring quote. Task completion depended on family availability.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Pain insight -->
-<div class="border-b border-white/10 bg-zinc-900/80 px-5 py-16 md:px-12 md:py-20 reveal">
-  <span class="mb-4 block text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.pain.reframe.label">The reframe</span>
-  <p class="max-w-4xl font-serif text-[clamp(1.25rem,2.5vw,1.95rem)] font-light italic leading-snug text-zinc-200" data-i18n-html="case.faintv.pain.reframe.body">These aren't bad forms. They're forms on the <strong class="font-normal text-zinc-100">wrong device</strong>. The solution isn't to simplify the form — it's to move it to mobile.</p>
-</div>
-
-<!-- A: HANDOFF -->
-<section id="handoff" class="handoff-flow-section border-b border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32">
-  <div class="handoff-flow-intro reveal mx-auto max-w-4xl border-b-0">
-    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.handoff.label">A — Handoff flow</span>
-    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.handoff.title">Start on TV. Finish on mobile.</h2>
-    <p class="mt-10 max-w-none text-lg leading-[1.9] text-zinc-300" data-i18n="case.faintv.handoff.body">TV stays in control of the viewing and decision moment. Mobile takes over the moment high-effort input is required. The handoff is one tap — or one QR scan.</p>
-  </div>
-
-  <div class="mx-auto mt-16 max-w-3xl">
-    <div class="hf-top space-y-3 pb-1 md:space-y-1.5">
-      <div class="hf-step relative z-[1]" data-handoff-step>
-        <div class="grid grid-cols-[52px_1fr] items-start gap-x-3 md:grid-cols-[1fr_80px_1fr] md:items-center md:gap-0">
-          <div class="relative z-[2] order-1 flex justify-center md:order-2 md:justify-center">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white/25 bg-zinc-950 font-serif text-base italic text-zinc-200 md:h-12 md:w-12 md:text-lg">01</div>
-          </div>
-          <div class="order-2 rounded-xl bg-brand-red/15 p-4 text-left ring-1 ring-brand-red/20 transition hover:bg-brand-red/20 md:order-1 md:p-6 md:text-right">
-            <span class="text-base font-bold uppercase tracking-[0.2em] text-brand-red" data-i18n="case.faintv.handoff.device.tv">TV</span>
-            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.step1.title">Product appears during broadcast</p>
-            <p class="mt-1 text-lg text-zinc-300" data-i18n="case.faintv.handoff.step1.desc">Lightweight CTA overlay: "Press red to buy"</p>
-          </div>
-          <div class="hidden md:order-3 md:block"></div>
-        </div>
-      </div>
-      <div class="hf-step relative z-[1]" data-handoff-step>
-        <div class="grid grid-cols-[52px_1fr] items-start gap-x-3 md:grid-cols-[1fr_80px_1fr] md:items-center md:gap-0">
-          <div class="relative z-[2] order-1 flex justify-center md:order-2">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white/25 bg-zinc-950 font-serif text-base italic text-zinc-200 md:h-12 md:w-12 md:text-lg">02</div>
-          </div>
-          <div class="order-2 rounded-xl bg-brand-red/15 p-4 text-left ring-1 ring-brand-red/20 transition hover:bg-brand-red/20 md:order-1 md:p-6 md:text-right">
-            <span class="text-base font-bold uppercase tracking-[0.2em] text-brand-red" data-i18n="case.faintv.handoff.device.tv">TV</span>
-            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.step2.title">User confirms intent</p>
-            <p class="mt-1 text-lg text-zinc-300" data-i18n="case.faintv.handoff.step2.desc">Product summary + "Send to my phone"</p>
-          </div>
-          <div class="hidden md:order-3 md:block"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="hf-step relative z-[1] my-4 w-full md:my-3" data-handoff-step>
-      <div class="w-full rounded-xl bg-brand-blue/20 p-5 text-left ring-1 ring-brand-blue/25 transition hover:bg-brand-blue/25 md:p-8 md:text-center">
-        <span class="text-base font-bold uppercase tracking-[0.2em] text-brand-blue" data-i18n="case.faintv.handoff.mid.label">Handoff</span>
-        <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.mid.title">QR code on TV or push notification to phone</p>
-        <p class="mt-1 text-lg text-zinc-300" data-i18n="case.faintv.handoff.mid.desc">One scan or one tap — the critical device transition</p>
-      </div>
-    </div>
-
-    <div class="hf-bottom space-y-3 pt-1 md:space-y-1.5">
-      <div class="hf-step relative z-[1]" data-handoff-step>
-        <div class="grid grid-cols-[52px_1fr] items-start gap-x-3 md:grid-cols-[1fr_80px_1fr] md:items-center md:gap-0">
-          <div class="hidden md:order-1 md:block"></div>
-          <div class="relative z-[2] order-1 flex justify-center md:order-2">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white/25 bg-zinc-950 font-serif text-base italic text-zinc-200 md:h-12 md:w-12 md:text-lg">03</div>
-          </div>
-          <div class="order-2 rounded-xl bg-brand-green/15 p-4 text-left ring-1 ring-brand-green/20 transition hover:bg-brand-green/20 md:order-3 md:p-6">
-            <span class="text-base font-bold uppercase tracking-[0.2em] text-brand-green" data-i18n="case.faintv.handoff.device.mobile">Mobile</span>
-            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.step3.title">Mobile opens checkout</p>
-            <p class="mt-1 text-lg text-zinc-300" data-i18n="case.faintv.handoff.step3.desc">Member data pre-filled — address and payment only</p>
-          </div>
-        </div>
-      </div>
-      <div class="hf-step relative z-[1]" data-handoff-step>
-        <div class="grid grid-cols-[52px_1fr] items-start gap-x-3 md:grid-cols-[1fr_80px_1fr] md:items-center md:gap-0">
-          <div class="hidden md:order-1 md:block"></div>
-          <div class="relative z-[2] order-1 flex justify-center md:order-2">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white/25 bg-zinc-950 font-serif text-base italic text-zinc-200 md:h-12 md:w-12 md:text-lg">04</div>
-          </div>
-          <div class="order-2 rounded-xl bg-brand-green/15 p-4 text-left ring-1 ring-brand-green/20 transition hover:bg-brand-green/20 md:order-3 md:p-6">
-            <span class="text-base font-bold uppercase tracking-[0.2em] text-brand-green" data-i18n="case.faintv.handoff.device.mobile">Mobile</span>
-            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.step4.title">Complete payment on mobile</p>
-            <p class="mt-1 text-lg text-zinc-300" data-i18n="case.faintv.handoff.step4.desc">Touchscreen input — typically around 2 minutes</p>
-          </div>
-        </div>
-      </div>
-      <div class="hf-step relative z-[1]" data-handoff-step>
-        <div class="grid grid-cols-[52px_1fr] items-start gap-x-3 md:grid-cols-[1fr_80px_1fr] md:items-center md:gap-0">
-          <div class="relative z-[2] order-1 flex justify-center md:order-2">
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white/25 bg-zinc-950 font-serif text-base italic text-zinc-200 md:h-12 md:w-12 md:text-lg">05</div>
-          </div>
-          <div class="order-2 rounded-xl bg-brand-red/15 p-4 text-left ring-1 ring-brand-red/20 transition hover:bg-brand-red/20 md:order-1 md:p-6 md:text-right">
-            <span class="text-base font-bold uppercase tracking-[0.2em] text-brand-red" data-i18n="case.faintv.handoff.device.tv">TV</span>
-            <p class="mt-2 text-lg font-semibold text-zinc-100" data-i18n="case.faintv.handoff.step5.title">TV confirms success</p>
-            <p class="mt-1 text-lg text-zinc-300" data-i18n="case.faintv.handoff.step5.desc">Brief confirmation, then auto-returns to content</p>
-          </div>
-          <div class="hidden md:order-3 md:block"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Handoff insight -->
-<div class="border-b border-white/10 bg-zinc-900/80 px-5 py-16 md:px-12 md:py-20 reveal">
-  <span class="mb-4 block text-base font-bold uppercase tracking-[0.3em] text-brand-green" data-i18n="case.faintv.handoff.insight.label">Why this works</span>
-  <p class="max-w-4xl font-serif text-[clamp(1.25rem,2.5vw,1.95rem)] font-light italic leading-snug text-zinc-200" data-i18n-html="case.faintv.handoff.insight.body"><strong class="font-normal text-zinc-100">Mobile checkout keeps the momentum going after the handoff.</strong> TV keeps the decision moment. Mobile handles all input.</p>
-</div>
-
-<!-- A: KEY SCREENS -->
-<section id="screens" class="border-b border-white/10 px-5 py-20 md:px-10 md:py-24 reveal key-screens-intro">
-  <div class="mx-auto max-w-4xl">
-    <span class="mb-4 block text-base font-bold uppercase tracking-[0.35em] text-brand-red" data-i18n="case.faintv.screens.label">A — Key screens</span>
-    <h2 class="font-serif text-[clamp(1.75rem,4.5vw,3.25rem)] font-light italic leading-[1.12] tracking-[-0.02em] text-zinc-100" data-i18n="case.faintv.screens.title">Four moments that tell the full story.</h2>
-  </div>
-</section>
-<div class="screens-grid mx-auto grid max-w-6xl grid-cols-1 gap-x-8 gap-y-16 px-5 pb-24 pt-4 md:grid-cols-2 md:gap-x-12 md:gap-y-20 md:px-10 md:pb-32 reveal">
-  <div class="flex flex-col gap-5">
-    <div class="mx-auto w-[88%] max-w-lg">
-      <span class="text-lg font-bold uppercase tracking-[0.1em] text-brand-red"><span data-i18n="case.faintv.screens.cta.title">TV · Product CTA overlay</span> <span class="ml-1 text-base font-normal opacity-60" data-i18n="case.faintv.screens.badge.shipped">Shipped</span></span>
-      <p class="mt-2 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.screens.cta.desc">Non-intrusive product prompt during broadcast. One button triggers the handoff.</p>
-    </div>
-    <div class="group relative mx-auto w-[88%] max-w-lg overflow-hidden rounded-xl border border-white/10 bg-zinc-900 shadow-xl">
-      <img src="images/faintv-key-tv-cta-overlay.jpg" alt="TV product CTA overlay" class="w-full object-cover transition duration-[900ms] ease-out group-hover:scale-[1.04]">
-    </div>
-  </div>
-  <div class="flex flex-col gap-5">
-    <div class="mx-auto w-[88%] max-w-lg">
-      <span class="text-lg font-bold uppercase tracking-[0.1em] text-brand-red"><span data-i18n="case.faintv.screens.handoff.title">TV · Handoff moment</span> <span class="ml-1 text-base font-normal opacity-60" data-i18n="case.faintv.screens.badge.shipped">Shipped</span></span>
-      <p class="mt-2 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.screens.handoff.desc">QR code on screen + push notification sent. The critical device transition.</p>
-    </div>
-    <div class="group relative mx-auto w-[88%] max-w-lg overflow-hidden rounded-xl border border-white/10 bg-zinc-900 shadow-xl">
-      <img src="images/faintv-key-tv-handoff-qr.jpg" alt="TV handoff QR screen" class="w-full object-cover transition duration-[900ms] ease-out group-hover:scale-[1.04]">
-    </div>
-  </div>
-  <div class="flex flex-col gap-5">
-    <div class="mx-auto w-[88%] max-w-lg">
-      <span class="text-lg font-bold uppercase tracking-[0.1em] text-brand-green" data-i18n="case.faintv.screens.checkout.title">Mobile · Checkout</span>
-      <p class="mt-2 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.screens.checkout.desc">Pre-filled member data, touchscreen input. Typically around 2 minutes.</p>
-    </div>
-    <div class="group relative mx-auto w-[88%] max-w-lg overflow-hidden rounded-xl border border-white/10 bg-zinc-900 shadow-xl">
-      <img src="images/faintv-key-mobile-checkout.jpg" alt="Mobile checkout screen" class="w-full object-cover transition duration-[900ms] ease-out group-hover:scale-[1.04]">
-    </div>
-  </div>
-  <div class="flex flex-col gap-5">
-    <div class="mx-auto w-[88%] max-w-lg">
-      <span class="text-lg font-bold uppercase tracking-[0.1em] text-brand-red"><span data-i18n="case.faintv.screens.confirmed.title">TV · Purchase confirmed</span> <span class="ml-1 text-base font-normal opacity-60" data-i18n="case.faintv.screens.badge.shipped">Shipped</span></span>
-      <p class="mt-2 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.screens.confirmed.desc">Brief confirmation, then auto-returns to viewing. Loop closed on TV.</p>
-    </div>
-    <div class="group relative mx-auto w-[88%] max-w-lg overflow-hidden rounded-xl border border-white/10 bg-zinc-900 shadow-xl">
-      <img src="images/faintv-key-tv-purchase-confirmed.jpg" alt="TV purchase confirmed state" class="w-full object-cover transition duration-[900ms] ease-out group-hover:scale-[1.04]">
-    </div>
+<div class="border-b border-white/10 bg-zinc-900/80 py-16 md:py-20 reveal">
+  <div class="mx-auto max-w-6xl px-5 md:px-10">
+    <span class="mb-4 block text-base font-bold uppercase tracking-[0.3em] text-brand-blue" data-i18n="case.faintv.voice.insight.label">From insight to motion</span>
+    <p class="max-w-4xl font-serif text-[clamp(1.25rem,2.5vw,1.95rem)] font-light italic leading-snug text-zinc-200" data-i18n="case.faintv.voice.insight.body">Getting the timing right was not enough. Without a visual response during the press, users had no way to confirm the system was receiving them — so animated feedback was added, restoring the sense of being in control.</p>
   </div>
 </div>
 
 <!-- R: RESULT -->
-<div class="border-b border-white/10 bg-zinc-900/80 px-5 py-16 md:px-12 md:py-20 reveal">
-  <p class="max-w-4xl font-serif text-[clamp(1.1rem,2.2vw,1.65rem)] font-light italic leading-relaxed text-zinc-200" data-i18n-html="case.faintv.result.body">By moving high-input tasks off the TV and validating a cross-device handoff strategy, the redesign confirmed that <em class="text-brand-green not-italic">device-fit matters more than interface polish.</em></p>
+<div class="border-b border-white/10 bg-zinc-900/80 py-16 md:py-20 reveal">
+  <div class="mx-auto max-w-6xl px-5 md:px-10">
+    <p class="max-w-4xl font-serif text-[clamp(1.1rem,2.2vw,1.65rem)] font-light italic leading-relaxed text-zinc-200" data-i18n-html="case.faintv.result.body">By moving high-input tasks off the TV and validating a cross-device handoff strategy, the redesign confirmed that <em class="text-brand-green not-italic">device-fit matters more than interface polish.</em></p>
+  </div>
 </div>
 
 <!-- IMPACT -->
-<div id="result" class="grid grid-cols-1 border-b border-white/10 md:grid-cols-2 reveal">
-  <div class="flex flex-col justify-center border-b border-white/10 bg-gradient-to-br from-zinc-900 to-zinc-950 px-8 py-16 md:border-b-0 md:border-r md:px-12 md:py-24 lg:py-28">
-    <span class="text-base font-medium uppercase tracking-[0.2em] text-zinc-300" data-i18n="case.faintv.impact.before">Before redesign</span>
-    <span class="mt-4 font-serif text-[clamp(4rem,14vw,8rem)] font-light italic leading-none tracking-tight text-zinc-100">30<span class="align-top text-[0.45em] text-brand-red">%</span></span>
-  </div>
-  <div class="flex flex-col justify-center bg-gradient-to-br from-brand-red/10 via-zinc-900 to-zinc-950 px-8 py-16 md:px-12 md:py-24 lg:py-28">
-    <span class="text-base font-medium uppercase tracking-[0.2em] text-zinc-300" data-i18n="case.faintv.impact.after">After redesign</span>
-    <span class="mt-4 font-serif text-[clamp(4rem,14vw,8rem)] font-light italic leading-none tracking-tight text-zinc-50">80<span class="align-top text-[0.45em] text-brand-red">%</span></span>
+<div id="result" class="border-b border-white/10 reveal">
+  <div class="mx-auto grid max-w-6xl grid-cols-1 px-5 md:grid-cols-2 md:px-10">
+    <div class="flex flex-col items-center justify-center border-b border-white/10 px-12 py-16 text-center md:border-b-0 md:border-r md:px-16 md:py-24 lg:py-28">
+      <span class="text-base font-medium uppercase tracking-[0.2em] text-zinc-300" data-i18n="case.faintv.impact.before">Before — TV only</span>
+      <span class="mt-8 font-serif text-[clamp(4rem,14vw,8rem)] font-light italic leading-none tracking-tight text-zinc-100">30<span class="align-top text-[0.45em] text-brand-red">min</span></span>
+    </div>
+    <div class="flex flex-col items-center justify-center px-12 py-16 text-center md:px-16 md:py-24 lg:py-28">
+      <span class="text-base font-medium uppercase tracking-[0.2em] text-zinc-300" data-i18n="case.faintv.impact.after">After — handoff to mobile</span>
+      <span class="mt-8 font-serif text-[clamp(4rem,14vw,8rem)] font-light italic leading-none tracking-tight text-zinc-100">5<span class="align-top text-[0.45em] text-brand-red">min</span></span>
+    </div>
   </div>
 </div>
-<div class="border-b border-white/10 bg-zinc-900/60 px-5 py-12 md:px-12 md:py-16 reveal">
-  <p class="mx-auto max-w-4xl text-center font-serif text-[clamp(1.1rem,2.2vw,1.55rem)] font-light italic leading-relaxed text-zinc-200" data-i18n-html="case.faintv.impact.summary">Task completion among <em class="text-brand-red not-italic">elderly users</em> increased by 50 percentage points — validating a voice-first, lower-input direction on TV.</p>
+<div class="border-b border-white/10 bg-zinc-900/60 py-12 md:py-16 reveal">
+  <div class="mx-auto max-w-6xl px-5 md:px-10">
+    <p class="mx-auto max-w-4xl text-center font-serif text-[clamp(1.1rem,2.2vw,1.55rem)] font-light italic leading-relaxed text-zinc-200" data-i18n="case.faintv.impact.summary">In usability testing with five participants, registering on the television took around 30 minutes on average. Moving the flow to mobile brought it down to about 5.</p>
+  </div>
 </div>
 
-<div class="grid grid-cols-1 divide-y divide-white/10 border-b border-white/10 md:grid-cols-3 md:divide-x md:divide-y-0 reveal">
-  <div class="group bg-zinc-950 px-8 py-14 transition-colors duration-500 hover:bg-zinc-900 md:px-10 md:py-16">
-    <p class="font-serif text-[clamp(2.75rem,8vw,4.5rem)] font-light italic leading-none text-zinc-100">65<span class="align-top text-[0.42em] text-brand-red">%</span></p>
-    <p class="mt-6 max-w-xs text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.impact.stat65">Initially struggled with text-based search — voice search significantly reduced this friction.</p>
-  </div>
-  <div class="group bg-zinc-950 px-8 py-14 transition-colors duration-500 hover:bg-zinc-900 md:px-10 md:py-16">
-    <p class="font-serif text-[clamp(2.75rem,8vw,4.5rem)] font-light italic leading-none text-zinc-100">2<span class="align-top text-[0.42em] text-brand-red">min</span></p>
-    <p class="mt-6 max-w-xs text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.impact.stat2min">Average checkout on mobile, vs 12–15 minutes via TV D-pad input.</p>
-  </div>
-  <div class="group bg-zinc-950 px-8 py-14 transition-colors duration-500 hover:bg-zinc-900 md:px-10 md:py-16">
-    <p class="font-serif text-[clamp(2.75rem,8vw,4.5rem)] font-light italic leading-none text-zinc-100">50<span class="align-top text-[0.42em] text-brand-green">+</span></p>
-    <p class="mt-6 max-w-xs text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.impact.stat50">Participants across user research and usability testing sessions.</p>
+<div class="border-b border-white/10 reveal">
+  <div class="mx-auto max-w-6xl px-5 pt-16 md:px-10 md:pt-20">
+    <span class="mb-8 block text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.impact.research.label">Research at a glance</span>
+    <div class="grid grid-cols-1 divide-y divide-white/10 md:grid-cols-4 md:divide-x md:divide-y-0">
+      <div class="group bg-zinc-950 px-8 py-14 text-center transition-colors duration-500 hover:bg-zinc-900 md:px-10 md:py-16">
+        <p class="font-serif text-[clamp(2.75rem,8vw,4.5rem)] font-light italic leading-none text-zinc-100">6</p>
+        <p class="mt-6 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.impact.stat1">In-depth interviews</p>
+      </div>
+      <div class="group bg-zinc-950 px-8 py-14 text-center transition-colors duration-500 hover:bg-zinc-900 md:px-10 md:py-16">
+        <p class="font-serif text-[clamp(2.75rem,8vw,4.5rem)] font-light italic leading-none text-zinc-100">30<span class="align-top text-[0.42em] text-brand-red">+</span></p>
+        <p class="mt-6 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.impact.stat2">Survey responses</p>
+      </div>
+      <div class="group bg-zinc-950 px-8 py-14 text-center transition-colors duration-500 hover:bg-zinc-900 md:px-10 md:py-16">
+        <p class="font-serif text-[clamp(2.75rem,8vw,4.5rem)] font-light italic leading-none text-zinc-100">12<span class="align-top text-[0.42em] text-brand-red">hrs</span></p>
+        <p class="mt-6 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.impact.stat3">In-home contextual observation</p>
+      </div>
+      <div class="group bg-zinc-950 px-8 py-14 text-center transition-colors duration-500 hover:bg-zinc-900 md:px-10 md:py-16">
+        <p class="font-serif text-[clamp(2.75rem,8vw,4.5rem)] font-light italic leading-none text-zinc-100">5</p>
+        <p class="mt-6 text-lg leading-relaxed text-zinc-300" data-i18n="case.faintv.impact.stat4">Usability testing participants</p>
+      </div>
+    </div>
   </div>
 </div>
+
+<p class="mx-auto max-w-3xl px-5 py-12 text-center text-sm leading-relaxed text-zinc-500 md:px-10 md:py-16" data-i18n="case.faintv.impact.context">Over the following two quarters, FainTV's overall subscriber base grew 50% and revenue rose 4% — alongside the launch of the company's first branded set-top box.</p>
 
 <!-- REFLECTION -->
-<div class="grid grid-cols-1 gap-16 border-b border-white/10 px-5 py-20 md:grid-cols-2 md:gap-20 md:px-10 md:py-24 lg:gap-24 lg:py-32 reveal">
-  <div>
-    <span class="mb-6 block text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.learned.label">What I learned</span>
-    <p class="font-serif text-[clamp(1.05rem,1.9vw,1.35rem)] font-light italic leading-relaxed text-zinc-200" data-i18n-html="case.faintv.learned.body">Designing for elderly users isn't just about making things bigger — it's about eliminating interactions that require <em class="text-brand-red not-italic">long, sustained input.</em> Voice should be a connector across devices, not just a search shortcut inside a single interface.</p>
-  </div>
-  <div>
-    <span class="mb-6 block text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.nextsteps.label">Next steps</span>
-    <p class="font-serif text-[clamp(1.05rem,1.9vw,1.35rem)] font-light italic leading-relaxed text-zinc-200" data-i18n-html="case.faintv.nextsteps.body">Design the caregiver experience on web, explore an <em class="text-brand-red not-italic">emergency SOS button</em> integrated into the voice and cross-device system — and test the QR-based handoff with non-smartphone-native elderly users.</p>
+<div class="border-b border-t border-white/10 px-5 py-20 md:px-10 md:py-28 lg:py-32 reveal">
+  <div class="mx-auto grid max-w-6xl grid-cols-1 gap-16 md:grid-cols-2 md:gap-24 lg:gap-32">
+    <div>
+      <span class="mb-8 block text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.learned.label">What I learned</span>
+      <p class="font-serif text-[clamp(1.05rem,1.9vw,1.35rem)] font-light italic leading-relaxed text-zinc-200" data-i18n-html="case.faintv.learned.body">Designing for elderly users isn't just about making things bigger — it's about eliminating interactions that require <em class="text-brand-red not-italic">long, sustained input.</em> Voice should be a connector across devices, not just a search shortcut inside a single interface.</p>
+    </div>
+    <div>
+      <span class="mb-8 block text-base font-bold uppercase tracking-[0.3em] text-brand-red" data-i18n="case.faintv.nextsteps.label">Next steps</span>
+      <p class="font-serif text-[clamp(1.05rem,1.9vw,1.35rem)] font-light italic leading-relaxed text-zinc-200" data-i18n-html="case.faintv.nextsteps.body">Design the caregiver experience on web, explore an <em class="text-brand-red not-italic">emergency SOS button</em> integrated into the voice and cross-device system — and test the QR-based handoff with non-smartphone-native elderly users.</p>
+    </div>
   </div>
 </div>
 
@@ -880,6 +1859,7 @@
     if (!loader) return;
     window.setTimeout(() => {
       loader.classList.add('is-hidden');
+      if (typeof revealVisible === 'function') revealVisible();
       window.setTimeout(() => loader.remove(), 750);
     }, 550);
   });
@@ -896,17 +1876,496 @@
     ring.style.transform = `translate(${rx - 19}px,${ry - 19}px)`;
     requestAnimationFrame(loop);
   })();
-  document.querySelectorAll('a').forEach((el) => {
+  document.querySelectorAll('a, .voice-demo__btn, .voice-demo__replay, [data-a1-prev], [data-a1-next]').forEach((el) => {
     el.addEventListener('mouseenter', () => ring.classList.add('expanded'));
     el.addEventListener('mouseleave', () => ring.classList.remove('expanded'));
   });
 
+  function revealEl(el) {
+    if (!el || el.classList.contains('in')) return;
+    el.classList.add('in');
+  }
+  function revealVisible() {
+    document.querySelectorAll('.reveal:not(.in)').forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.bottom > -80 && r.top < (window.innerHeight || 0) + 80) revealEl(el);
+    });
+  }
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      if (e.isIntersecting) { revealEl(e.target); io.unobserve(e.target); }
     });
-  }, { threshold: 0.06 });
+  }, { threshold: 0, rootMargin: '80px 0px 80px 0px' });
   document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+  window.addEventListener('scroll', revealVisible, { passive: true });
+  window.addEventListener('resize', revealVisible);
+  requestAnimationFrame(revealVisible);
+  window.setTimeout(revealVisible, 400);
+  window.setTimeout(function () {
+    document.querySelectorAll('.reveal').forEach(revealEl);
+  }, 1800);
+
+  (function initFlowStagger() {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const desktopMq = window.matchMedia('(min-width: 768px)');
+    document.querySelectorAll('[data-flow-scroll]').forEach(function (track) {
+      const pin = track.querySelector('.flow-scroll__pin') || track;
+      const cards = Array.prototype.slice.call(track.querySelectorAll('[data-flow-card]'));
+      const arrows = Array.prototype.slice.call(track.querySelectorAll('[data-flow-arrow]'));
+      function showAll() {
+        cards.concat(arrows).forEach(function (el) { el.classList.add('is-in'); });
+      }
+      function revealUpTo(n) {
+        cards.forEach(function (card, i) {
+          if (i < n) card.classList.add('is-in');
+        });
+        arrows.forEach(function (arrow, i) {
+          if (i < n - 1) arrow.classList.add('is-in');
+        });
+      }
+      if (reduce) {
+        showAll();
+        return;
+      }
+
+      function desktopProgress() {
+        const pinTop = parseFloat(getComputedStyle(pin).top) || 104;
+        const pinH = pin.offsetHeight || 1;
+        const travel = Math.max(1, track.offsetHeight - pinH);
+        const top = track.getBoundingClientRect().top;
+        return Math.min(1, Math.max(0, (pinTop - top) / travel));
+      }
+
+      function onDesktopScroll() {
+        if (track.getBoundingClientRect().bottom <= 80) {
+          revealUpTo(cards.length);
+          return;
+        }
+        const p = desktopProgress();
+        let n = 0;
+        if (p >= 0.04) n = 1;
+        if (p >= 0.36) n = 2;
+        if (p >= 0.68) n = 3;
+        revealUpTo(n);
+      }
+
+      function bindMobile() {
+        const io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-in');
+            io.unobserve(entry.target);
+          });
+        }, { threshold: 0.22, rootMargin: '0px 0px -10% 0px' });
+        cards.concat(arrows).forEach(function (el) { io.observe(el); });
+        return io;
+      }
+
+      let mobileIo = null;
+      function syncMode() {
+        if (desktopMq.matches) {
+          if (mobileIo) { mobileIo.disconnect(); mobileIo = null; }
+          onDesktopScroll();
+        } else {
+          if (!mobileIo) mobileIo = bindMobile();
+        }
+      }
+
+      window.addEventListener('scroll', function () {
+        if (desktopMq.matches) onDesktopScroll();
+      }, { passive: true });
+      if (desktopMq.addEventListener) desktopMq.addEventListener('change', syncMode);
+      else desktopMq.addListener(syncMode);
+      syncMode();
+    });
+  })();
+
+  (function initVoiceHold() {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const root = document.querySelector('[data-voice-hold]');
+    if (!root) return;
+    const pad = root.querySelector('[data-voice-pad]');
+    const playBtn = root.querySelector('[data-voice-play]');
+    const ring = root.querySelector('[data-voice-ring]');
+    const bars = Array.prototype.slice.call(root.querySelectorAll('.voice-demo__bar'));
+    const status = root.querySelector('[data-voice-status]');
+    const copyListen = root.querySelector('[data-voice-copy-listen]');
+    if (!pad || !playBtn || !ring) return;
+
+    const HOLD_MS = 3000;
+    const RING_C = 2 * Math.PI * 46;
+    const LISTEN_HOLD_MS = 2200;
+    const DRAIN_MS = 200;
+    ring.style.strokeDasharray = String(RING_C);
+    ring.style.strokeDashoffset = String(RING_C);
+
+    let progress = 0;
+    let holding = false;
+    let listening = false;
+    let autoplay = false;
+    let fillRaf = 0;
+    let drainRaf = 0;
+    let barsRaf = 0;
+    let listenTimer = 0;
+    let pointerId = null;
+    const barState = bars.map(function () {
+      return { h: 0.28, t: 0.28, next: 0 };
+    });
+
+    function setProgress(p) {
+      progress = Math.max(0, Math.min(1, p));
+      ring.style.strokeDashoffset = String(RING_C * (1 - progress));
+    }
+    function setListening(on) {
+      listening = on;
+      root.classList.toggle('is-listening', on);
+      if (on) {
+        if (status) status.textContent = (copyListen && copyListen.textContent) || 'Listening';
+        startBars();
+      } else {
+        if (status) status.textContent = '';
+        stopBars();
+      }
+    }
+    function setPlayEnabled(on) {
+      playBtn.disabled = !on;
+    }
+    function startBars() {
+      stopBars();
+      function tick(now) {
+        barState.forEach(function (s, i) {
+          if (now >= s.next) {
+            s.t = 0.18 + Math.random() * 0.82;
+            s.next = now + 70 + Math.random() * 120;
+          }
+          s.h += (s.t - s.h) * 0.28;
+          if (bars[i]) bars[i].style.transform = 'scaleY(' + s.h + ')';
+        });
+        barsRaf = requestAnimationFrame(tick);
+      }
+      barsRaf = requestAnimationFrame(tick);
+    }
+    function stopBars() {
+      if (barsRaf) cancelAnimationFrame(barsRaf);
+      barsRaf = 0;
+      bars.forEach(function (bar) { bar.style.transform = 'scaleY(0.28)'; });
+    }
+    function cancelFill() {
+      if (fillRaf) cancelAnimationFrame(fillRaf);
+      fillRaf = 0;
+    }
+    function cancelDrain() {
+      if (drainRaf) cancelAnimationFrame(drainRaf);
+      drainRaf = 0;
+    }
+    function drainProgress() {
+      cancelDrain();
+      const from = progress;
+      if (from <= 0) {
+        setProgress(0);
+        root.classList.remove('is-holding');
+        return;
+      }
+      const start = performance.now();
+      function tick(now) {
+        const t = Math.min(1, (now - start) / DRAIN_MS);
+        setProgress(from * (1 - t));
+        if (t < 1) drainRaf = requestAnimationFrame(tick);
+        else root.classList.remove('is-holding');
+      }
+      drainRaf = requestAnimationFrame(tick);
+    }
+    function fillThen(done) {
+      cancelFill();
+      cancelDrain();
+      setProgress(0);
+      root.classList.add('is-holding');
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min(1, (now - start) / HOLD_MS);
+        setProgress(p);
+        if (p >= 1) {
+          fillRaf = 0;
+          root.classList.remove('is-holding');
+          setListening(true);
+          if (done) done();
+          return;
+        }
+        fillRaf = requestAnimationFrame(tick);
+      }
+      fillRaf = requestAnimationFrame(tick);
+    }
+    function resetIdle() {
+      cancelFill();
+      cancelDrain();
+      if (listenTimer) {
+        window.clearTimeout(listenTimer);
+        listenTimer = 0;
+      }
+      holding = false;
+      autoplay = false;
+      pointerId = null;
+      setListening(false);
+      setProgress(0);
+      root.classList.remove('is-holding');
+      setPlayEnabled(true);
+    }
+    function endHold() {
+      if (autoplay) return;
+      if (!holding && !listening) return;
+      holding = false;
+      if (pointerId !== null && pad.releasePointerCapture) {
+        try { pad.releasePointerCapture(pointerId); } catch (err) {}
+      }
+      pointerId = null;
+      if (listening) {
+        setListening(false);
+        setProgress(0);
+        root.classList.remove('is-holding');
+        setPlayEnabled(true);
+        return;
+      }
+      cancelFill();
+      drainProgress();
+      setPlayEnabled(true);
+    }
+    function markTried() {
+      root.classList.add('has-tried');
+    }
+    function beginHold(id) {
+      if (autoplay || holding || listening) return;
+      markTried();
+      holding = true;
+      pointerId = id;
+      setPlayEnabled(false);
+      fillThen(function () {
+        holding = false;
+      });
+    }
+
+    pad.addEventListener('pointerdown', function (e) {
+      if (e.button !== undefined && e.button !== 0) return;
+      if (autoplay) return;
+      e.preventDefault();
+      if (pad.setPointerCapture && e.pointerId !== undefined) {
+        pad.setPointerCapture(e.pointerId);
+      }
+      beginHold(e.pointerId);
+    });
+    pad.addEventListener('pointerup', endHold);
+    pad.addEventListener('pointercancel', endHold);
+    pad.addEventListener('lostpointercapture', function () {
+      if (holding) endHold();
+    });
+    pad.addEventListener('keydown', function (e) {
+      if (e.repeat) return;
+      if (e.key !== ' ' && e.key !== 'Enter') return;
+      e.preventDefault();
+      beginHold(null);
+    });
+    pad.addEventListener('keyup', function (e) {
+      if (e.key !== ' ' && e.key !== 'Enter') return;
+      e.preventDefault();
+      endHold();
+    });
+    pad.addEventListener('blur', function () {
+      if (holding) endHold();
+    });
+    pad.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+
+    playBtn.addEventListener('click', function () {
+      if (autoplay || holding || listening) return;
+      markTried();
+      autoplay = true;
+      setPlayEnabled(false);
+      fillThen(function () {
+        listenTimer = window.setTimeout(function () {
+          resetIdle();
+        }, LISTEN_HOLD_MS);
+      });
+    });
+
+    if (reduce.addEventListener) {
+      reduce.addEventListener('change', function () {
+        if (reduce.matches) resetIdle();
+      });
+    }
+  })();
+
+  (function initA1Lanes() {
+    const reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const desktopMq = window.matchMedia('(min-width: 768px)');
+    document.querySelectorAll('[data-a1-lane], .a1-stage').forEach(function (lane) {
+      const track = lane.querySelector('[data-a1-track], .a1-track');
+      const prev = lane.querySelector('[data-a1-prev]');
+      const next = lane.querySelector('[data-a1-next]');
+      const fade = lane.querySelector('[data-a1-fade]');
+      if (!track) return;
+
+      function behavior() {
+        return reduceMq.matches ? 'auto' : 'smooth';
+      }
+      function cardStep() {
+        const card = track.querySelector('.a1-lane__card, .a1-card');
+        const styles = getComputedStyle(track);
+        const gap = parseFloat(styles.columnGap || styles.gap) || 0;
+        return (card ? card.getBoundingClientRect().width : 280) + gap;
+      }
+      function updateChrome() {
+        const max = Math.max(0, track.scrollWidth - track.clientWidth);
+        const atStart = track.scrollLeft <= 2;
+        const atEnd = track.scrollLeft >= max - 2;
+        if (prev) prev.disabled = atStart;
+        if (next) next.disabled = atEnd;
+        if (fade) fade.classList.toggle('is-end', atEnd || max <= 2);
+        track.classList.toggle('is-end', atEnd || max <= 2);
+      }
+      function scrollByDir(dir) {
+        track.scrollBy({ left: dir * cardStep(), behavior: behavior() });
+      }
+
+      if (prev) prev.addEventListener('click', function () { scrollByDir(-1); });
+      if (next) next.addEventListener('click', function () { scrollByDir(1); });
+      if (prev) prev.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+      if (next) next.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+
+      track.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); scrollByDir(1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); scrollByDir(-1); }
+      });
+
+      let dragging = false;
+      let startX = 0;
+      let startScroll = 0;
+      track.addEventListener('pointerdown', function (e) {
+        if (!desktopMq.matches) return;
+        if (e.pointerType === 'touch') return;
+        if (e.button !== 0) return;
+        dragging = true;
+        startX = e.clientX;
+        startScroll = track.scrollLeft;
+        track.classList.add('is-dragging');
+        track.setPointerCapture(e.pointerId);
+      });
+      track.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        track.scrollLeft = startScroll - (e.clientX - startX);
+      });
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        track.classList.remove('is-dragging');
+      }
+      track.addEventListener('pointerup', endDrag);
+      track.addEventListener('pointercancel', endDrag);
+
+      track.addEventListener('scroll', updateChrome, { passive: true });
+      window.addEventListener('resize', updateChrome);
+      updateChrome();
+    });
+  })();
+
+  (function initA2Carousels() {
+    document.querySelectorAll('[data-a2-carousel]').forEach(function (root) {
+      const track = root.querySelector('[data-a2-track]');
+      const viewport = root.querySelector('[data-a2-viewport]');
+      const slides = Array.from(root.querySelectorAll('.a2-carousel__slide'));
+      const captions = Array.from(root.querySelectorAll('[data-a2-caption]'));
+      const dots = Array.from(root.querySelectorAll('[data-a2-dot]'));
+      const currentEl = root.querySelector('[data-a2-current]');
+      const prevBtn = root.querySelector('[data-a2-prev]');
+      const nextBtn = root.querySelector('[data-a2-next]');
+      if (!track || !viewport || !slides.length || !prevBtn || !nextBtn) return;
+      const total = slides.length;
+      const peek = slides[0].cloneNode(true);
+      peek.setAttribute('aria-hidden', 'true');
+      track.appendChild(peek);
+      let index = 0;
+      let startX = 0;
+      let startY = 0;
+      let deltaX = 0;
+      let dragging = false;
+      let axisLocked = false;
+
+      function step() {
+        const gap = parseFloat(getComputedStyle(track).gap) || 0;
+        return slides[0].getBoundingClientRect().width + gap;
+      }
+
+      function setOffset(px, animate) {
+        track.style.transition = animate === false ? 'none' : '';
+        track.style.transform = 'translate3d(' + px + 'px,0,0)';
+      }
+
+      function go(next, animate) {
+        index = (next + total) % total;
+        setOffset(-index * step(), animate);
+        captions.forEach(function (el, i) { el.hidden = i !== index; });
+        dots.forEach(function (el, i) {
+          const active = i === index;
+          el.classList.toggle('is-active', active);
+          if (active) el.setAttribute('aria-current', 'true');
+          else el.removeAttribute('aria-current');
+        });
+        slides.forEach(function (el, i) {
+          el.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+        });
+        if (currentEl) currentEl.textContent = String(index + 1).padStart(2, '0');
+      }
+
+      prevBtn.addEventListener('click', function () { go(index - 1); });
+      nextBtn.addEventListener('click', function () { go(index + 1); });
+      prevBtn.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+      nextBtn.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+      dots.forEach(function (el, i) {
+        el.addEventListener('click', function () { go(i); });
+      });
+
+      let hot = false;
+      root.addEventListener('pointerenter', function () { hot = true; });
+      root.addEventListener('pointerleave', function () { hot = false; });
+
+      function onKey(e) {
+        const inside = root.contains(document.activeElement) || document.activeElement === root;
+        if (!hot && !inside) return;
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(index + 1); }
+      }
+      document.addEventListener('keydown', onKey);
+
+      viewport.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        dragging = true;
+        axisLocked = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        deltaX = 0;
+      });
+      viewport.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (!axisLocked) {
+          if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+          if (Math.abs(dy) > Math.abs(dx)) { dragging = false; return; }
+          axisLocked = true;
+          viewport.setPointerCapture(e.pointerId);
+        }
+        deltaX = dx;
+      });
+      function endDrag() {
+        if (axisLocked && Math.abs(deltaX) > 48) go(index + (deltaX < 0 ? 1 : -1));
+        dragging = false;
+        axisLocked = false;
+        deltaX = 0;
+      }
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      window.addEventListener('resize', function () { go(index, false); });
+
+      go(0);
+    });
+  })();
 
   (function initHandoffStepReveal() {
     const section = document.querySelector('.handoff-flow-section');
@@ -961,11 +2420,9 @@
         { id: 'situation', label: 'Situation', labelKey: 'case.faintv.situation.label' },
         { id: 'task', label: 'Task', labelKey: 'case.faintv.task.label' },
         { id: 'action', label: 'Action', labelKey: 'case.faintv.action.label' },
-        { id: 'strategy', label: 'Strategy', labelKey: 'case.faintv.strategy.label' },
-        { id: 'voice', label: 'Voice', labelKey: 'case.faintv.voice.label' },
-        { id: 'pain', label: 'Pain', labelKey: 'case.faintv.pain.label' },
-        { id: 'handoff', label: 'Handoff', labelKey: 'case.faintv.handoff.label' },
-        { id: 'screens', label: 'Key screens', labelKey: 'case.faintv.screens.label' },
+        { id: 'action1', label: '04 — Sign-in', labelKey: 'case.faintv.progress.action1' },
+        { id: 'action2', label: 'Action 2', labelKey: 'case.faintv.handoff.label' },
+        { id: 'action3', label: 'Action 3', labelKey: 'case.faintv.voice.label' },
         { id: 'result', label: 'Result', labelKey: 'case.faintv.progress.result' },
       ].map(function (s) { return { id: s.id, label: s.label, labelKey: s.labelKey, el: document.getElementById(s.id) }; })
        .filter(function (s) { return s.el; });

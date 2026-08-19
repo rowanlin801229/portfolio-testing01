@@ -41,7 +41,7 @@
 
     .cs-hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:120px 5vw 8vh;border-bottom:1px solid var(--line)}
     .cs-label{font-size: 1rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);margin-bottom:2rem;display:block;opacity:0;transform:translateY(12px);filter:blur(4px);animation:fadeup .7s cubic-bezier(.16,1,.3,1) .2s forwards}
-    .cs-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(5rem,13vw,13rem);line-height:.9;letter-spacing:-.03em;margin-bottom:2rem;opacity:0;transform:translateY(60px);filter:blur(4px);animation:fadeup .9s cubic-bezier(.16,1,.3,1) .3s forwards}
+    .cs-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(5rem,13vw,13rem);line-height:.9;letter-spacing:-.03em;margin-bottom:2rem;opacity:0;transform:translateY(60px);filter:blur(4px);animation:fadeup .9s cubic-bezier(.16,1,.3,1) .3s forwards;text-wrap:pretty;text-wrap:balance}
     .cs-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;border-top:1px solid var(--line);padding-top:2.5rem;opacity:0;transform:translateY(20px);filter:blur(4px);animation:fadeup .7s cubic-bezier(.16,1,.3,1) .55s forwards}
     .cs-meta-label{font-size: 1rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.6rem}
     .cs-meta-val{font-size: 1.125rem;line-height:1.6;color:var(--fg)}
@@ -53,9 +53,9 @@
     .cs-img-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2px;overflow:hidden}
 
     .cs-section{padding:clamp(5rem,9vh,8rem) 5vw;border-bottom:1px solid var(--line)}
-    .cs-sec-header{display:grid;grid-template-columns:220px 1fr;gap:6vw;margin-bottom:5rem}
+    .cs-sec-header{display:grid;grid-template-columns:10rem minmax(0,1fr);gap:2.5rem;margin-bottom:5rem}
     .cs-sec-label{font-size: 1rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);padding-top:.3rem}
-    .cs-sec-headline{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(2rem,4vw,3.5rem);line-height:1.15;letter-spacing:-.02em}
+    .cs-sec-headline{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(2rem,4vw,3.5rem);line-height:1.15;letter-spacing:-.02em;text-wrap:pretty;text-wrap:balance}
     .cs-text-grid{display:grid;grid-template-columns:220px 1fr;gap:6vw}
     .cs-text-label{font-size: 1rem;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);padding-top:.25rem}
     .cs-text-body{font-size: 1.125rem;line-height:1.95;color:var(--muted);max-width:68ch;text-wrap:pretty}

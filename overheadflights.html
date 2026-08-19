@@ -228,6 +228,8 @@
       transform: translateY(60px);
       filter: blur(4px);
       animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
+      text-wrap: pretty;
+      text-wrap: balance;
     }
     html[lang="zh-Hant"] .cs-title { font-size: clamp(2.5rem, 6vw, 5.5rem); }
     .cs-subtitle {
@@ -363,8 +365,8 @@
     .cs-section { padding: clamp(5rem, 9vh, 8rem) 5vw; border-bottom: 1px solid var(--line); }
     .cs-sec-header {
       display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 6vw;
+      grid-template-columns: 10rem minmax(0, 1fr);
+      gap: 2.5rem;
       margin-bottom: 3.5rem;
     }
     .cs-sec-label {
@@ -382,6 +384,8 @@
       line-height: 1.2;
       letter-spacing: -0.02em;
       color: #bdbdb6;
+      text-wrap: pretty;
+      text-wrap: balance;
     }
     .cs-text-grid {
       display: grid;

@@ -202,7 +202,7 @@
 
     .cs-hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 120px 5vw 8vh; border-bottom: 1px solid var(--line); }
     .cs-label { font-size: 1rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); margin-bottom: 2rem; display: block; opacity: 0; transform: translateY(12px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards; }
-    .cs-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(4rem, 11vw, 11rem); line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 2rem; opacity: 0; transform: translateY(60px); filter: blur(4px); animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; }
+    .cs-title { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(4rem, 11vw, 11rem); line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 2rem; opacity: 0; transform: translateY(60px); filter: blur(4px); animation: fadeup 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards; text-wrap: pretty; text-wrap: balance; }
     html[lang="zh-Hant"] .cs-title { font-size: clamp(2.75rem, 7.2vw, 6.75rem); }
     .cs-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; border-top: 1px solid var(--line); padding-top: 2.5rem; opacity: 0; transform: translateY(20px); filter: blur(4px); animation: fadeup 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s forwards; }
     .cs-meta-label { font-size: 1rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 0.6rem; }
@@ -216,9 +216,9 @@
     .cs-img-single { padding: 0; border-bottom: 1px solid var(--line); overflow: hidden; }
 
     .cs-section { padding: clamp(5rem, 9vh, 8rem) 5vw; border-bottom: 1px solid var(--line); }
-    .cs-sec-header { display: grid; grid-template-columns: 220px 1fr; gap: 6vw; margin-bottom: 5rem; }
+    .cs-sec-header { display: grid; grid-template-columns: 10rem minmax(0, 1fr); gap: 2.5rem; margin-bottom: 5rem; }
     .cs-sec-label { font-size: 1rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--accent); padding-top: 0.3rem; }
-    .cs-sec-headline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.15; letter-spacing: -0.02em; }
+    .cs-sec-headline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.15; letter-spacing: -0.02em; text-wrap: pretty; text-wrap: balance; }
 
     .cs-text-grid { display: grid; grid-template-columns: 220px 1fr; gap: 6vw; }
     .cs-text-label { font-size: 1rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); padding-top: 0.25rem; }
