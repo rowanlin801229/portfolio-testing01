@@ -169,8 +169,8 @@
     applyTranslations(initial);
   }
 
-  /* Cache-bust so new work.* keys are not stuck on an old translations.json */
-  fetch('translations.json?v=' + Date.now())
+  /* Bump this when translations.json changes so browsers pick up new keys. */
+  fetch('translations.json?v=20260819')
     .then(function (res) {
       if (!res.ok) throw new Error('Failed to load translations.json');
       return res.json();

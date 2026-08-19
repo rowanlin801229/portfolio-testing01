@@ -16,6 +16,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
   <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
+  <link rel="preload" as="image" href="images/faintv-hero.webp" fetchpriority="high">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -1096,7 +1097,7 @@
     <h1 class="font-serif text-[clamp(3.5rem,14vw,11rem)] font-light italic leading-[0.92] tracking-[-0.03em] text-zinc-100 opacity-0 [animation:heroFadeUp_0.9s_ease-out_0.35s_forwards]" data-i18n="case.faintv.hero.title">FainTV</h1>
     <div class="group relative mt-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-2xl shadow-black/40 md:mt-10">
       <div class="aspect-[16/9] min-h-[220px] w-full overflow-hidden bg-zinc-950 md:aspect-[2/1] md:min-h-[380px]">
-        <img src="images/ Fain TV loading screen.webp" alt="FainTV loading screen" class="h-full w-full object-contain transition duration-[900ms] ease-out group-hover:scale-[1.02]">
+        <img src="images/faintv-hero.webp" alt="FainTV loading screen" class="h-full w-full object-contain transition duration-[900ms] ease-out group-hover:scale-[1.02]" fetchpriority="high" decoding="async">
       </div>
       <div class="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-zinc-950 via-zinc-950/80 to-transparent md:w-40"></div>
       <div class="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-zinc-950 via-zinc-950/80 to-transparent md:w-40"></div>
@@ -1868,14 +1869,16 @@
       if (typeof revealVisible === 'function') revealVisible();
       window.setTimeout(function () { loader.remove(); }, 750);
     }
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      window.setTimeout(hide, 280);
-    } else {
-      document.addEventListener('DOMContentLoaded', function () {
-        window.setTimeout(hide, 280);
-      });
+    const hero = document.querySelector('#hero img');
+    if (hero) {
+      if (hero.complete && hero.naturalWidth) {
+        hide();
+      } else {
+        hero.addEventListener('load', hide, { once: true });
+        hero.addEventListener('error', hide, { once: true });
+      }
     }
-    window.setTimeout(hide, 1200);
+    window.setTimeout(hide, 300);
   })();
 
   const ring = document.getElementById('cur-ring');
