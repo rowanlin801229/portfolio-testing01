@@ -3256,8 +3256,8 @@
       z-index: 3;
       pointer-events: none;
       background:
-        linear-gradient(180deg, rgba(6,6,8,.72) 0%, rgba(6,6,8,.40) 46%, rgba(6,6,8,.80) 100%),
-        radial-gradient(120% 90% at 50% 45%, rgba(6,6,8,.20) 0%, rgba(6,6,8,.62) 100%);
+        linear-gradient(180deg, rgba(6,6,8,.80) 0%, rgba(6,6,8,.58) 46%, rgba(6,6,8,.88) 100%),
+        radial-gradient(120% 90% at 50% 45%, rgba(6,6,8,.38) 0%, rgba(6,6,8,.74) 100%);
     }
     #hero.ph-hero .ph-grain {
       position: absolute;
@@ -3498,8 +3498,6 @@
       </div>
     </div>
   </div>
-
-  <div id="tweaks-root"></div>
 
   <canvas id="stars" width="1044" height="662"></canvas>
 
@@ -3985,60 +3983,8 @@
     </footer>
   </main>
 
-  <!-- React for Tweaks panel only -->
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-  <script type="text/babel" src="tweaks-panel.jsx"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin="anonymous"></script>
-  <script type="text/babel">
-    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-      "bg": "#ffffff",
-      "fg": "#4a4a48",
-      "accent": "#B84545",
-      "line": "rgba(74,74,72,0.14)",
-      "bodySize": 0.88,
-      "letterSpacing": -0.03
-    }/*EDITMODE-END*/;
-
-    function PortfolioTweaks() {
-      const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
-
-      function set(key, val) {
-        setTweak(key, val);
-        if (key === 'bg') {
-          document.documentElement.style.setProperty('--bg', val);
-          document.body.style.backgroundColor = val;
-        }
-        if (key === 'fg')     document.documentElement.style.setProperty('--fg', val);
-        if (key === 'accent') {
-          document.documentElement.style.setProperty('--accent', val);
-          document.documentElement.style.setProperty(
-            '--hero-sig-color',
-            'color-mix(in srgb, ' + val + ' 40%, #5c4a4a 60%)',
-          );
-        }
-        if (key === 'bodySize')    document.querySelectorAll('.hero-desc, .about-bio-small, .cs-text-body').forEach(el => el.style.fontSize = val + 'rem');
-      }
-
-      return (
-        React.createElement(TweaksPanel, { title: "Design Tokens" },
-          React.createElement(TweakSection, { label: "Colour" },
-            React.createElement(TweakColor, { label: "Background", value: tweaks.bg,     onChange: (v) => set("bg", v) }),
-            React.createElement(TweakColor, { label: "Foreground", value: tweaks.fg,     onChange: (v) => set("fg", v) }),
-            React.createElement(TweakColor, { label: "Accent",     value: tweaks.accent, onChange: (v) => set("accent", v) })
-          ),
-          React.createElement(TweakSection, { label: "Typography" },
-            React.createElement(TweakSlider, { label: "Body size (rem)", value: tweaks.bodySize, min: 0.7, max: 1.2, step: 0.05, onChange: (v) => set("bodySize", v) })
-          )
-        )
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById('tweaks-root')).render(React.createElement(PortfolioTweaks));
-  </script>
-
   <script>
     /* ── Pandora hero: photo lock + scroll zoom + screen glow + trail ── */
     (function () {

@@ -1,6 +1,16 @@
 {
   "buildCommand": "true",
   "outputDirectory": ".",
+  "redirects": [
+    { "source": "/streetstyle", "destination": "/faintv", "permanent": true },
+    { "source": "/streetstyle/", "destination": "/faintv", "permanent": true },
+    { "source": "/sqspmagazine", "destination": "/genebook", "permanent": true },
+    { "source": "/sqspmagazine/", "destination": "/genebook", "permanent": true },
+    { "source": "/203issue", "destination": "/", "permanent": true },
+    { "source": "/203issue/", "destination": "/", "permanent": true },
+    { "source": "/selectprojects", "destination": "/", "permanent": true },
+    { "source": "/selectprojects/", "destination": "/", "permanent": true }
+  ],
   "rewrites": [
     {
       "source": "/:path((?!.*\\..*$|.*\\..*$).*)",
